@@ -1,9 +1,41 @@
-# This file should ensure the existence of records required to run the application in every environment (production,
-# development, test). The code here should be idempotent so that it can be executed at any point in every environment.
-# The data can then be loaded with the bin/rails db:seed command (or created alongside the database with db:setup).
-#
-# Example:
-#
-#   ["Action", "Comedy", "Drama", "Horror"].each do |genre_name|
-#     MovieGenre.find_or_create_by!(name: genre_name)
-#   end
+puts "Cleaning database..."
+Cities.destroy_all
+
+puts "Creating cities..."
+City.create!(name: "Barcelona")
+puts "Created Barcelona"
+puts "Creating cities..."
+City.create!(name: "Tokyo")
+puts "Created Tokyo"
+puts "Creating cities..."
+City.create!(name: "Paris")
+puts "Created Paris"
+puts "Creating cities..."
+City.create!(name: "New York")
+puts "Created New York"
+puts "Creating cities..."
+City.create!(name: "Sydney")
+puts "Created Sydney"
+puts "Creating cities..."
+City.create!(name: "Amsterdam")
+puts "Created Amsterdam"
+puts "Creating cities..."
+City.create!(name: "London")
+puts "Created London"
+puts "Creating cities..."
+City.create!(name: "Lima")
+puts "Created Lima"
+puts "Creating cities..."
+City.create!(name: "New Dehli")
+puts "Created New Dehli"
+puts "Creating cities..."
+City.create!(name: "Phnom Penh")
+puts "Created Phnom Penh"
+puts "Creating cities..."
+City.create!(name: "Budapest")
+puts "Created Budapest"
+puts "Creating cities..."
+City.create!(name: "Cairo")
+puts "Created Cairo"
+
+puts "Finished! Created #{Cities.count} cities."
