@@ -3,17 +3,15 @@ class PlacesController < ApplicationController
 
   def index
     @places = policy_scope(Place)
-
-    @markers = @places.geocoded.map do |plac|
-    {
-      lat: plac.latitude,
-      lng: plac.longitude
-        }
-    end
   end
 
   def show
     @comment = Comment.new
+    @markers =
+    [{
+      lat: @place.latitude,
+      lng: @place.longitude
+    }]
   end
 
   private

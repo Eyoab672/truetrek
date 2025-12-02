@@ -1,13 +1,32 @@
 import { Controller } from "@hotwired/stimulus"
+import mapboxgl from 'mapbox-gl'
 
 // Connects to data-controller="map"
 export default class extends Controller {
+  static values = {
+    apiKey: String,
+    markers: Array
+  }
   connect() {
-       mapboxgl.accessToken = 'pk.eyJ1IjoiZXlvYWJoYWIiLCJhIjoiY21pb2dzdDF3MDIxZDNkczV5MzVoaDg1ZSJ9.VUE7WRQHlQA42YRm0v_2lw';
-    const map = new mapboxgl.Map({
-        container: 'map', // container ID
-        center: [-74.5, 40], // starting position [lng, lat]. Note that lat must be set between -90 and 90
-        zoom: 9 // starting zoom
+    mapboxgl.accessToken = this.apiKeyValue
+    this.map = new mapboxgl.Map({
+      container: this.element,
+      zoom: 9 // starting zoom
     });
+    this.#addMarkersToMap()
+    this.#fitMapToMarkers()
+  }
+  #addMarkersToMap() {
+    this.markersValue.forEach((marker) => {
+      new mapboxgl.Marker()
+        .setLngLat([marker.lng, marker.lat])
+        .addTo(this.map)
+    })
+  }
+
+  #fitMapToMarkers() {
+    const bounds = new mapboxgl.LngLatBounds()
+    this.markersValue.forEach(marker => bounds.extend([marker.lng, marker.lat]))
+    this.map.fitBounds(bounds, { padding: 70, maxZoom: 15, duration: 0 })
   }
 }
