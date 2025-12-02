@@ -3,7 +3,7 @@ Rails.application.routes.draw do
   root to: "cities#index"
 
   resources :cities, only: :index do
-    resources :places, only: :index
+    resources :places, only: [:index, :show]
   end
 
   resources :places, only: :index do 
