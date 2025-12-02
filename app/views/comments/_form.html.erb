@@ -1,6 +1,15 @@
 <%= simple_form_for comment do |f| %>
+  <% if local_assigns[:place]&.new_record? %>
+    <%= simple_fields_for :place, place do |p| %>
+      <%= p.input :title, label: "Place name" %>
+      <%= p.input :city_id, collection: City.all, label: "City" %>
+      <%= p.input :address, label: "Address" %>
+      <%= p.input :latitude, as: :hidden %>
+      <%= p.input :longitude, as: :hidden %>
+    <% end %>
+  <% end %>
+
   <%= f.input :description, label: "Write your description of the place you visited." %>
   <%= f.input :photos, as: :file, direct_upload: true, label: "Upload your photos." %>
   <%= f.submit %>
-
 <% end %>

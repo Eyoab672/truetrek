@@ -3,9 +3,10 @@ Rails.application.routes.draw do
   root to: "cities#index"
 
   resources :cities, only: :index do
-    resources :places, only: [:index, :show]
+    resources :places, only: [:index, :show] do
+      resources :comments, only: :create  # for existing places
+    end
   end
-
 
   resources :places, only: :index do
     resources :travel_book_places, only: :create
@@ -13,7 +14,7 @@ Rails.application.routes.draw do
 
   resources :travel_book_places, only: :destroy
   resources :travel_books, only: :show
-  resources :comments, only: [:new, :create]
+  resources :comments, only: [:new, :create]  # for new places
 
 
 
