@@ -35,9 +35,10 @@ bin/rails console
 - Rails 7.2 with Hotwire (Turbo + Stimulus)
 - PostgreSQL database
 - Devise authentication
+- Pundit authorization
 - Bootstrap 5 + Font Awesome
-- Cloudinary for image hosting
-- Active Storage for file attachments
+- Cloudinary for image hosting (Active Storage)
+- Geocoder with Nominatim lookup for place coordinates
 
 ### Data Model
 
@@ -52,22 +53,32 @@ TravelBook
 
 City
 ├── has_many Places
-└── has_one_attached photo
+└── img attribute (string URL)
 
 Place
 ├── belongs_to City
 ├── has_many Comments
-└── attributes: title, wiki_description, latitude, longitude
+├── geocoded_by :address
+└── attributes: title, wiki_description, latitude, longitude, address
 
 Comment
 ├── belongs_to Place
 ├── belongs_to User
-└── has_many_attached photos
+├── has_many_attached photos
+└── validates description: presence, minimum 100 chars
 ```
+
+### Authorization with Pundit
+- All controllers include `Pundit::Authorization` via `ApplicationController`
+- `verify_authorized` runs after all actions except index (unless skipped)
+- `verify_policy_scoped` runs after index actions
+- Pundit is skipped for Devise controllers and pages controller
+- Policy files in `app/policies/` - each resource has its own policy
 
 ### Routes Structure
 - Root: `cities#index`
 - Nested: `cities/:city_id/places` for browsing places within a city
+- Nested: `cities/:city_id/places/:place_id/comments` for creating comments
 - `travel_book_places` for adding/removing places from a user's travel book
 - Devise handles all `/users/*` authentication routes
 
