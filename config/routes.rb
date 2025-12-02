@@ -6,7 +6,8 @@ Rails.application.routes.draw do
     resources :places, only: [:index, :show]
   end
 
-  resources :places, only: :index do 
+
+  resources :places, only: :index do
     resources :travel_book_places, only: :create
   end
 

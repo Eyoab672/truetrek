@@ -1,0 +1,16 @@
+<h1>Explore Cities</h1>
+
+<div class="search-bar">
+  <%= form_with url: root_path, method: :get, local: true do %>
+    <%= text_field_tag :query, params[:query], placeholder: "Search city..." %>
+    <%= submit_tag "Search" %>
+  <% end %>
+</div>
+
+<<div class="cities-list">
+  <% @cities.each do |city| %>
+    <%= link_to city_path(city), class: "city-card", style: "background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url(#{city.img});" do %>
+      <h3><%= city.name %></h3>
+    <% end %>
+  <% end %>
+</div>
