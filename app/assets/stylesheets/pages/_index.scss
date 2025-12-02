@@ -20,20 +20,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(
-    180deg,
-    #000000 0%,
-    #050505 10%,
-    #0a0a0a 20%,
-    #0f0f0f 30%,
-    #131313 40%,
-    #171717 50%,
-    #1b1b1b 60%,
-    #1e1e1e 70%,
-    #212121 80%,
-    #242424 90%,
-    #272727 100%
-  );
+  background: linear-gradient(180deg, #000000, #ffffff);
   overflow: hidden;
 
   // Subtle animated glow
@@ -44,11 +31,10 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background-image:
-      radial-gradient(ellipse at 50% 0%, rgba(255, 255, 255, 0.03) 0%, transparent 50%),
-      radial-gradient(circle at 20% 80%, rgba(80, 80, 80, 0.15) 0%, transparent 40%),
-      radial-gradient(circle at 80% 60%, rgba(60, 60, 60, 0.1) 0%, transparent 35%);
-    animation: heroGradient 20s ease infinite;
+    // background-image:
+    //   radial-gradient(ellipse at 50% 0%, rgba(255, 255, 255, 0.03) 0%, transparent 50%),
+    //   radial-gradient(circle at 20% 80%, rgba(80, 80, 80, 0.15) 0%, transparent 40%),
+    //   radial-gradient(circle at 80% 60%, rgba(60, 60, 60, 0.1) 0%, transparent 35%);
   }
 
   // Subtle noise texture
@@ -60,25 +46,20 @@
     right: 0;
     bottom: 0;
     background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
-    opacity: 0.03;
+    opacity: 0.025;
     pointer-events: none;
   }
 }
 
-@keyframes heroGradient {
-  0%, 100% { transform: scale(1) rotate(0deg); }
-  50% { transform: scale(1.1) rotate(5deg); }
-}
-
-.hero-overlay {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 200px;
-  background: linear-gradient(to top, #f8f9fa 0%, rgba(248, 249, 250, 0.8) 30%, rgba(36, 36, 36, 0.4) 70%, transparent 100%);
-  pointer-events: none;
-}
+// .hero-overlay {
+//   position: absolute;
+//   bottom: 0;
+//   left: 0;
+//   right: 0;
+//   height: 200px;
+//   // background: linear-gradient(to top, #f8f9fa 0%, rgba(248, 249, 250, 0.8) 30%, rgba(36, 36, 36, 0.4) 70%, transparent 100%);
+//   pointer-events: none;
+// }
 
 .hero-content {
   position: relative;
@@ -200,7 +181,7 @@
 // ========================================
 
 .cities-section {
-  padding: 4rem 2rem 6rem;
+  padding: 2rem 2rem 6rem;
   background: #f8f9fa;
   min-height: 50vh;
 }
