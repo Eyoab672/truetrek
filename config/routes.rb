@@ -2,11 +2,10 @@ Rails.application.routes.draw do
   devise_for :users
   root to: "cities#index"
 
-  resources :cities, only: :index do
-    resources :places, only: :index
-  end
+  resources :cities
 
-  resources :places, only: :index do 
+
+  resources :places, only: :index do
     resources :travel_book_places, only: :create
   end
 
