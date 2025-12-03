@@ -17,6 +17,6 @@ class TravelBookPlacePolicy < ApplicationPolicy
   end
 
   def destroy?
-    record.user == user
+    record.travel_book.user == user
   end
 end

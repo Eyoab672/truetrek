@@ -1,17 +1,60 @@
-<h1>My Travel Book</h1>
+<div class="travel-book-page">
+  <!-- Header Section -->
+  <section class="travel-book-header">
+    <div class="header-content">
+      <h1 class="header-title">My Travel Book</h1>
+      <p class="header-subtitle">Your curated collection of destinations</p>
+    </div>
+  </section>
 
-<% if @travel_book.places.any? %>
-  <% @travel_book.places.group_by(&:city).each do |city, places| %>
-    <h2><%= city.name %></h2>
-    <ul>
-      <% places.each do |place| %>
-        <li>
-          <%= link_to place.title, city_place_path(city, place) %>
-          <%= button_to "Remove", travel_book_place_path(@travel_book.travel_book_places.find_by(place: place)), method: :delete %>
-        </li>
-      <% end %>
-    </ul>
+  <% if @travel_book.places.any? %>
+    <% @travel_book.places.includes(:city).group_by(&:city).each do |city, places| %>
+      <section class="city-section">
+        <div class="city-section-header">
+          <h2 class="city-section-title">
+            <i class="fa-solid fa-location-dot"></i>
+            <%= city.name %>
+          </h2>
+          <span class="places-count"><%= places.count %> <%= 'place'.pluralize(places.count) %></span>
+        </div>
+
+        <div class="places-grid">
+          <% places.each do |place| %>
+            <div class="place-card">
+              <%= link_to city_place_path(city, place), class: "place-card-link" do %>
+                <% if place.default_img_url %>
+                  <div class="place-card-image" style="background-image: url('<%= place.default_img_url %>');"></div>
+                <% else %>
+                  <div class="place-card-image place-card-image-placeholder">
+                    <i class="fa-solid fa-image"></i>
+                  </div>
+                <% end %>
+                <div class="place-card-overlay"></div>
+                <div class="place-card-content">
+                  <h3 class="place-card-title"><%= place.title %></h3>
+                  <span class="place-card-cta">View details <i class="fa-solid fa-arrow-right"></i></span>
+                </div>
+              <% end %>
+              <%= button_to travel_book_place_path(@travel_book.travel_book_places.find_by(place: place)), method: :delete, class: "place-card-remove" do %>
+                <i class="fa-solid fa-heart"></i>
+              <% end %>
+            </div>
+          <% end %>
+        </div>
+      </section>
+    <% end %>
+  <% else %>
+    <section class="empty-state">
+      <div class="empty-state-content">
+        <div class="empty-state-icon">
+          <i class="fa-regular fa-bookmark"></i>
+        </div>
+        <h2 class="empty-state-title">Your Travel Book is empty</h2>
+        <p class="empty-state-text">Start exploring cities and save places you'd like to visit</p>
+        <%= link_to root_path, class: "empty-state-btn" do %>
+          Discover destinations <i class="fa-solid fa-arrow-right"></i>
+        <% end %>
+      </div>
+    </section>
   <% end %>
-<% else %>
-  <p>No places saved yet. Start exploring cities to add places!</p>
-<% end %>
+</div>

@@ -8,6 +8,9 @@ puts "Creating cities..."
 City.create!(name: "Barcelona" , img: "https://niesamowita.b-cdn.net/images/Europa/Barcelona/Barcelona.jpg")
 puts "Created Barcelona"
 puts "Creating cities..."
+City.create!(name: "Afar", img: "https://fanosethiopiatours.wordpress.com/wp-content/uploads/2016/06/fb_img_1690248178732.jpg")
+puts "Created Afar"
+puts "Creating cities..."
 City.create!(name: "Tokyo", img: "https://img.freepik.com/free-photo/aerial-view-tokyo-cityscape-with-fuji-mountain-japan_335224-148.jpg?semt=ais_hybrid&w=740&q=80")
 puts "Created Tokyo"
 puts "Creating cities..."
@@ -61,6 +64,7 @@ new_delhi = City.find_by(name: "New Dehli")
 phnom_penh = City.find_by(name: "Phnom Penh")
 budapest = City.find_by(name: "Budapest")
 cairo = City.find_by(name: "Cairo")
+afar = City.find_by(name: "Afar")
 
 sagrada_familia = Place.create!(
   title: "Sagrada Familia",
@@ -158,6 +162,14 @@ pyramids = Place.create!(
   city: cairo
 )
 
+erta_ale = Place.create!(
+  title: "Erta Ale",
+  wiki_description: "Erta Ale is an active shield volcano located in the Afar Region of Ethiopia. It is famed for its persistent lava and salt lake, one of the few in the world.",
+  address: "Danakil Depression, Afar Region, Ethiopia",
+  default_img_url: "https://fanosethiopiatours.wordpress.com/wp-content/uploads/2016/06/fb_img_1690248178732.jpg",
+  city: afar
+)
+
 puts "Created #{Place.count} places."
 
 puts "Creating comments..."
@@ -171,6 +183,12 @@ Comment.create!(
   description: "The temple grounds are peaceful despite the crowds. The giant red lantern at the entrance is iconic. Don't miss the shopping street Nakamise-dori leading up to it for traditional snacks.",
   place: senso_ji,
   user: user2
+)
+
+Comment.create!(
+  description: "One of the most surreal experiences of my life! Hiking through the Danakil Depression at night to see the glowing lava lake is otherworldly. Bring plenty of water — it's one of Earth's hottest places. A true hidden gem that few travelers know about.",
+  place: erta_ale,
+  user: user1
 )
 
 Comment.create!(
