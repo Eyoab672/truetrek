@@ -15,8 +15,13 @@
     <%= javascript_importmap_tags %>
   </head>
   <body>
-    <%= render "shared/navbar" %>
+    <div class="d-none d-md-block">
+      <%= render "shared/navbar" %>
+    </div>
     <%= render "shared/flashes" %>
+    <div class="d-block d-md-none">
+      <%= render "shared/bottombar" %>
+    </div>
     <%= yield %>
   </body>
 </html>

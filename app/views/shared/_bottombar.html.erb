@@ -1,0 +1,26 @@
+<nav class="bottom-nav">
+  <div class="bottom-nav-inner">
+
+        <!-- BOOK -->
+    <%= link_to root_path, class: "bottom-nav-item" do %>
+      <div class="bottom-nav-icon">
+        <i class="fa-solid fa-house" style="color: #000000;"></i>
+      </div>
+    <% end %>
+
+    <!-- CAMERA (HIGHLIGHTED, INLINE) -->
+    <%= link_to new_comment_path, class: "bottom-nav-item bottom-nav-item-main" do %>
+      <div class="bottom-nav-main-circle">
+        <i class="fa-solid fa-camera" id="camera"></i>
+      </div>
+    <% end %>
+
+        <!-- HOME -->
+    <%= link_to root_path, class: "bottom-nav-item" do %>
+      <div class="bottom-nav-icon">
+        <i class="fa-solid fa-user" style="color: #000000;"></i>
+      </div>
+    <% end %>
+
+  </div>
+</nav>
