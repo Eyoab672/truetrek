@@ -2,7 +2,8 @@ class PlacesController < ApplicationController
   before_action :set_place, only: [:show]
 
   def index
-    @places = policy_scope(Place)
+    @city = City.find(params[:city_id])
+    @places = policy_scope(@city.places)
   end
 
   def show

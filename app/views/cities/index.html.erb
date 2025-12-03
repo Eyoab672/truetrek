@@ -1,16 +1,42 @@
-<h1>Explore Cities</h1>
+<div class="homepage">
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="hero-content">
+      <h1 class="hero-title">Discover Your Next Adventure</h1>
+      <p class="hero-subtitle">Explore breathtaking destinations and create unforgettable memories</p>
 
-<div class="search-bar">
-  <%= form_with url: root_path, method: :get, local: true do %>
-    <%= text_field_tag :query, params[:query], placeholder: "Search city..." %>
-    <%= submit_tag "Search" %>
-  <% end %>
-</div>
+      <!-- Search Bar -->
+      <div class="search-container">
+        <%= form_with url: root_path, method: :get, local: true, class: "search-form" do %>
+          <div class="search-input-wrapper">
+            <i class="fa-solid fa-magnifying-glass search-icon"></i>
+            <%= text_field_tag :query, params[:query], placeholder: "Where do you want to go?", class: "search-input" %>
+          </div>
+          <%= submit_tag "Explore", class: "search-btn" %>
+        <% end %>
+      </div>
+    </div>
+    <div class="hero-overlay"></div>
+  </section>
 
-<<div class="cities-list">
-  <% @cities.each do |city| %>
-    <%= link_to city_path(city), class: "city-card", style: "background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url(#{city.img});" do %>
-      <h3><%= city.name %></h3>
-    <% end %>
-  <% end %>
+  <!-- Cities Section -->
+  <section class="cities-section">
+    <div class="section-header">
+      <h2 class="section-title">Popular Destinations</h2>
+      <p class="section-subtitle">Handpicked cities waiting to be explored</p>
+    </div>
+
+    <div class="cities-grid">
+      <% @cities.each_with_index do |city, index| %>
+        <%= link_to city_places_path(city), class: "city-card #{'featured' if index < 2}" do %>
+          <div class="card-image" style="background-image: url('<%= city.img %>');"></div>
+          <div class="card-overlay"></div>
+          <div class="card-content">
+            <h3 class="card-title"><%= city.name %></h3>
+            <span class="card-cta">Explore <i class="fa-solid fa-arrow-right"></i></span>
+          </div>
+        <% end %>
+      <% end %>
+    </div>
+  </section>
 </div>

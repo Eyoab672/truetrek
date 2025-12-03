@@ -1,3 +1,15 @@
-<h1>Places</h1>
+<div class="container">
+  <h1>Places index</h1>
+  <div class="cards">
+    <% @places.each do |place| %>
+      <%= link_to city_place_path(place.city, place) do %>
+        <div class="card-category" style="background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url(<%= image_path place.default_img_url %>)">
+          <%= place.title %>
+        </div>
+      <% end %>
+    <% end %>
+  </div>
+</div>
+
 
 
