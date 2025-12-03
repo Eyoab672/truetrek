@@ -1,5 +1,6 @@
 // Import page-specific CSS files here.
 @import "home";
+@import "travel_book";
 
 // ========================================
 // HOMEPAGE STYLES
@@ -52,15 +53,6 @@
   }
 }
 
-// .hero-overlay {
-//   position: absolute;
-//   bottom: 0;
-//   left: 0;
-//   right: 0;
-//   height: 200px;
-//   // background: linear-gradient(to top, #f8f9fa 0%, rgba(248, 249, 250, 0.8) 30%, rgba(36, 36, 36, 0.4) 70%, transparent 100%);
-//   pointer-events: none;
-// }
 
 .hero-content {
   position: relative;
@@ -425,3 +417,6 @@
     font-size: 1.25rem;
   }
 }
+
+// Import places page styles after shared card styles are defined
+@import "places";

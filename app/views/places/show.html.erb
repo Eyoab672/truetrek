@@ -1,44 +1,159 @@
-<h1>Details page: <%= @place.title %></h1>
-<div class="">
-  <strong>Wiki description: </strong><%= @place.wiki_description %>
-</div>
-<div class="">
-  <strong>City: </strong><%= @place.city.name %>
-</div>
-<div class="container" style="display:flex;flex-direction:column;">
-  <div class="d-flex gap-3">
-    <div>
-      <h2>Images</h2>
-      <div class="place-images" style="display: flex; flex-wrap: wrap; gap: 10px;">
-        <% @place.comments.each do |comment| %>
-          <% comment.photos.each do |photo| %>
-            <%= cl_image_tag photo.key, height: 300, width: 400, crop: :fill %>
+<div class="place-show-page">
+  <!-- Hero Header -->
+  <section class="place-header">
+    <div class="place-header-content">
+      <nav class="place-breadcrumb">
+        <%= link_to @place.city.name, city_places_path(@place.city), class: "breadcrumb-link" %>
+        <i class="fa-solid fa-chevron-right"></i>
+        <span><%= @place.title %></span>
+      </nav>
+      <h1 class="place-title"><%= @place.title %></h1>
+      <p class="place-location">
+        <i class="fa-solid fa-location-dot"></i> <%= @place.city.name %>
+      </p>
+    </div>
+  </section>
+
+  <div class="container">
+    <!-- Carousel + Map Row -->
+    <section class="place-media-section">
+      <div class="place-media-row">
+        <!-- Photo Carousel -->
+        <div class="place-carousel-container">
+          <% photos = @place.comments.flat_map { |c| c.photos.to_a } %>
+          <% if photos.any? %>
+            <div id="placeCarousel" class="carousel slide" data-bs-ride="carousel">
+              <!-- Indicators -->
+              <div class="carousel-indicators">
+                <% photos.each_with_index do |photo, index| %>
+                  <button type="button" data-bs-target="#placeCarousel" data-bs-slide-to="<%= index %>"
+                    class="<%= 'active' if index == 0 %>" aria-current="<%= 'true' if index == 0 %>"
+                    aria-label="Slide <%= index + 1 %>"></button>
+                <% end %>
+              </div>
+
+              <!-- Slides -->
+              <div class="carousel-inner">
+                <% photos.each_with_index do |photo, index| %>
+                  <div class="carousel-item <%= 'active' if index == 0 %>">
+                    <%= cl_image_tag photo.key, height: 500, width: 800, crop: :fill, class: "d-block w-100 carousel-image" %>
+                  </div>
+                <% end %>
+              </div>
+
+              <!-- Controls -->
+              <% if photos.size > 1 %>
+                <button class="carousel-control-prev" type="button" data-bs-target="#placeCarousel" data-bs-slide="prev">
+                  <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                  <span class="visually-hidden">Previous</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#placeCarousel" data-bs-slide="next">
+                  <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                  <span class="visually-hidden">Next</span>
+                </button>
+              <% end %>
+            </div>
+          <% else %>
+            <div class="no-photos-placeholder">
+              <i class="fa-solid fa-camera fa-3x"></i>
+              <p>No photos yet. Be the first to add one!</p>
+            </div>
           <% end %>
+        </div>
+
+        <!-- Map -->
+        <div class="place-map-container">
+          <div data-controller="map"
+               id="map"
+               class="place-map"
+               data-map-api-key-value="<%= ENV['MAPBOX_API_KEY'] %>"
+               data-map-markers-value="<%= @markers.to_json %>">
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Description -->
+    <div class="mt-3">
+  <% if user_signed_in? %>
+    <% travel_book = current_user.travel_book %>
+    <% if travel_book && travel_book.places.include?(@place) %>
+      <% travel_book_place = travel_book.travel_book_places.find_by(place: @place) %>
+      <%= button_to "Remove from Travel Book", travel_book_place_path(travel_book_place), method: :delete, class: "btn btn-outline-danger" %>
+    <% else %>
+      <%= button_to "Add to Travel Book", place_travel_book_places_path(@place), method: :post, class: "btn btn-primary" %>
+    <% end %>
+  <% end %>
+</div>
+    <section class="place-description-section">
+      <h2 class="section-heading">About this place</h2>
+      <p class="place-description"><%= @place.wiki_description %></p>
+    </section>
+
+    <!-- Comments Section -->
+    <section class="place-comments-section">
+      <h2 class="section-heading">
+        <i class="fa-solid fa-comments"></i>
+        Reviews & Comments
+        <span class="comment-count">(<%= @place.comments.count %>)</span>
+      </h2>
+
+      <% if @place.comments.any? %>
+        <div class="comments-list">
+          <% @place.comments.each do |comment| %>
+            <div class="comment-card">
+              <div class="comment-header">
+                <%# <div class="comment-avatar">
+                  <%= comment.user.username.first.upcase %>
+                <%# </div> %>
+                <div class="comment-meta">
+                  <span class="comment-author"><%= comment.user.username %></span>
+                  <span class="comment-date"><%= time_ago_in_words(comment.created_at) %> ago</span>
+                </div>
+              </div>
+              <div class="comment-body">
+                <p><%= comment.description %></p>
+              </div>
+              <% if comment.photos.attached? %>
+                <div class="comment-photos">
+                  <% comment.photos.each do |photo| %>
+                    <%= cl_image_tag photo.key, height: 80, width: 80, crop: :fill, class: "comment-thumbnail" %>
+                  <% end %>
+                </div>
+              <% end %>
+            </div>
+          <% end %>
+        </div>
+      <% else %>
+        <div class="no-comments">
+          <i class="fa-regular fa-comment-dots fa-2x"></i>
+          <p>No comments yet. Share your experience!</p>
+        </div>
+      <% end %>
+    </section>
+
+    <!-- Add Comment Form -->
+    <section class="place-add-comment-section">
+      <h2 class="section-heading">
+        <i class="fa-solid fa-pen"></i>
+        Share Your Experience
+      </h2>
+      <div class="comment-form-card">
+        <%= simple_form_for @comment, url: city_place_comments_path(@place.city, @place), html: { class: "comment-form" } do |f| %>
+          <%= f.input :description,
+              as: :text,
+              label: "Your Review",
+              input_html: { rows: 4, placeholder: "Tell others about your experience at this place..." } %>
+          <%= f.input :photos,
+              as: :file,
+              input_html: { multiple: true, class: "form-control" },
+              direct_upload: true,
+              label: "Add Photos" %>
+          <div class="form-actions">
+            <%= f.submit "Post Comment", class: "btn-submit-comment" %>
+          </div>
         <% end %>
       </div>
-    </div>
-    <div data-controller="map"
-  id="map"
-  data-map-api-key-value="<%= ENV['MAPBOX_API_KEY'] %>"
-  data-map-markers-value="<%= @markers.to_json %>"
-  style= 'width: 100%; height: 300px;'>
-    </div>
+    </section>
   </div>
-  <h2>Comments</h2>
-  <% @place.comments.each do |comment| %>
-    <div class="comment" style="margin-bottom: 20px; padding: 10px; border: 1px solid #ccc;">
-      <div>
-        <strong>User: </strong><%= comment.user.email %>
-      </div>
-      <div>
-        <strong>Comment: </strong><%= comment.description %>
-      </div>
-    </div>
-  <% end %>
-  <h2>Add a Comment</h2>
-  <%= simple_form_for @comment, url: city_place_comments_path(@place.city, @place) do |f| %>
-    <%= f.input :description, label: "Write your description of the place you visited." %>
-    <%= f.input :photos, as: :file, input_html: { multiple: true }, direct_upload: true, label: "Upload your photos." %>
-    <%= f.submit "Add Comment" %>
-  <% end %>
 </div>
