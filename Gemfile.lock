@@ -135,6 +135,7 @@ GEM
     drb (2.2.3)
     erb (6.0.0)
     erubi (1.13.1)
+    event_stream_parser (1.0.0)
     execjs (2.10.0)
     faraday (2.14.0)
       faraday-net_http (>= 2.0, < 3.5)
@@ -146,6 +147,8 @@ GEM
       multipart-post (~> 2.0)
     faraday-net_http (3.4.2)
       net-http (~> 0.5)
+    faraday-retry (2.3.2)
+      faraday (~> 2.0)
     ffi (1.17.2-aarch64-linux-gnu)
     ffi (1.17.2-aarch64-linux-musl)
     ffi (1.17.2-arm-linux-gnu)
@@ -333,6 +336,14 @@ GEM
       rubocop-performance (>= 1.24)
       rubocop-rails (>= 2.30)
     ruby-progressbar (1.13.0)
+    ruby_llm (1.2.0)
+      base64
+      event_stream_parser (~> 1)
+      faraday (~> 2)
+      faraday-multipart (~> 1)
+      faraday-net_http (~> 3)
+      faraday-retry (~> 2)
+      zeitwerk (~> 2)
     rubyzip (3.2.2)
     sassc (2.4.0)
       ffi (~> 1.9)
@@ -422,6 +433,7 @@ DEPENDENCIES
   pundit
   rails (~> 7.2.3)
   rubocop-rails-omakase
+  ruby_llm (~> 1.2.0)
   sassc-rails
   selenium-webdriver
   simple_form!
