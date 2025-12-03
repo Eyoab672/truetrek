@@ -8,6 +8,11 @@ class PlacesController < ApplicationController
 
   def show
     @comment = Comment.new
+    @markers =
+    [{
+      lat: @place.latitude,
+      lng: @place.longitude
+    }]
   end
 
   private

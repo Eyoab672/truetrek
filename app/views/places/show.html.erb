@@ -1,21 +1,29 @@
+<h1>Details page: <%= @place.title %></h1>
+<div class="">
+  <strong>Wiki description: </strong><%= @place.wiki_description %>
+</div>
+<div class="">
+  <strong>City: </strong><%= @place.city.name %>
+</div>
 <div class="container" style="display:flex;flex-direction:column;">
-  <h1>Details page: <%= @place.title %></h1>
-  <div class="">
-    <strong>Wiki description: </strong><%= @place.wiki_description %>
+  <div class="d-flex gap-3">
+    <div>
+      <h2>Images</h2>
+      <div class="place-images" style="display: flex; flex-wrap: wrap; gap: 10px;">
+        <% @place.comments.each do |comment| %>
+          <% comment.photos.each do |photo| %>
+            <%= cl_image_tag photo.key, height: 300, width: 400, crop: :fill %>
+          <% end %>
+        <% end %>
+      </div>
+    </div>
+    <div data-controller="map"
+  id="map"
+  data-map-api-key-value="<%= ENV['MAPBOX_API_KEY'] %>"
+  data-map-markers-value="<%= @markers.to_json %>"
+  style= 'width: 100%; height: 300px;'>
+    </div>
   </div>
-  <div class="">
-    <strong>City: </strong><%= @place.city.name %>
-  </div>
-
-  <h2>Images</h2>
-  <div class="place-images" style="display: flex; flex-wrap: wrap; gap: 10px;">
-    <% @place.comments.each do |comment| %>
-      <% comment.photos.each do |photo| %>
-        <%= cl_image_tag photo.key, height: 300, width: 400, crop: :fill %>
-      <% end %>
-    <% end %>
-  </div>
-
   <h2>Comments</h2>
   <% @place.comments.each do |comment| %>
     <div class="comment" style="margin-bottom: 20px; padding: 10px; border: 1px solid #ccc;">
@@ -27,7 +35,6 @@
       </div>
     </div>
   <% end %>
-
   <h2>Add a Comment</h2>
   <%= simple_form_for @comment, url: city_place_comments_path(@place.city, @place) do |f| %>
     <%= f.input :description, label: "Write your description of the place you visited." %>
