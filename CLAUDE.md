@@ -65,7 +65,7 @@ Comment
 ├── belongs_to Place
 ├── belongs_to User
 ├── has_many_attached photos
-└── validates description: presence, minimum 100 chars
+└── validates description: presence, minimum 20 chars
 ```
 
 ### Authorization with Pundit

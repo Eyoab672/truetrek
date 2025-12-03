@@ -1,0 +1,17 @@
+<h1>My Travel Book</h1>
+
+<% if @travel_book.places.any? %>
+  <% @travel_book.places.group_by(&:city).each do |city, places| %>
+    <h2><%= city.name %></h2>
+    <ul>
+      <% places.each do |place| %>
+        <li>
+          <%= link_to place.title, city_place_path(city, place) %>
+          <%= button_to "Remove", travel_book_place_path(@travel_book.travel_book_places.find_by(place: place)), method: :delete %>
+        </li>
+      <% end %>
+    </ul>
+  <% end %>
+<% else %>
+  <p>No places saved yet. Start exploring cities to add places!</p>
+<% end %>

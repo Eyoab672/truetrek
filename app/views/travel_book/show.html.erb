@@ -1,0 +1,32 @@
+<h1>My Travel Book</h1>
+
+<% if @places_by_city.empty? %>
+  <p>You haven’t added any places yet. Start exploring!</p>
+<% else %>
+  <% @places_by_city.each do |city, places| %>
+    <div class="card mb-4">
+      <div class="card-header bg-light">
+        <h3><%= city.name %></h3>
+      </div>
+      <div class="card-body">
+        <ul class="list-group">
+          <% places.each do |place| %>
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              <%= place.title %>
+              <%= link_to "Remove", travel_book_remove_place_path(@travel_book, place_id: place.id), method: :delete, class: "btn btn-sm btn-outline-danger" %>
+            </li>
+          <% end %>
+        </ul>
+      </div>
+    </div>
+  <% end %>
+<% end %>
+
+<!-- Add Place Form -->
+<div class="mt-4">
+  <h4>Add a Place to Your Travel Book</h4>
+  <%= form_with url: travel_book_add_place_path(@travel_book), method: :post do %>
+    <%= select_tag :place_id, options_from_collection_for_select(Place.all, :id, :title), prompt: "Select a place" %>
+    <%= submit_tag "Add Place", class: "btn btn-primary" %>
+  <% end %>
+</div>

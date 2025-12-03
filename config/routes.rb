@@ -8,12 +8,11 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :places, only: :index do
+  get 'my_travel_book', to: 'travel_books#show', as: :my_travel_book
+  resources :places, only: [] do
     resources :travel_book_places, only: :create
   end
-
   resources :travel_book_places, only: :destroy
-  resources :travel_books, only: :show
   resources :comments, only: [:new, :create]  # for new places
 
 
