@@ -5,6 +5,8 @@ class Place < ApplicationRecord
   has_many :comments, dependent: :destroy
   geocoded_by :address
 
+  validates :title, presence: true
+
   pg_search_scope :search,
     against: [:title, :wiki_description],
     associated_against: {
