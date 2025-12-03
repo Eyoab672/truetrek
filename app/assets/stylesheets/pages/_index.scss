@@ -13,6 +13,11 @@
 // HERO SECTION
 // ========================================
 
+#logo-phone {
+  color: white;
+  font-weight: 700;
+  font-size: 20px;
+}
 .hero-section {
   position: relative;
   height: 70vh;
@@ -31,10 +36,6 @@
     left: 0;
     right: 0;
     bottom: 0;
-    // background-image:
-    //   radial-gradient(ellipse at 50% 0%, rgba(255, 255, 255, 0.03) 0%, transparent 50%),
-    //   radial-gradient(circle at 20% 80%, rgba(80, 80, 80, 0.15) 0%, transparent 40%),
-    //   radial-gradient(circle at 80% 60%, rgba(60, 60, 60, 0.1) 0%, transparent 35%);
   }
 
   // Subtle noise texture
@@ -181,7 +182,7 @@
 // ========================================
 
 .cities-section {
-  padding: 2rem 2rem 6rem;
+  padding: 1rem 2rem 6rem;
   background: #f8f9fa;
   min-height: 50vh;
 }
@@ -389,7 +390,7 @@
   }
 
   .cities-section {
-    padding: 3rem 1rem 4rem;
+    padding: 0rem 1rem 4rem;
   }
 
   .cities-grid {

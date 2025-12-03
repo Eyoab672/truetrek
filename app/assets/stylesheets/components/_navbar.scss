@@ -7,17 +7,19 @@
   flex-grow: 0;
 }
 
-.navbar-brand {
+.navbar-logo {
   font-weight: 700;
-  color: white
+  color: white;
+  text-decoration: none;
+  margin: 0.5rem 0rem;
 }
 
-.navbar-brand p {
+.navbar-logo p {
   margin: 0;
   font-size: 1.7rem;
 }
 
-.navbar-brand p:hover {
+.navbar-logo p:hover {
   color: white;
 }
 
@@ -26,7 +28,7 @@
 }
 
 .nav-item a:hover {
-  color: white;
+  color: black;
 }
 
 .navbar-toggler-icon {
@@ -36,4 +38,107 @@
 a.dropdown-item {
   color: black;
   text-decoration: none;
+}
+
+
+/* ----- Page reset + background (like screenshot) ----- */
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
+    sans-serif;
+  background: #ccbbae; /* warm beige like the card background */
+}
+
+/* ----- Outer container (fixed, bottom) ----- */
+.bottom-nav {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding-bottom: env(safe-area-inset-bottom, 16px);
+  padding-top: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  pointer-events: none; /* let only inner bar capture clicks */
+  z-index: 1000;
+}
+
+/* ----- Floating pill bar ----- */
+.bottom-nav-inner {
+  pointer-events: auto;
+  width: 100%;
+  // max-width: 420px;
+  background: rgba(255, 255, 255, 1); /* slightly darker strip */
+  // border-radius: 24px;
+  padding: 8px 18px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow:
+    0 10px 25px rgba(0, 0, 0, 0.35),
+    0 0 0 1px rgba(255, 255, 255, 0.04);
+}
+
+/* ----- Home indicator line under the bar ----- */
+.bottom-nav-indicator {
+  margin-top: 10px;
+  width: 96px;
+  height: 4px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.85);
+  pointer-events: none;
+}
+
+/* ----- Items ----- */
+.bottom-nav-item {
+  flex: 1;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+  text-decoration: none;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 13px;
+  font-weight: 500;
+  border-radius: 999px;
+  padding: 8px 10px;
+  transition:
+    background 0.18s ease-out,
+    color 0.18s ease-out,
+    transform 0.18s ease-out,
+    box-shadow 0.18s ease-out;
+}
+
+/* icons inside items */
+.bottom-nav-item svg,
+.bottom-nav-item i {
+  font-size: 17px;   /* for FA */
+  color: #000000 !important;   /* FontAwesome icons */
+  fill: #000000 !important;    /* SVG icons */
+}
+
+/* ----- ACTIVE item (the white pill like “Discover”) ----- */
+.bottom-nav-item-active {
+  background: #f7f3ef;
+  color: #3a2f2a; /* dark brown text/icon */
+  box-shadow:
+    0 6px 12px rgba(0, 0, 0, 0.25),
+    0 0 0 1px rgba(255, 255, 255, 0.6);
+  transform: translateY(-1px);
+}
+
+/* Slight hover feedback (optional, desktop only) */
+@media (hover: hover) and (pointer: fine) {
+  .bottom-nav-item:hover:not(.bottom-nav-item-active) {
+    background: rgba(255, 255, 255, 0.06);
+    color: rgba(255, 255, 255, 0.85);
+  }
+}
+
+#camera {
+  font-size: 26px;
 }
