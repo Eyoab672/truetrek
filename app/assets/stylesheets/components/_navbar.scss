@@ -41,17 +41,6 @@ a.dropdown-item {
 }
 
 
-/* ----- Page reset + background (like screenshot) ----- */
-html,
-body {
-  margin: 0;
-  padding: 0;
-  height: 100%;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
-    sans-serif;
-  background: #ccbbae; /* warm beige like the card background */
-}
-
 /* ----- Outer container (fixed, bottom) ----- */
 .bottom-nav {
   position: fixed;

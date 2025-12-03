@@ -1,33 +1,69 @@
-<div class="container">
-  <h1>Places in <%= @city.name %></h1>
+<div class="places-page">
+  <!-- Hero Section -->
+  <section class="places-hero-section">
+    <div class="places-hero-content">
+      <h1 class="places-hero-title">Explore <%= @city.name %></h1>
+      <p class="places-hero-subtitle">Discover amazing places and hidden gems</p>
 
-  <%= form_with url: city_places_path(@city), method: :get, local: true, class: "mb-4" do |f| %>
-    <div class="input-group">
-      <%= f.text_field :query, value: params[:query], class: "form-control", placeholder: "Search places..." %>
-      <%= f.submit "Search", class: "btn btn-primary" %>
-      <% if params[:query].present? %>
-        <%= link_to "Clear", city_places_path(@city), class: "btn btn-outline-secondary" %>
-      <% end %>
-    </div>
-  <% end %>
-
-  <div class="cards">
-    <% @places.each do |place| %>
-      <%= link_to city_place_path(place.city, place) do %>
-        <% if place.default_img_url %>
-          <div class="card-category" style="background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url(<%= image_path place.default_img_url %>)">
-            <%= place.title %>
+      <!-- Search Bar -->
+      <div class="search-container">
+        <%= form_with url: city_places_path(@city), method: :get, local: true, class: "places-search-form" do |f| %>
+          <div class="places-search-wrapper">
+            <%= f.text_field :query, value: params[:query], placeholder: "Search places...", class: "places-search-input" %>
+            <%= f.button type: "submit", class: "places-search-btn" do %>
+              <i class="fa-solid fa-magnifying-glass"></i>
+            <% end %>
           </div>
-        <% else %>
-          <div class="card-category" style="background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url(<%= cl_image_path place.comments.first.photos.first.key, height: 300, crop: :fill %>)">
-            <%= place.title %>
-          </div>
+          <% if params[:query].present? %>
+            <%= link_to city_places_path(@city), class: "clear-search-btn" do %>
+              <i class="fa-solid fa-xmark"></i> Clear
+            <% end %>
+          <% end %>
         <% end %>
-      <% end %>
-    <% end %>
-  </div>
+      </div>
+    </div>
+  </section>
 
-  <% if @places.empty? && params[:query].present? %>
-    <p class="text-muted">No places found for "<%= params[:query] %>"</p>
-  <% end %>
+  <!-- Places Section -->
+  <section class="places-section">
+    <% if params[:query].present? %>
+      <div class="section-header">
+        <h2 class="section-title">Search results for "<%= params[:query] %>"</h2>
+        <p class="section-subtitle"><%= @places.count %> place<%= @places.count == 1 ? '' : 's' %> found</p>
+      </div>
+    <% else %>
+      <div class="section-header">
+        <h2 class="section-title"></h2>
+      </div>
+    <% end %>
+
+    <% if @places.any? %>
+      <div class="places-grid">
+        <% @places.each_with_index do |place, index| %>
+          <%= link_to city_place_path(place.city, place), class: "place-card #{'featured' if index < 2}" do %>
+            <% if place.default_img_url %>
+              <div class="card-image" style="background-image: url('<%= place.default_img_url %>');"></div>
+            <% elsif place.comments.any? && place.comments.first.photos.attached? %>
+              <div class="card-image" style="background-image: url('<%= cl_image_path place.comments.first.photos.first.key, height: 400, crop: :fill %>');"></div>
+            <% else %>
+              <div class="card-image" style="background-image: url('https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=800');"></div>
+            <% end %>
+            <div class="card-overlay"></div>
+            <div class="card-content">
+              <h3 class="card-title"><%= place.title %></h3>
+              <span class="card-cta">View details<i class="fa-solid fa-arrow-right"></i></span>
+            </div>
+          <% end %>
+        <% end %>
+      </div>
+    <% else %>
+      <div class="no-results">
+        <i class="fa-solid fa-compass fa-3x mb-3 text-muted"></i>
+        <p class="text-muted">No places found<%= " for \"#{params[:query]}\"" if params[:query].present? %></p>
+        <% if params[:query].present? %>
+          <%= link_to "View all places", city_places_path(@city), class: "btn btn-outline-primary mt-2" %>
+        <% end %>
+      </div>
+    <% end %>
+  </section>
 </div>
