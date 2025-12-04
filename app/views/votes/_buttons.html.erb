@@ -1,0 +1,16 @@
+<div class="vote-buttons" id="vote_buttons_<%= comment.id %>">
+  <% user_vote = comment.user_vote(current_user) %>
+  <% balance = comment.vote_balance %>
+
+  <%= button_to comment_vote_path(comment), method: :post, params: { vote: { value: 1 } }, class: "vote-btn vote-up #{'active' if user_vote&.value == 1}", data: { turbo_frame: "_top" } do %>
+    <i class="fa-solid fa-arrow-up"></i>
+  <% end %>
+
+  <span class="vote-count <%= 'positive' if balance > 0 %><%= 'negative' if balance < 0 %>">
+    <%= balance %>
+  </span>
+
+  <%= button_to comment_vote_path(comment), method: :post, params: { vote: { value: -1 } }, class: "vote-btn vote-down #{'active' if user_vote&.value == -1}", data: { turbo_frame: "_top" } do %>
+    <i class="fa-solid fa-arrow-down"></i>
+  <% end %>
+</div>

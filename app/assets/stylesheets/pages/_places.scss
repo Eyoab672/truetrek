@@ -600,9 +600,68 @@
 
 .comment-header {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 1rem;
   margin-bottom: 1rem;
+}
+
+// Vote Buttons
+.vote-buttons {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  min-width: 40px;
+}
+
+.vote-btn {
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: #f0f0f0;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #6c757d;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: #e0e0e0;
+  }
+
+  &.vote-up:hover,
+  &.vote-up.active {
+    background: #d4edda;
+    color: #28a745;
+  }
+
+  &.vote-down:hover,
+  &.vote-down.active {
+    background: #f8d7da;
+    color: #dc3545;
+  }
+
+  i {
+    font-size: 0.85rem;
+  }
+}
+
+.vote-count {
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: #4a4a4a;
+  min-width: 20px;
+  text-align: center;
+
+  &.positive {
+    color: #28a745;
+  }
+
+  &.negative {
+    color: #dc3545;
+  }
 }
 
 .comment-avatar {

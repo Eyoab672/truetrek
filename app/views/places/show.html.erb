@@ -124,6 +124,13 @@
           <% @place.comments.where(parent_id: nil).order(created_at: :desc).each do |comment| %>
             <div class="comment-card" id="comment_<%= comment.id %>">
               <div class="comment-header">
+                <% if user_signed_in? %>
+                  <%= render partial: "votes/buttons", locals: { comment: comment } %>
+                <% else %>
+                  <div class="vote-buttons">
+                    <span class="vote-count"><%= comment.vote_balance %></span>
+                  </div>
+                <% end %>
                 <div class="comment-meta">
                   <span class="comment-author"><%= comment.user.username %></span>
                   <span class="comment-date"><%= time_ago_in_words(comment.created_at) %> ago</span>

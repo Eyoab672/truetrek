@@ -16,6 +16,7 @@ Rails.application.routes.draw do
   # Replies to comments
   resources :comments, only: [] do
     resources :replies, only: :create, controller: "replies"
+    resource :vote, only: [:create, :destroy]
   end
 
   get 'my_travel_book', to: 'travel_books#show', as: :my_travel_book

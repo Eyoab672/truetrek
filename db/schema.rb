@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_12_04_134306) do
+ActiveRecord::Schema[7.2].define(version: 2025_12_04_150258) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -105,6 +105,17 @@ ActiveRecord::Schema[7.2].define(version: 2025_12_04_134306) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
+  create_table "votes", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "comment_id", null: false
+    t.integer "value", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["comment_id"], name: "index_votes_on_comment_id"
+    t.index ["user_id", "comment_id"], name: "index_votes_on_user_id_and_comment_id", unique: true
+    t.index ["user_id"], name: "index_votes_on_user_id"
+  end
+
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "comments", "comments", column: "parent_id"
@@ -114,4 +125,6 @@ ActiveRecord::Schema[7.2].define(version: 2025_12_04_134306) do
   add_foreign_key "travel_book_places", "places"
   add_foreign_key "travel_book_places", "travel_books"
   add_foreign_key "travel_books", "users"
+  add_foreign_key "votes", "comments"
+  add_foreign_key "votes", "users"
 end
