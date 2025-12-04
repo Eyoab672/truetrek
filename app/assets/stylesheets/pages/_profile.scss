@@ -12,15 +12,9 @@
   margin-bottom: 24px;
 }
 
-.profile-header-bg {
-  height: 120px;
-  background: linear-gradient(180deg, #000000, #232323);
-  border-radius: 0 0 24px 24px;
-}
-
 .profile-header-content {
   text-align: center;
-  margin-top: -50px;
+  margin-top: 1rem;
   padding: 0 20px;
 }
 
@@ -87,7 +81,7 @@
   justify-content: center;
   gap: 32px;
   padding: 24px 20px;
-  background: #ffffff;
+  background: #849DBB;
   border-radius: 16px;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
   margin: 0 16px 24px;
@@ -101,12 +95,12 @@
   display: block;
   font-size: 1.75rem;
   font-weight: 700;
-  color: #132742;
+  color: white;
 }
 
 .stat-label {
   font-size: 0.8rem;
-  color: #6b7280;
+  color: white;
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
@@ -171,7 +165,7 @@
 
 /* Profile Sections */
 .profile-section {
-  background: #ffffff;
+  background: #849DBB;
   border-radius: 16px;
   padding: 20px;
   margin: 0 16px 20px;
@@ -187,12 +181,12 @@
   h2 {
     font-size: 1.125rem;
     font-weight: 700;
-    color: #132742;
+    color: white;
     margin: 0;
 
     i {
       margin-right: 8px;
-      color: #6b7280;
+      color: #ffffff;
     }
   }
 }
@@ -249,7 +243,7 @@
 
 .place-name {
   font-size: 0.8rem;
-  color: #374151;
+  color: white;
   font-weight: 500;
 }
 
@@ -331,7 +325,7 @@
 .empty-state {
   text-align: center;
   padding: 40px 20px;
-  color: #9ca3af;
+  color: #ffffff;
 
   i {
     font-size: 3rem;
@@ -341,14 +335,15 @@
   p {
     margin: 0 0 16px;
     font-size: 1rem;
+    color: white;
   }
 }
 
 .empty-state-btn {
   display: inline-block;
   padding: 10px 24px;
-  background: #132742;
-  color: #ffffff;
+  background: white;
+  color: #6b7280;
   border-radius: 999px;
   font-weight: 600;
   text-decoration: none;
@@ -357,6 +352,7 @@
   &:hover {
     background: #1a3a5c;
     color: #ffffff;
+    box-shadow: none;
   }
 }
 
@@ -365,10 +361,16 @@
   .profile-stats {
     gap: 20px;
     padding: 20px 16px;
+    background-color: white;
   }
 
   .stat-number {
     font-size: 1.5rem;
+    color: black;
+  }
+
+  .stat-label {
+    color: black;
   }
 
   .travel-book-preview {
@@ -379,5 +381,29 @@
     flex-direction: column;
     align-items: flex-start;
     gap: 4px;
+  }
+
+  .profile-member-since {
+    color: white;
+  }
+
+  .profile-location {
+    color: white;
+  }
+
+  .profile-edit-btn {
+    background-color: rgba(255, 255, 255, 0.5)
+  }
+
+  .profile-section {
+    background-color: white;
+
+    h2, p {
+      color: black;
+    }
+
+    i {
+      color: black;
+    }
   }
 }

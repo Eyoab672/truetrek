@@ -1,6 +1,6 @@
 .navbar-lewagon {
   justify-content: space-between;
-  background: rgb(0, 0, 0);
+  background: #849DBB;
 }
 
 .navbar-lewagon .navbar-collapse {
@@ -25,10 +25,12 @@
 
 .nav-item a {
   color: white;
+  margin-left: 2rem;
+  font-size: 0.9rem;
 }
 
 .nav-item a:hover {
-  color: black;
+  color: #533A33;
 }
 
 .navbar-toggler-icon {

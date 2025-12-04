@@ -1,68 +1,80 @@
-<div class="card shadow-sm border-0 rounded-4">
-  <div class="card-body p-4">
-    <%= simple_form_for comment, html: { class: "comment-form" } do |f| %>
+<div class="comment-form-wrapper">
+  <div class="comment-form-card">
+    <%= simple_form_for comment, html: { class: "styled-comment-form" } do |f| %>
       <% if local_assigns[:place]&.new_record? %>
-        <h4 class="mb-4 text-primary"><i class="fas fa-map-marker-alt me-2"></i>Add a New Place</h4>
+        <div class="form-section">
+          <h3 class="form-section-title">
+            <i class="fa-solid fa-location-dot"></i>
+            Add a New Place
+          </h3>
 
-        <%= simple_fields_for :place, place do |p| %>
-          <div data-controller="address-autocomplete" data-address-autocomplete-api-key-value="<%= ENV['MAPBOX_API_KEY'] %>">
-            <div class="mb-3">
-              <%= p.input :title,
-                label: "Place Name",
-                placeholder: "e.g. Sagrada Familia",
-                input_html: { class: "form-control form-control-lg rounded-3" } %>
-            </div>
-
-            <div class="mb-3">
-              <%= p.input :city_id,
-                collection: City.order(:name),
-                label: "City",
-                prompt: "Select a city first",
-                input_html: {
-                  class: "form-select form-select-lg rounded-3",
-                  data: { address_autocomplete_target: "citySelect", action: "change->address-autocomplete#cityChanged" }
-                } %>
-            </div>
-
-            <div class="mb-3">
-              <label class="form-label fw-semibold">Address</label>
-              <div class="geocoder-container rounded-3" data-address-autocomplete-target="geocoderContainer"></div>
-              <div class="form-text text-muted" data-address-autocomplete-target="addressHint">
-                <i class="fas fa-info-circle me-1"></i>Please select a city first
+          <%= simple_fields_for :place, place do |p| %>
+            <div data-controller="address-autocomplete" data-address-autocomplete-api-key-value="<%= ENV['MAPBOX_API_KEY'] %>">
+              <div class="form-field">
+                <%= p.input :title,
+                  label: "Place Name",
+                  placeholder: "e.g. Sagrada Familia",
+                  input_html: { class: "styled-input" } %>
               </div>
-              <%= p.input :address, as: :hidden, input_html: { data: { address_autocomplete_target: "address" } } %>
-              <%= p.input :latitude, as: :hidden, input_html: { data: { address_autocomplete_target: "latitude" } } %>
-              <%= p.input :longitude, as: :hidden, input_html: { data: { address_autocomplete_target: "longitude" } } %>
-            </div>
-          </div>
-        <% end %>
 
-        <hr class="my-4">
+              <div class="form-field">
+                <%= p.input :city_id,
+                  collection: City.order(:name),
+                  label: "City",
+                  prompt: "Select a city first",
+                  input_html: {
+                    class: "styled-select",
+                    data: { address_autocomplete_target: "citySelect", action: "change->address-autocomplete#cityChanged" }
+                  } %>
+              </div>
+
+              <div class="form-field">
+                <label class="styled-label">Address</label>
+                <div class="geocoder-container" data-address-autocomplete-target="geocoderContainer"></div>
+                <p class="form-hint" data-address-autocomplete-target="addressHint">
+                  <i class="fa-solid fa-circle-info"></i> Please select a city first
+                </p>
+                <%= p.input :address, as: :hidden, input_html: { data: { address_autocomplete_target: "address" } } %>
+                <%= p.input :latitude, as: :hidden, input_html: { data: { address_autocomplete_target: "latitude" } } %>
+                <%= p.input :longitude, as: :hidden, input_html: { data: { address_autocomplete_target: "longitude" } } %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+
+        <div class="form-divider"></div>
       <% end %>
 
-      <h4 class="mb-4 text-primary"><i class="fas fa-comment me-2"></i>Your Experience</h4>
+      <div class="form-section">
+        <h3 class="form-section-title">
+          <i class="fa-solid fa-pen-to-square"></i>
+          Your Experience
+        </h3>
 
-      <div class="mb-3">
-        <%= f.input :description,
-          as: :text,
-          label: "Share your experience",
-          placeholder: "Tell others about your visit... What made it special? Any tips for future visitors?",
-          input_html: { class: "form-control rounded-3", rows: 5 } %>
-        <div class="form-text">Minimum 100 characters</div>
+        <div class="form-field">
+          <%= f.input :description,
+            as: :text,
+            label: "Share your experience",
+            placeholder: "Tell others about your visit... What made it special? Any tips for future visitors?",
+            input_html: { class: "styled-textarea", rows: 5 } %>
+          <p class="form-hint">Minimum 20 characters</p>
+        </div>
+
+        <div class="form-field">
+          <%= f.input :photos,
+            as: :file,
+            direct_upload: true,
+            label: "Upload Photos",
+            input_html: { multiple: true, class: "styled-file-input", accept: "image/*" } %>
+          <p class="form-hint">
+            <i class="fa-solid fa-camera"></i> Share your best shots (optional)
+          </p>
+        </div>
       </div>
 
-      <div class="mb-4">
-        <%= f.input :photos,
-          as: :file,
-          direct_upload: true,
-          label: "Upload Photos",
-          input_html: { multiple: true, class: "form-control rounded-3", accept: "image/*" } %>
-        <div class="form-text"><i class="fas fa-camera me-1"></i>Share your best shots (optional)</div>
-      </div>
-
-      <div class="d-grid">
+      <div class="form-actions">
         <%= f.submit local_assigns[:place]&.new_record? ? "Create Place & Comment" : "Add Comment",
-          class: "btn btn-primary btn-lg rounded-3 py-3" %>
+          class: "btn-submit-form" %>
       </div>
     <% end %>
   </div>

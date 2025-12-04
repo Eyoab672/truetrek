@@ -1,0 +1,101 @@
+:root {
+  --bn-bg: #05060a;
+  --bn-bar-bg: #111319;
+  --bn-purple: #a786ff;
+  --bn-text-muted: #9ca3af;
+  --bn-text-active: #ffffff;
+}
+
+body {
+  background: var(--bn-bg);
+}
+
+/* Positioning */
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  padding-bottom: env(safe-area-inset-bottom, 12px);
+  padding-top: 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 2000;
+}
+
+/* Rounded bar */
+.bottom-nav-inner {
+  background: var(--bn-bar-bg);
+  width: 100%;
+  max-width: 480px;
+  padding: 12px 22px 18px;
+  border-radius: 22px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Bottom indicator */
+.bottom-nav-indicator {
+  width: 120px;
+  height: 4px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.25);
+  margin-top: 6px;
+}
+
+/* Items */
+.bottom-nav-item {
+  flex: 1;
+  text-align: center;
+  text-decoration: none;
+  color: var(--bn-text-muted);
+  font-size: 11px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Normal icons */
+.bottom-nav-icon {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.bottom-nav-icon svg {
+  width: 20px;
+  height: 20px;
+  fill: var(--bn-text-muted);
+}
+
+/* Main center button */
+.bottom-nav-item-main {
+  flex: 0;
+}
+
+.bottom-nav-main-circle {
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+  background: var(--bn-purple);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transform: translateY(-18px);
+  box-shadow: 0 10px 22px rgba(167, 134, 255, 0.4);
+}
+
+.bottom-nav-main-circle svg {
+  width: 28px;
+  height: 28px;
+  fill: #05060a;
+}
+
+/* Labels */
+.bottom-nav-label {
+  color: var(--bn-text-muted);
+}
