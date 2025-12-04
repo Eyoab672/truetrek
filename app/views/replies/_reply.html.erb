@@ -1,5 +1,11 @@
 <div class="reply-card" id="comment_<%= reply.id %>">
-  <div class="reply-thread-line"></div>
+  <% if user_signed_in? %>
+    <%= render partial: "votes/buttons", locals: { comment: reply } %>
+  <% else %>
+    <div class="vote-buttons vote-buttons-small">
+      <span class="vote-count"><%= reply.vote_balance %></span>
+    </div>
+  <% end %>
   <div class="reply-content">
     <div class="reply-header">
       <div class="reply-avatar">

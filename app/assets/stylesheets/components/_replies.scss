@@ -98,15 +98,39 @@
 // Individual reply card
 .reply-card {
   position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
   padding: 0.75rem 0;
 
   &:not(:last-child) {
     border-bottom: 1px solid #f0f0f0;
   }
+
+  // Smaller vote buttons for replies
+  .vote-buttons {
+    flex-shrink: 0;
+    min-width: 32px;
+    gap: 0.15rem;
+  }
+
+  .vote-btn {
+    width: 26px;
+    height: 26px;
+
+    i {
+      font-size: 0.75rem;
+    }
+  }
+
+  .vote-count {
+    font-size: 0.8rem;
+  }
 }
 
 .reply-content {
   flex: 1;
+  min-width: 0;
 }
 
 .reply-header {
