@@ -3,7 +3,7 @@
   <section class="places-hero-section">
     <div class="places-hero-content">
       <h1 class="places-hero-title">Explore <%= @city.name %></h1>
-      <p class="places-hero-subtitle">Discover amazing places and hidden gems</p>
+      <%# <p class="places-hero-subtitle">Discover amazing places and hidden gems</p> %>
 
       <!-- Search Bar -->
       <div class="search-container">
@@ -40,20 +40,44 @@
     <% if @places.any? %>
       <div class="places-grid">
         <% @places.each_with_index do |place, index| %>
-          <%= link_to city_place_path(place.city, place), class: "place-card #{'featured' if index < 2}" do %>
-            <% if place.default_img_url %>
+          <% photos = place.comments.flat_map { |c| c.photos.to_a }.first(5) %>
+          <div class="place-card <%= 'featured' if index < 2 %>">
+            <% if photos.any? %>
+              <div id="placeCardCarousel<%= place.id %>" class="carousel slide card-carousel" data-bs-ride="carousel">
+                <div class="carousel-inner">
+                  <% photos.each_with_index do |photo, photo_index| %>
+                    <div class="carousel-item <%= 'active' if photo_index == 0 %>">
+                      <div class="card-image" style="background-image: url('<%= cl_image_path photo.key, height: 400, width: 600, crop: :fill %>');"></div>
+                    </div>
+                  <% end %>
+                </div>
+                <% if photos.size > 1 %>
+                  <button class="carousel-control-prev" type="button" data-bs-target="#placeCardCarousel<%= place.id %>" data-bs-slide="prev" onclick="event.stopPropagation();">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                  </button>
+                  <button class="carousel-control-next" type="button" data-bs-target="#placeCardCarousel<%= place.id %>" data-bs-slide="next" onclick="event.stopPropagation();">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                  </button>
+                  <div class="carousel-indicators-dots">
+                    <% photos.each_with_index do |_, dot_index| %>
+                      <span class="dot <%= 'active' if dot_index == 0 %>" data-bs-target="#placeCardCarousel<%= place.id %>" data-bs-slide-to="<%= dot_index %>"></span>
+                    <% end %>
+                  </div>
+                <% end %>
+              </div>
+            <% elsif place.default_img_url %>
               <div class="card-image" style="background-image: url('<%= place.default_img_url %>');"></div>
-            <% elsif place.comments.any? && place.comments.first.photos.attached? %>
-              <div class="card-image" style="background-image: url('<%= cl_image_path place.comments.first.photos.first.key, height: 400, crop: :fill %>');"></div>
             <% else %>
               <div class="card-image" style="background-image: url('https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=800');"></div>
             <% end %>
             <div class="card-overlay"></div>
-            <div class="card-content">
-              <h3 class="card-title"><%= place.title %></h3>
-              <span class="card-cta">View details<i class="fa-solid fa-arrow-right"></i></span>
-            </div>
-          <% end %>
+            <%= link_to city_place_path(place.city, place), class: "card-link" do %>
+              <div class="card-content">
+                <h3 class="card-title"><%= place.title %></h3>
+                <span class="card-cta">View details<i class="fa-solid fa-arrow-right"></i></span>
+              </div>
+            <% end %>
+          </div>
         <% end %>
       </div>
     <% else %>

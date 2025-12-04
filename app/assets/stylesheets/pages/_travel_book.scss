@@ -12,9 +12,10 @@
 // ========================================
 
 .travel-book-header {
-  background: linear-gradient(180deg, #000000, #232323);
+  background: #849DBB;
   padding: 3rem 2rem;
   text-align: center;
+  border-radius: 0px 0px 40px 40px;
 }
 
 .header-content {
@@ -357,5 +358,9 @@
 
   .place-card-remove {
     opacity: 1;
+  }
+
+  .travel-book-page {
+    margin-bottom: 3rem;
   }
 }

@@ -32,8 +32,6 @@ puts "Creating cities..."
 City.create!(name: "Lima", img: "https://cdn.divessi.com/cached/Peru_Lima_iStock-Christian-Vinces.jpg/1200.jpg")
 puts "Created Lima"
 puts "Creating cities..."
-City.create!(name: "New Dehli", img: "https://content.r9cdn.net/rimg/dimg/89/80/30f91a95-city-32821-16374b316c6.jpg?width=1200&height=630&xhint=2922&yhint=2792&crop=true")
-puts "Created New Dehli"
 puts "Creating cities..."
 City.create!(name: "Phnom Penh", img: "https://blog.bangkokair.com/wp-content/uploads/2025/01/Cover_phnom-penh-travel-guide.jpg")
 puts "Created Phnom Penh"

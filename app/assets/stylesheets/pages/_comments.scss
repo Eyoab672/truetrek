@@ -1,0 +1,382 @@
+// ========================================
+// COMMENTS PAGE STYLES
+// ========================================
+// Uses same color palette as homepage:
+// #B5ACA3 - Warm taupe
+// #abcdef - Light blue
+// #849DBB - Soft blue
+// #5d89ba - Medium blue (primary)
+// #533A33 - Dark brown
+// #7c6054 - Medium brown (buttons)
+
+.comment-new-page {
+  min-height: 100vh;
+  background: #849DBB;
+}
+
+// ========================================
+// PAGE HEADER
+// ========================================
+
+.comment-page-header {
+  background: #849DBB;
+  padding: 2rem 0 3rem;
+  margin-top: -1rem;
+  border-radius: 0 0 40px 40px;
+}
+
+.comment-page-header-content {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  text-align: center;
+}
+
+.comment-breadcrumb {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+  font-size: 0.9rem;
+
+  .breadcrumb-link {
+    color: rgba(255, 255, 255, 0.7);
+    text-decoration: none;
+    transition: color 0.2s ease;
+
+    &:hover {
+      color: #ffffff;
+    }
+  }
+
+  i.fa-chevron-right {
+    color: rgba(255, 255, 255, 0.4);
+    font-size: 0.7rem;
+  }
+
+  span {
+    color: #ffffff;
+  }
+}
+
+.comment-page-title {
+  font-size: clamp(1.75rem, 4vw, 2.5rem);
+  font-weight: 800;
+  color: #ffffff;
+  margin: 0 0 0.5rem 0;
+  text-shadow: 0 2px 10px rgba(83, 58, 51, 0.2);
+}
+
+.comment-page-subtitle {
+  font-size: 1.1rem;
+  color: rgba(255, 255, 255, 0.85);
+  margin: 0;
+}
+
+// ========================================
+// FORM SECTION
+// ========================================
+
+.comment-form-section {
+  padding: 2rem 1rem 4rem;
+  margin-top: -1.5rem;
+}
+
+// ========================================
+// FORM CARD
+// ========================================
+
+.comment-form-wrapper {
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.comment-form-card {
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 2.5rem;
+  box-shadow: 0 10px 40px rgba(83, 58, 51, 0.1);
+}
+
+// ========================================
+// FORM SECTIONS
+// ========================================
+
+.form-section {
+  margin-bottom: 1.5rem;
+}
+
+.form-section-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #533A33;
+  margin: 0 0 1.5rem 0;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+
+  i {
+    color: #849DBB;
+    font-size: 1.1rem;
+  }
+}
+
+.form-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #e0dcd8, transparent);
+  margin: 2rem 0;
+}
+
+// ========================================
+// FORM FIELDS
+// ========================================
+
+.form-field {
+  margin-bottom: 1.5rem;
+}
+
+.styled-label,
+.styled-comment-form label {
+  display: block;
+  font-weight: 600;
+  color: #533A33;
+  margin-bottom: 0.5rem;
+  font-size: 0.95rem;
+}
+
+.styled-input,
+.styled-select,
+.styled-textarea,
+.styled-comment-form .form-control,
+.styled-comment-form .form-select {
+  width: 100%;
+  padding: 0.875rem 1rem;
+  font-size: 1rem;
+  border: 2px solid #e0dcd8;
+  border-radius: 12px;
+  background: #ffffff;
+  color: #533A33;
+  transition: all 0.2s ease;
+
+  &::placeholder {
+    color: #B5ACA3;
+  }
+
+  &:focus {
+    outline: none;
+    border-color: #849DBB;
+    box-shadow: 0 0 0 4px rgba(132, 157, 187, 0.15);
+  }
+}
+
+.styled-select,
+.styled-comment-form .form-select {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23849DBB' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  padding-right: 2.5rem;
+  cursor: pointer;
+}
+
+.styled-textarea,
+.styled-comment-form textarea {
+  resize: vertical;
+  min-height: 120px;
+  line-height: 1.6;
+}
+
+.styled-file-input,
+.styled-comment-form input[type="file"] {
+  padding: 0.75rem 1rem;
+  cursor: pointer;
+
+  &::file-selector-button {
+    padding: 0.5rem 1rem;
+    margin-right: 1rem;
+    border: none;
+    border-radius: 8px;
+    background: #849DBB;
+    color: #ffffff;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s ease;
+
+    &:hover {
+      background: #7c6054;
+    }
+  }
+}
+
+.form-hint {
+  font-size: 0.85rem;
+  color: #B5ACA3;
+  margin: 0.5rem 0 0 0;
+
+  i {
+    margin-right: 0.25rem;
+  }
+}
+
+// Simple Form specific overrides
+.styled-comment-form {
+  .input {
+    margin-bottom: 1.5rem;
+  }
+
+  .string, .text, .file, .select {
+    label {
+      display: block;
+      font-weight: 600;
+      color: #533A33;
+      margin-bottom: 0.5rem;
+      font-size: 0.95rem;
+    }
+  }
+
+  // Error states
+  .field_with_errors {
+    input, textarea, select {
+      border-color: #e57373;
+    }
+  }
+
+  .error {
+    color: #e57373;
+    font-size: 0.85rem;
+    margin-top: 0.25rem;
+  }
+}
+
+// ========================================
+// SUBMIT BUTTON
+// ========================================
+
+.form-actions {
+  margin-top: 2rem;
+  text-align: center;
+}
+
+.btn-submit-form {
+  display: inline-block;
+  padding: 1rem 3rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #ffffff;
+  background: #7c6054;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 8px 25px rgba(124, 96, 84, 0.3);
+
+  &:hover {
+    background: #533A33;
+    transform: translateY(-2px);
+    box-shadow: 0 12px 35px rgba(83, 58, 51, 0.35);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+// ========================================
+// GEOCODER OVERRIDE
+// ========================================
+
+.comment-form-wrapper .geocoder-container {
+  .mapboxgl-ctrl-geocoder {
+    border: 2px solid #e0dcd8;
+    border-radius: 12px;
+    box-shadow: none;
+
+    &:focus-within {
+      border-color: #849DBB;
+      box-shadow: 0 0 0 4px rgba(132, 157, 187, 0.15);
+    }
+
+    .mapboxgl-ctrl-geocoder--input {
+      color: #533A33;
+
+      &::placeholder {
+        color: #B5ACA3;
+      }
+    }
+  }
+}
+
+// ========================================
+// RESPONSIVE
+// ========================================
+
+@media (max-width: 768px) {
+  .comment-page-header {
+    padding: 1.5rem 0 2.5rem;
+  }
+
+  .comment-page-header-content {
+    padding: 0 1rem;
+  }
+
+  .comment-breadcrumb {
+    font-size: 0.8rem;
+  }
+
+  .comment-page-title {
+    font-size: 1.5rem;
+  }
+
+  .comment-form-section {
+    padding: 1.5rem 0.5rem 3rem;
+  }
+
+  .comment-form-card {
+    padding: 1.5rem;
+    border-radius: 16px;
+  }
+
+  .form-section-title {
+    font-size: 1.1rem;
+  }
+
+  .btn-submit-form {
+    width: 100%;
+    padding: 1rem 2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .comment-page-header {
+    border-radius: 0 0 30px 30px;
+  }
+
+  .comment-form-card {
+    padding: 1.25rem;
+  }
+
+  .comment-page-header-content {
+    margin-top: 2rem;
+  }
+
+  .comment-page-header {
+    padding-bottom: 1rem;
+  }
+
+  .comment-form-card {
+    margin-bottom: 1.8rem;
+  }
+
+  .comment-new-page {
+    background-color: #849DBB;
+  }
+  .styled-input,
+  .styled-select,
+  .styled-textarea,
+  .styled-comment-form .form-control,
+  .styled-comment-form .form-select {
+    padding: 0.75rem;
+    font-size: 0.95rem;
+  }
+}

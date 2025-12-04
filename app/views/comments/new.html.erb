@@ -1,1 +1,14 @@
-<%= render "form", comment: @comment, place: @place %>
+<div class="comment-new-page">
+  <section class="comment-page-header">
+    <div class="comment-page-header-content">
+      <h1 class="comment-page-title">Share Your Experience</h1>
+      <p class="comment-page-subtitle">Help other travelers by sharing your insights</p>
+    </div>
+  </section>
+
+  <section class="comment-form-section">
+    <div class="container">
+      <%= render "form", comment: @comment, place: @place %>
+    </div>
+  </section>
+</div>
