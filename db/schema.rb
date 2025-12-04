@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_12_04_094604) do
+ActiveRecord::Schema[7.2].define(version: 2025_12_04_134306) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -63,7 +63,7 @@ ActiveRecord::Schema[7.2].define(version: 2025_12_04_094604) do
 
   create_table "places", force: :cascade do |t|
     t.string "title"
-    t.string "wiki_description"
+    t.text "enhanced_description"
     t.float "longitude"
     t.float "latitude"
     t.bigint "city_id", null: false
@@ -71,6 +71,7 @@ ActiveRecord::Schema[7.2].define(version: 2025_12_04_094604) do
     t.datetime "updated_at", null: false
     t.string "address"
     t.string "default_img_url"
+    t.text "original_description"
     t.index ["city_id"], name: "index_places_on_city_id"
   end
 
