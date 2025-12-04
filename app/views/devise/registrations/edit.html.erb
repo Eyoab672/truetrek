@@ -19,7 +19,7 @@
 
         <div class="auth-avatar-section">
           <div class="auth-avatar-preview">
-           <% if resource.persisted? && resource.avatar.attached? %>
+           <% if resource.persisted? && resource.avatar.attached? && resource.avatar.blob&.persisted? %>
     <%= image_tag url_for(resource.avatar), class: "auth-avatar-img" %>
     <% else %>
       <div class="auth-avatar-placeholder">

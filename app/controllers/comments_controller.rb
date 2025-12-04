@@ -1,6 +1,8 @@
 require "open-uri"
 
 class CommentsController < ApplicationController
+  include DescriptionEnhancer
+
   SYSTEM_PROMPT = <<~PROMPT.freeze
     You are a helpful travel assistant that provides concise, engaging summaries about places.
     When enhancing descriptions, keep them informative but brief (2-3 paragraphs max).
@@ -86,22 +88,6 @@ class CommentsController < ApplicationController
   end
 
   def enhance_description_with_comment
-    return if @place.enhanced_description.blank?
-
-    @chat = RubyLLM.chat
-    @chat.with_instructions(SYSTEM_PROMPT)
-
-    # Build conversation history from existing description
-    @chat.ask("Here is the current description of #{@place.title}: #{@place.enhanced_description}")
-
-    # Enhance with new comment
-    response = @chat.ask(
-      "A visitor shared this experience: '#{@comment.description}'. " \
-      "Update the description to incorporate relevant insights from their visit, keeping it concise."
-    )
-
-    @place.update(enhanced_description: response.content)
-  rescue StandardError => e
-    Rails.logger.error("Failed to enhance description: #{e.message}")
+    enhance_description_with_content(@place, @comment.description, @comment.user&.username)
   end
 end

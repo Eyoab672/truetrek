@@ -88,6 +88,27 @@
     <section class="place-description-section">
       <h2 class="section-heading">About this place</h2>
       <p class="place-description"><%= @place.enhanced_description %></p>
+
+      <% contributors = @place.comments.includes(:user).map(&:user).uniq %>
+      <% if contributors.any? %>
+        <div class="contributors-section">
+          <span class="contributors-label">Contributors:</span>
+          <div class="contributors-avatars">
+            <% contributors.each do |user| %>
+              <div class="contributor-avatar" title="<%= user.username %>">
+                <% if user.avatar.attached? && user.avatar.blob&.persisted? %>
+                  <%= image_tag url_for(user.avatar), alt: user.username, class: "contributor-avatar-img" %>
+                <% else %>
+                  <div class="contributor-avatar-placeholder">
+                    <%= user.username&.first&.upcase %>
+                  </div>
+                <% end %>
+              </div>
+            <% end %>
+            <span class="contributors-count"><%= contributors.count %> <%= "contributor".pluralize(contributors.count) %></span>
+          </div>
+        </div>
+      <% end %>
     </section>
 
     <!-- Comments Section -->
