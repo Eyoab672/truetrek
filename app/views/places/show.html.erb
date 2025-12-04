@@ -75,16 +75,16 @@
 
     <!-- Description -->
     <div class="mt-3">
-  <% if user_signed_in? %>
-    <% travel_book = current_user.travel_book %>
-    <% if travel_book && travel_book.places.include?(@place) %>
-      <% travel_book_place = travel_book.travel_book_places.find_by(place: @place) %>
-      <%= button_to "Remove from Travel Book", travel_book_place_path(travel_book_place), method: :delete, class: "btn btn-outline-danger" %>
-    <% else %>
-      <%= button_to "Add to Travel Book", place_travel_book_places_path(@place), method: :post, class: "btn btn-primary" %>
-    <% end %>
-  <% end %>
-</div>
+      <% if user_signed_in? %>
+        <% travel_book = current_user.travel_book %>
+        <% if travel_book && travel_book.places.include?(@place) %>
+          <% travel_book_place = travel_book.travel_book_places.find_by(place: @place) %>
+          <%= button_to "Remove from Travel Book", travel_book_place_path(travel_book_place), method: :delete, class: "btn btn-outline-danger" %>
+        <% else %>
+          <%= button_to "Add to Travel Book", place_travel_book_places_path(@place), method: :post, class: "btn btn-primary" %>
+        <% end %>
+      <% end %>
+    </div>
     <section class="place-description-section">
       <h2 class="section-heading">About this place</h2>
       <p class="place-description"><%= @place.wiki_description %></p>

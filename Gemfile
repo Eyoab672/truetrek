@@ -45,6 +45,7 @@ gem "sassc-rails"
 gem "cloudinary"
 gem "pundit"
 gem "activestorage-cloudinary-service"
+gem "ruby_llm", "~> 1.2.0"
 
 group :development, :test do
   gem "dotenv-rails"
@@ -56,6 +57,9 @@ group :development, :test do
 
   # Omakase Ruby styling [https://github.com/rails/rubocop-rails-omakase/]
   gem "rubocop-rails-omakase", require: false
+  gem "httplog"
+  gem "pry-byebug"
+  gem "pry-rails"
 end
 
 group :development do
