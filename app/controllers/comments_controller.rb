@@ -35,6 +35,19 @@ class CommentsController < ApplicationController
     end
   end
 
+  def destroy
+    @comment = Comment.find(params[:id])
+    @place = @comment.place
+    authorize @comment
+
+    @comment.destroy
+
+    respond_to do |format|
+      format.turbo_stream { render turbo_stream: turbo_stream.remove("comment_#{@comment.id}") }
+      format.html { redirect_to city_place_path(@place.city, @place), notice: "Comment deleted." }
+    end
+  end
+
   private
 
   def comment_params

@@ -1,0 +1,35 @@
+<div class="reply-card" id="comment_<%= reply.id %>">
+  <div class="reply-thread-line"></div>
+  <div class="reply-content">
+    <div class="reply-header">
+      <div class="reply-avatar">
+        <% if reply.user.avatar.attached? %>
+          <%= cl_image_tag reply.user.avatar.key, width: 24, height: 24, crop: :fill, class: "reply-avatar-img" %>
+        <% else %>
+          <span class="reply-avatar-placeholder"><%= reply.user.username.first.upcase %></span>
+        <% end %>
+      </div>
+      <span class="reply-author"><%= reply.user.username %></span>
+      <span class="reply-date"><%= time_ago_in_words(reply.created_at) %> ago</span>
+    </div>
+    <div class="reply-body">
+      <p><%= reply.description %></p>
+    </div>
+    <% if user_signed_in? %>
+      <div class="reply-actions">
+        <button class="reply-btn"
+                data-controller="reply-toggle"
+                data-action="click->reply-toggle#showForm"
+                data-reply-toggle-comment-id-value="<%= parent_comment.id %>"
+                data-reply-toggle-mention-value="<%= reply.user.username %>">
+          <i class="fa-solid fa-reply"></i> Reply
+        </button>
+        <% if reply.user == current_user %>
+          <%= button_to comment_path(reply), method: :delete, class: "reply-delete-btn", data: { turbo_confirm: "Delete this reply?" } do %>
+            <i class="fa-solid fa-trash"></i>
+          <% end %>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+</div>

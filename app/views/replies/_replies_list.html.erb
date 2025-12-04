@@ -1,0 +1,8 @@
+<div id="replies_wrapper_<%= comment.id %>" class="replies-wrapper" data-expanded="false">
+  <div id="replies_<%= comment.id %>" class="replies-list">
+    <% comment.replies.order(created_at: :asc).each do |reply| %>
+      <%= render partial: "replies/reply", locals: { reply: reply, parent_comment: comment } %>
+    <% end %>
+  </div>
+  <div id="reply_form_placeholder_<%= comment.id %>"></div>
+</div>

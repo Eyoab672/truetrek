@@ -1,0 +1,14 @@
+<%# Add the new reply to the replies list %>
+<%= turbo_stream.append "replies_#{@parent_comment.id}" do %>
+  <%= render partial: "replies/reply", locals: { reply: @reply, parent_comment: @parent_comment } %>
+<% end %>
+
+<%# Clear the reply form %>
+<%= turbo_stream.replace "reply_form_#{@parent_comment.id}" do %>
+  <div id="reply_form_placeholder_<%= @parent_comment.id %>"></div>
+<% end %>
+
+<%# Update the replies count %>
+<%= turbo_stream.replace "replies_toggle_#{@parent_comment.id}" do %>
+  <%= render partial: "replies/toggle", locals: { comment: @parent_comment } %>
+<% end %>

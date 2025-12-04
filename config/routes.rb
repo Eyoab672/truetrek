@@ -1,6 +1,10 @@
 Rails.application.routes.draw do
   devise_for :users
-  resources :users, only: [:show]
+  resources :users, only: [:show] do
+    collection do
+      get :search
+    end
+  end
   root to: "cities#index"
 
   resources :cities, only: :index do
@@ -9,12 +13,17 @@ Rails.application.routes.draw do
     end
   end
 
+  # Replies to comments
+  resources :comments, only: [] do
+    resources :replies, only: :create, controller: "replies"
+  end
+
   get 'my_travel_book', to: 'travel_books#show', as: :my_travel_book
   resources :places, only: [] do
     resources :travel_book_places, only: :create
   end
   resources :travel_book_places, only: :destroy
-  resources :comments, only: [:new, :create]  # for new places
+  resources :comments, only: [:new, :create, :destroy]  # for new places + delete
 
 
 

@@ -1,0 +1,12 @@
+<div id="replies_toggle_<%= comment.id %>" class="replies-toggle-container">
+  <% replies_count = comment.replies.count %>
+  <% if replies_count > 0 %>
+    <button class="replies-toggle-btn"
+            data-controller="replies-expand"
+            data-action="click->replies-expand#toggle"
+            data-replies-expand-comment-id-value="<%= comment.id %>">
+      <i class="fa-solid fa-chevron-down toggle-icon"></i>
+      <span class="toggle-text">See <%= replies_count %> <%= 'reply'.pluralize(replies_count) %></span>
+    </button>
+  <% end %>
+</div>

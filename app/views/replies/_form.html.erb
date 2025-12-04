@@ -1,0 +1,23 @@
+<%= turbo_frame_tag "reply_form_#{comment.id}" do %>
+  <div class="reply-form-container" data-controller="reply-form">
+    <%= form_with model: [comment, reply || Comment.new], url: comment_replies_path(comment), class: "reply-form" do |f| %>
+      <div class="reply-input-wrapper">
+        <%= f.text_field :description,
+            placeholder: mentioning ? "Replying to @#{mentioning}..." : "Write a reply...",
+            class: "reply-input",
+            data: { reply_form_target: "input" } %>
+        <div class="reply-form-actions">
+          <%= f.submit "Reply", class: "reply-submit-btn" %>
+          <button type="button" class="reply-cancel-btn" data-action="click->reply-form#cancel">Cancel</button>
+        </div>
+      </div>
+      <% if reply&.errors&.any? %>
+        <div class="reply-errors">
+          <% reply.errors.full_messages.each do |message| %>
+            <p><%= message %></p>
+          <% end %>
+        </div>
+      <% end %>
+    <% end %>
+  </div>
+<% end %>
