@@ -444,6 +444,46 @@
   color: #7c6054;
 }
 
+// Heart button for save/unsave
+.place-heart-btn {
+  position: fixed;
+  top: 100px;
+  right: 2rem;
+  z-index: 1000;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 255, 255, 0.95);
+  color: #B5ACA3;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+
+  i {
+    font-size: 1.4rem;
+  }
+
+  &:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+    color: #ff6b6b;
+  }
+
+  // Saved state - red filled heart
+  &.saved {
+    color: #ff6b6b;
+
+    &:hover {
+      background: #ff6b6b;
+      color: white;
+    }
+  }
+}
+
 .place-breadcrumb {
   display: flex;
   align-items: center;
@@ -1024,6 +1064,17 @@
 
   .side-btn {
     align-items: center;
+  }
+
+  .place-heart-btn {
+    top: 80px;
+    right: 1rem;
+    width: 44px;
+    height: 44px;
+
+    i {
+      font-size: 1.2rem;
+    }
   }
 
   .place-carousel-container .carousel-image,

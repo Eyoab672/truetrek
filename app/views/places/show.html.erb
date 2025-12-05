@@ -9,17 +9,21 @@
       </nav>
       <div class="side-btn">
         <h1 class="place-title"><%= @place.title %></h1>
-          <div class="mt-0">
+          <%= turbo_frame_tag "place_heart_#{@place.id}" do %>
             <% if user_signed_in? %>
               <% travel_book = current_user.travel_book %>
               <% if travel_book && travel_book.places.include?(@place) %>
                 <% travel_book_place = travel_book.travel_book_places.find_by(place: @place) %>
-                <%= button_to "Unsave", travel_book_place_path(travel_book_place), method: :delete, class: "btn btn-outline-danger rounded-pill" %>
+                <%= button_to travel_book_place_path(travel_book_place), method: :delete, class: "place-heart-btn saved", title: "Remove from Travel Book", data: { turbo_frame: "place_heart_#{@place.id}" } do %>
+                  <i class="fa-solid fa-heart"></i>
+                <% end %>
               <% else %>
-                <%= button_to "Save", place_travel_book_places_path(@place), method: :post, class: "btn btn-outline-dark rounded-pill" %>
+                <%= button_to place_travel_book_places_path(@place), method: :post, class: "place-heart-btn", title: "Add to Travel Book", data: { turbo_frame: "place_heart_#{@place.id}" } do %>
+                  <i class="fa-regular fa-heart"></i>
+                <% end %>
               <% end %>
             <% end %>
-          </div>
+          <% end %>
       </div>
       <p class="place-location">
         <i class="fa-solid fa-location-dot"></i> <%= @place.city.name %>

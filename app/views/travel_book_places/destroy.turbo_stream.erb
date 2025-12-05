@@ -1,0 +1,7 @@
+<%= turbo_stream.replace "place_heart_#{@place.id}" do %>
+  <%= turbo_frame_tag "place_heart_#{@place.id}" do %>
+    <%= button_to place_travel_book_places_path(@place), method: :post, class: "place-heart-btn", title: "Add to Travel Book", data: { turbo_frame: "place_heart_#{@place.id}" } do %>
+      <i class="fa-regular fa-heart"></i>
+    <% end %>
+  <% end %>
+<% end %>

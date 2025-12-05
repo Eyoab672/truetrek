@@ -6,7 +6,10 @@ class TravelBookPlacesController < ApplicationController
     authorize @travel_book_place
 
     if @travel_book_place.save
-      redirect_back fallback_location: city_place_path(@place.city, @place), notice: "Place added to your Travel Book!"
+      respond_to do |format|
+        format.turbo_stream
+        format.html { redirect_back fallback_location: city_place_path(@place.city, @place), notice: "Place added to your Travel Book!" }
+      end
     else
       redirect_back fallback_location: city_place_path(@place.city, @place), alert: "Could not add place to Travel Book."
     end
@@ -14,9 +17,13 @@ class TravelBookPlacesController < ApplicationController
 
   def destroy
     @travel_book_place = TravelBookPlace.find(params[:id])
+    @place = @travel_book_place.place
     authorize @travel_book_place
 
     @travel_book_place.destroy
-    redirect_back fallback_location: my_travel_book_path, notice: "Place removed from your Travel Book."
+    respond_to do |format|
+      format.turbo_stream
+      format.html { redirect_back fallback_location: my_travel_book_path, notice: "Place removed from your Travel Book." }
+    end
   end
 end

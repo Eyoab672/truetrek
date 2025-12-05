@@ -1,0 +1,8 @@
+<%= turbo_stream.replace "place_heart_#{@place.id}" do %>
+  <%= turbo_frame_tag "place_heart_#{@place.id}" do %>
+    <% travel_book_place = current_user.travel_book.travel_book_places.find_by(place: @place) %>
+    <%= button_to travel_book_place_path(travel_book_place), method: :delete, class: "place-heart-btn saved", title: "Remove from Travel Book", data: { turbo_frame: "place_heart_#{@place.id}" } do %>
+      <i class="fa-solid fa-heart"></i>
+    <% end %>
+  <% end %>
+<% end %>
