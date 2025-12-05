@@ -17,6 +17,10 @@ Rails.application.routes.draw do
     end
   end
 
+  get  "/camera", to: "captures#new",    as: :camera
+  post "/camera", to: "captures#create"
+  
+
   # Replies to comments
   resources :comments, only: [] do
     resources :replies, only: :create, controller: "replies"
