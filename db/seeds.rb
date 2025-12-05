@@ -7,50 +7,64 @@ Place.destroy_all
 City.destroy_all
 User.destroy_all
 
+# Helper to find and attach image by place title
+def attach_photo(comment, place_title)
+  images_path = Rails.root.join("db/seeds/images")
+  extensions = %w[.jpg .jpeg .png .webp .avif]
+
+  extensions.each do |ext|
+    file_path = images_path.join("#{place_title}#{ext}")
+    if File.exist?(file_path)
+      content_type = case ext
+                     when ".jpg", ".jpeg" then "image/jpeg"
+                     when ".png" then "image/png"
+                     when ".webp" then "image/webp"
+                     when ".avif" then "image/avif"
+                     end
+      comment.photos.attach(
+        io: File.open(file_path),
+        filename: "#{place_title}#{ext}",
+        content_type: content_type
+      )
+      puts "  Attached #{place_title}#{ext}"
+      return
+    end
+  end
+  puts "  Warning: No image found for #{place_title}"
+end
+
 puts "Creating cities..."
-City.create!(name: "Barcelona" , img: "https://niesamowita.b-cdn.net/images/Europa/Barcelona/Barcelona.jpg")
+City.create!(name: "Barcelona", img: "https://niesamowita.b-cdn.net/images/Europa/Barcelona/Barcelona.jpg")
 puts "Created Barcelona"
-puts "Creating cities..."
 City.create!(name: "Afar", img: "https://fanosethiopiatours.wordpress.com/wp-content/uploads/2016/06/fb_img_1690248178732.jpg")
 puts "Created Afar"
-puts "Creating cities..."
 City.create!(name: "Tokyo", img: "https://img.freepik.com/free-photo/aerial-view-tokyo-cityscape-with-fuji-mountain-japan_335224-148.jpg?semt=ais_hybrid&w=740&q=80")
 puts "Created Tokyo"
-puts "Creating cities..."
 City.create!(name: "Paris", img: "https://t4.ftcdn.net/jpg/02/60/79/45/360_F_260794563_dq3TQWoefX8EsPlGyIf8Xnmq5BdeMRPq.jpg")
 puts "Created Paris"
-puts "Creating cities..."
 City.create!(name: "New York", img: "https://www.followmeaway.com/wp-content/uploads/2019/06/New-York-in-a-day-Times-Square.jpg")
 puts "Created New York"
-puts "Creating cities..."
 City.create!(name: "Sydney", img: "https://media.istockphoto.com/id/1256052948/photo/sydney-opera-house-close-up.jpg?s=612x612&w=0&k=20&c=whIj_OHD1xUfx9rgcLaKC2V_AjOJZb24IQOCcKrxaCM=")
 puts "Created Sydney"
-puts "Creating cities..."
 City.create!(name: "Amsterdam", img: "https://t4.ftcdn.net/jpg/01/76/95/31/360_F_176953179_IaK81ZsGI5gGjSc1SlB8rDqrdqS4XqRg.jpg")
 puts "Created Amsterdam"
-puts "Creating cities..."
 City.create!(name: "London", img: "https://www.visitlondon.com/-/media/images/london/visit/things-to-do/nightlife/tower-bridge-at-night1920x1080.png?mw=800&rev=743f319d95bf47638fe287a5322c115c&hash=4EE2C2E9D2540601359FE846DC4B55C0")
 puts "Created London"
-puts "Creating cities..."
 City.create!(name: "Lima", img: "https://cdn.divessi.com/cached/Peru_Lima_iStock-Christian-Vinces.jpg/1200.jpg")
 puts "Created Lima"
-puts "Creating cities..."
-puts "Creating cities..."
 City.create!(name: "Phnom Penh", img: "https://blog.bangkokair.com/wp-content/uploads/2025/01/Cover_phnom-penh-travel-guide.jpg")
 puts "Created Phnom Penh"
-puts "Creating cities..."
 City.create!(name: "Budapest", img: "https://www.budapest.org/es/wp-content/uploads/sites/99/budapest-danubio-panorama-hd.jpg")
 puts "Created Budapest"
-puts "Creating cities..."
 City.create!(name: "Cairo", img: "https://www.civitatis.com/blog/wp-content/uploads/2025/01/que-ver-cairo-egipto.jpg")
 puts "Created Cairo"
-puts "Creating cities..."
 
 puts "Finished! Created #{City.count} cities."
 
 puts "Creating users..."
-user1 = User.create!(email: "traveler1@example.com", password: "password123", username: "traveler1", city: "Barcelona")
-user2 = User.create!(email: "traveler2@example.com", password: "password123", username: "traveler2", city: "Tokyo")
+user1 = User.create!(email: "traveler1@example.com", password: "password123", username: "eyoab", city: "Barcelona")
+user2 = User.create!(email: "traveler2@example.com", password: "password123", username: "egor", city: "Moscow")
+user3 = User.create!(email: "admin@admin.com", password: "123456", username: "owen", city: "Amsterdam", admin: true)
 puts "Created #{User.count} users."
 
 puts "Creating places..."
@@ -71,7 +85,6 @@ sagrada_familia = Place.create!(
   title: "Sagrada Familia",
   enhanced_description: "The Basílica de la Sagrada Família is a large unfinished Roman Catholic minor basilica in Barcelona, designed by Antoni Gaudí.",
   address: "Carrer de Mallorca, 401, Barcelona, Spain",
-  default_img_url: "https://niesamowita.b-cdn.net/images/Europa/Barcelona/Barcelona.jpg",
   city: barcelona
 )
 
@@ -79,7 +92,6 @@ senso_ji = Place.create!(
   title: "Sensō-ji Temple",
   enhanced_description: "Sensō-ji is an ancient Buddhist temple located in Asakusa, Tokyo. It is Tokyo's oldest temple and one of its most significant.",
   address: "2 Chome-3-1 Asakusa, Taito City, Tokyo, Japan",
-  default_img_url: "https://img.freepik.com/free-photo/aerial-view-tokyo-cityscape-with-fuji-mountain-japan_335224-148.jpg?semt=ais_hybrid&w=740&q=80",
   city: tokyo
 )
 
@@ -87,7 +99,6 @@ eiffel_tower = Place.create!(
   title: "Eiffel Tower",
   enhanced_description: "The Eiffel Tower is a wrought-iron lattice tower on the Champ de Mars in Paris, named after engineer Gustave Eiffel.",
   address: "Champ de Mars, 5 Avenue Anatole France, Paris, France",
-  default_img_url: "https://t4.ftcdn.net/jpg/02/60/79/45/360_F_260794563_dq3TQWoefX8EsPlGyIf8Xnmq5BdeMRPq.jpg",
   city: paris
 )
 
@@ -95,7 +106,6 @@ central_park = Place.create!(
   title: "Central Park",
   enhanced_description: "Central Park is an urban park in New York City between the Upper West Side and Upper East Side of Manhattan.",
   address: "Central Park, New York, NY, USA",
-  default_img_url: "https://www.followmeaway.com/wp-content/uploads/2019/06/New-York-in-a-day-Times-Square.jpg",
   city: new_york
 )
 
@@ -103,7 +113,6 @@ opera_house = Place.create!(
   title: "Sydney Opera House",
   enhanced_description: "The Sydney Opera House is a multi-venue performing arts centre in Sydney. It is one of the 20th century's most famous and distinctive buildings.",
   address: "Bennelong Point, Sydney NSW 2000, Australia",
-  default_img_url: "https://media.istockphoto.com/id/1256052948/photo/sydney-opera-house-close-up.jpg?s=612x612&w=0&k=20&c=whIj_OHD1xUfx9rgcLaKC2V_AjOJZb24IQOCcKrxaCM=",
   city: sydney
 )
 
@@ -111,7 +120,6 @@ anne_frank = Place.create!(
   title: "Anne Frank House",
   enhanced_description: "The Anne Frank House is a museum dedicated to Jewish wartime diarist Anne Frank. The building is located on the Prinsengracht canal in Amsterdam.",
   address: "Prinsengracht 263-267, 1016 GV Amsterdam, Netherlands",
-  default_img_url: "https://t4.ftcdn.net/jpg/01/76/95/31/360_F_176953179_IaK81ZsGI5gGjSc1SlB8rDqrdqS4XqRg.jpg",
   city: amsterdam
 )
 
@@ -119,15 +127,13 @@ tower_bridge = Place.create!(
   title: "Tower Bridge",
   enhanced_description: "Tower Bridge is a Grade I listed combined bascule and suspension bridge in London, built between 1886 and 1894.",
   address: "Tower Bridge Road, London, UK",
-  default_img_url: "https://www.visitlondon.com/-/media/images/london/visit/things-to-do/nightlife/tower-bridge-at-night1920x1080.png?mw=800&rev=743f319d95bf47638fe287a5322c115c&hash=4EE2C2E9D2540601359FE846DC4B55C0",
   city: london
 )
 
-machu_picchu = Place.create!(
+plaza_mayor = Place.create!(
   title: "Plaza Mayor de Lima",
   enhanced_description: "The Plaza Mayor of Lima is the birthplace of the city of Lima and the core of the city. Located in the Historic Centre of Lima.",
   address: "Plaza Mayor, Cercado de Lima, Peru",
-  default_img_url: "https://cdn.divessi.com/cached/Peru_Lima_iStock-Christian-Vinces.jpg/1200.jpg",
   city: lima
 )
 
@@ -135,7 +141,6 @@ royal_palace = Place.create!(
   title: "Royal Palace of Phnom Penh",
   enhanced_description: "The Royal Palace is a complex of buildings which serves as the royal residence of the King of Cambodia.",
   address: "Samdach Sothearos Blvd, Phnom Penh, Cambodia",
-  default_img_url: "https://blog.bangkokair.com/wp-content/uploads/2025/01/Cover_phnom-penh-travel-guide.jpg",
   city: phnom_penh
 )
 
@@ -143,7 +148,6 @@ fishermans_bastion = Place.create!(
   title: "Fisherman's Bastion",
   enhanced_description: "Fisherman's Bastion is a terrace in neo-Gothic and neo-Romanesque style situated on the Buda bank of the Danube in Budapest.",
   address: "Szentháromság tér, Budapest, Hungary",
-  default_img_url: "https://www.budapest.org/es/wp-content/uploads/sites/99/budapest-danubio-panorama-hd.jpg",
   city: budapest
 )
 
@@ -151,7 +155,6 @@ pyramids = Place.create!(
   title: "Pyramids of Giza",
   enhanced_description: "The Giza pyramid complex is an archaeological site on the Giza Plateau, including the three Great Pyramids and the Great Sphinx.",
   address: "Al Haram, Giza Governorate, Egypt",
-  default_img_url: "https://www.civitatis.com/blog/wp-content/uploads/2025/01/que-ver-cairo-egipto.jpg",
   city: cairo
 )
 
@@ -159,84 +162,96 @@ erta_ale = Place.create!(
   title: "Erta Ale",
   enhanced_description: "Erta Ale is an active shield volcano located in the Afar Region of Ethiopia. It is famed for its persistent lava and salt lake, one of the few in the world.",
   address: "Danakil Depression, Afar Region, Ethiopia",
-  default_img_url: "https://fanosethiopiatours.wordpress.com/wp-content/uploads/2016/06/fb_img_1690248178732.jpg",
   city: afar
 )
 
 puts "Created #{Place.count} places."
 
-puts "Creating comments..."
-Comment.create!(
+puts "Creating comments with photos..."
+
+comment = Comment.create!(
   description: "Absolutely breathtaking architecture! Gaudí's masterpiece is a must-see. The interior light through the stained glass windows creates an otherworldly atmosphere that photos simply cannot capture.",
   place: sagrada_familia,
   user: user1
 )
+attach_photo(comment, "Sagrada Familia")
 
-Comment.create!(
+comment = Comment.create!(
   description: "The temple grounds are peaceful despite the crowds. The giant red lantern at the entrance is iconic. Don't miss the shopping street Nakamise-dori leading up to it for traditional snacks.",
   place: senso_ji,
   user: user2
 )
+attach_photo(comment, "Sensō-ji Temple")
 
-Comment.create!(
+comment = Comment.create!(
   description: "One of the most surreal experiences of my life! Hiking through the Danakil Depression at night to see the glowing lava lake is otherworldly. Bring plenty of water — it's one of Earth's hottest places. A true hidden gem that few travelers know about.",
   place: erta_ale,
   user: user1
 )
+attach_photo(comment, "Erta Ale")
 
-Comment.create!(
+comment = Comment.create!(
   description: "Visited at sunset and the views were magical. The elevator ride up offers stunning panoramic views of Paris. Book tickets in advance online to skip the long queues at the base.",
   place: eiffel_tower,
   user: user1
 )
+attach_photo(comment, "Eiffel Tower")
 
-Comment.create!(
+comment = Comment.create!(
   description: "A perfect escape from the busy Manhattan streets. We rented bikes and explored the entire park. The Bethesda Fountain and Bow Bridge are particularly beautiful spots for photos.",
   place: central_park,
   user: user2
 )
+attach_photo(comment, "Central Park")
 
-Comment.create!(
+comment = Comment.create!(
   description: "The architecture is absolutely stunning, especially when lit up at night. We took a harbor cruise to see it from the water. The acoustics inside during a performance are world-class.",
   place: opera_house,
   user: user1
 )
+attach_photo(comment, "Sydney Opera House")
 
-Comment.create!(
+comment = Comment.create!(
   description: "A deeply moving experience walking through the rooms where Anne Frank and her family hid. The museum does an excellent job of presenting history. Book tickets well in advance online.",
   place: anne_frank,
   user: user2
 )
+attach_photo(comment, "Anne Frank House")
 
-Comment.create!(
+comment = Comment.create!(
   description: "Walking across Tower Bridge at night is a magical experience. The bridge lifts for tall ships are fascinating to watch. The Tower Bridge Exhibition offers great views from the walkways.",
   place: tower_bridge,
   user: user2
 )
+attach_photo(comment, "Tower Bridge")
 
-Comment.create!(
+comment = Comment.create!(
   description: "The historic center of Lima is beautiful with stunning colonial architecture. The plaza is surrounded by important buildings including the Government Palace and the Cathedral of Lima.",
-  place: machu_picchu,
+  place: plaza_mayor,
   user: user1
 )
+attach_photo(comment, "Plaza Mayor de Lima")
 
-Comment.create!(
+comment = Comment.create!(
   description: "The Royal Palace is stunning with its Khmer architecture and beautiful gardens. The Silver Pagoda inside has an incredible floor made of silver tiles. Dress modestly to enter.",
   place: royal_palace,
   user: user1
 )
+attach_photo(comment, "Royal Palace of Phnom Penh")
 
-Comment.create!(
+comment = Comment.create!(
   description: "The views of Budapest from here are absolutely spectacular, especially at sunset. The neo-Gothic towers and terraces are perfect for photos. Don't miss the view of the Parliament building.",
   place: fishermans_bastion,
   user: user2
 )
+attach_photo(comment, "Fisherman's Bastion")
 
-Comment.create!(
+comment = Comment.create!(
   description: "Standing before the ancient pyramids is a humbling experience. The sheer scale is hard to comprehend until you're there. We highly recommend hiring a local guide for the history.",
   place: pyramids,
   user: user1
 )
+attach_photo(comment, "Pyramids of Giza")
 
 puts "Created #{Comment.count} comments."
 puts "Seeding complete!"
