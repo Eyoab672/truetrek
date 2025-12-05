@@ -7,6 +7,10 @@ Rails.application.routes.draw do
   end
   root to: "cities#index"
 
+  authenticate :user, ->(user) { user.admin? } do
+    mount MissionControl::Jobs::Engine, at: "/jobs"
+  end
+
   resources :cities, only: :index do
     resources :places, only: [:index, :show] do
       resources :comments, only: :create  # for existing places
