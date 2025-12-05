@@ -1,0 +1,14 @@
+<div class="info-window">
+  <% photo = place.comments.flat_map { |c| c.photos.to_a }.first %>
+  <% if photo %>
+    <div class="info-window-image" style="background-image: url('<%= cl_image_path photo.key, height: 120, width: 160, crop: :fill %>');"></div>
+  <% elsif place.default_img_url %>
+    <div class="info-window-image" style="background-image: url('<%= place.default_img_url %>');"></div>
+  <% end %>
+  <div class="info-window-content">
+    <h4 class="info-window-title"><%= place.title %></h4>
+    <%= link_to city_place_path(place.city, place), class: "info-window-link" do %>
+      View details <i class="fa-solid fa-arrow-right"></i>
+    <% end %>
+  </div>
+</div>

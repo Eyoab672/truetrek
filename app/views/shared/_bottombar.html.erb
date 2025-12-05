@@ -8,10 +8,22 @@
       </div>
     <% end %>
 
+    <%= link_to pages_home_path, class: "bottom-nav-item bottom-nav-item-main" do %>
+      <div class="bottom-nav-main-circle">
+        <i class="fa-solid fa-location-dot" style="color: #000000;"></i>
+      </div>
+    <% end %>
+
     <!-- CAMERA (HIGHLIGHTED, INLINE) -->
     <%= link_to camera_path, class: "bottom-nav-item bottom-nav-item-main" do %>
   <   div class="bottom-nav-main-circle">
         <i class="fa-solid fa-camera" id="camera"></i>
+      </div>
+    <% end %>
+
+    <%= link_to my_travel_book_path, class: "bottom-nav-item bottom-nav-item-main" do %>
+      <div class="bottom-nav-main-circle">
+        <i class="fa-solid fa-bookmark" style="color: #000000;"></i>
       </div>
     <% end %>
 

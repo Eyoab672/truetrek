@@ -5,8 +5,10 @@ Rails.application.routes.draw do
       get :search
     end
   end
+
   root to: "cities#index"
 
+  get "/pages/home", to: "pages#home"
   authenticate :user, ->(user) { user.admin? } do
     mount MissionControl::Jobs::Engine, at: "/jobs"
   end
