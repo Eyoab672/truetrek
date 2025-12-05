@@ -10,7 +10,15 @@ class Place < ApplicationRecord
 
   validates :title, presence: true
 
-  # pg_search_scope ...
+  pg_search_scope :search,
+    against: [:title, :enhanced_description],
+    associated_against: {
+      comments: [:description]
+    },
+    using: {
+      tsearch: { prefix: true }
+    }
+  # TODO: Re-enable once geocoder SSL issue is fixed
 
   after_validation :geocode, if: :will_save_change_to_address?
 end
