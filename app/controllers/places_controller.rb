@@ -1,4 +1,12 @@
 class PlacesController < ApplicationController
+  before_action :set_place, only: [:show]
+
+  def index
+    @city = City.find(params[:city_id])
+    @places = policy_scope(@city.places)
+    @places = @places.search(params[:query]) if params[:query].present?
+  end
+
   def new
     @place = Place.new
 
@@ -10,6 +18,15 @@ class PlacesController < ApplicationController
       @auto_city = City.closest_to(lat, lng)
       @place.city = @auto_city if @auto_city
     end
+  end
+
+  def show
+    @comment = Comment.new
+    @markers =
+    [{
+      lat: @place.latitude,
+      lng: @place.longitude
+    }]
   end
 
   def create
@@ -38,6 +55,11 @@ class PlacesController < ApplicationController
   end
 
   private
+
+  def set_place
+    @place = Place.find(params[:id])
+    authorize @place
+  end
 
   def place_params
     params.require(:place).permit(
