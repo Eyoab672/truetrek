@@ -119,15 +119,16 @@
     </section>
 
     <!-- Comments Section -->
-    <section class="place-comments-section">
-      <h2 class="section-heading">
+    <section class="place-comments-section" data-controller="collapsible" data-collapsible-expanded-value="true">
+      <h2 class="section-heading section-heading-collapsible" data-action="click->collapsible#toggle">
         <i class="fa-solid fa-comments"></i>
         Reviews & Comments
         <span class="comment-count">(<%= @place.comments.count %>)</span>
+        <i class="fa-solid fa-chevron-down collapse-icon" data-collapsible-target="icon"></i>
       </h2>
 
       <% if @place.comments.where(parent_id: nil).any? %>
-        <div class="comments-list">
+        <div class="comments-list" data-collapsible-target="content">
           <% @place.comments.where(parent_id: nil).order(created_at: :desc).each do |comment| %>
             <div class="comment-card" id="comment_<%= comment.id %>">
               <div class="comment-header">
@@ -191,7 +192,7 @@
           <% end %>
         </div>
       <% else %>
-        <div class="no-comments">
+        <div class="no-comments" data-collapsible-target="content">
           <i class="fa-regular fa-comment-dots fa-2x"></i>
           <p>No comments yet. Share your experience!</p>
         </div>
