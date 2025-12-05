@@ -1,0 +1,40 @@
+<div class="container py-4">
+  <h2 class="mb-3">Take a photo</h2>
+  <p class="text-muted mb-4">
+    We’ll use this photo to create a new place or attach it to an existing one.
+  </p>
+
+  <div class="camera-section mb-4">
+    <div class="camera-preview-wrapper mb-3">
+      <video id="camera-video" autoplay playsinline class="w-100 border rounded"></video>
+    </div>
+
+    <div class="camera-photo-wrapper mb-3">
+      <img id="camera-photo" alt="Your photo will appear here" class="w-100 border rounded" />
+    </div>
+
+    <div class="d-flex gap-2 mb-3">
+      <button type="button" id="start-camera" class="btn btn-primary">
+        Start camera
+      </button>
+      <button type="button" id="take-photo" class="btn btn-success" disabled>
+        Take photo
+      </button>
+      <button type="button" id="stop-camera" class="btn btn-outline-secondary" disabled>
+        Stop
+      </button>
+    </div>
+
+    <canvas id="camera-canvas" style="display:none;"></canvas>
+  </div>
+
+  <div class="d-grid gap-2">
+    <button type="button" class="btn btn-primary" id="use-for-new-place" disabled>
+      Use photo to create a new place
+    </button>
+
+    <button type="button" class="btn btn-outline-primary" id="use-for-existing-place" disabled>
+      Use photo for an existing place
+    </button>
+  </div>
+</div>

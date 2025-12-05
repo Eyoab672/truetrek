@@ -1,6 +1,4 @@
 class RepliesController < ApplicationController
-  include DescriptionEnhancer
-
   def create
     @parent_comment = Comment.find(params[:comment_id])
     @place = @parent_comment.place
@@ -12,7 +10,7 @@ class RepliesController < ApplicationController
     authorize @reply, policy_class: CommentPolicy
 
     if @reply.save
-      enhance_description_with_reply
+      UpdateEnhancedDescriptionJob.perform_later(@place.id)
       respond_to do |format|
         format.turbo_stream
         format.html { redirect_to city_place_path(@place.city, @place) }
@@ -29,9 +27,5 @@ class RepliesController < ApplicationController
 
   def reply_params
     params.require(:comment).permit(:description)
-  end
-
-  def enhance_description_with_reply
-    enhance_description_with_content(@place, @reply.description, @reply.user&.username)
   end
 end

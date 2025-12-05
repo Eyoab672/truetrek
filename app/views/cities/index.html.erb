@@ -63,7 +63,7 @@
                       <div class="card-body">
                         <h5 class="card-title"><%= place.title %></h5>
                         <p class="card-text text-muted"><small><i class="fa-solid fa-location-dot"></i> <%= place.city.name %></small></p>
-                        <p class="card-text"><%= truncate(place.wiki_description, length: 100) %></p>
+                        <p class="card-text"><%= truncate(place.enhanced_description, length: 100) %></p>
                       </div>
                     </div>
                   <% end %>

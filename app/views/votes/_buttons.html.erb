@@ -2,7 +2,7 @@
   <% user_vote = comment.user_vote(current_user) %>
   <% balance = comment.vote_balance %>
 
-  <%= button_to comment_vote_path(comment), method: :post, params: { vote: { value: 1 } }, class: "vote-btn vote-up #{'active' if user_vote&.value == 1}", data: { turbo_frame: "_top" } do %>
+  <%= button_to comment_vote_path(comment), method: :post, params: { vote: { value: 1 } }, class: "vote-btn vote-up #{'active' if user_vote&.value == 1}" do %>
     <i class="fa-solid fa-arrow-up"></i>
   <% end %>
 
@@ -10,7 +10,7 @@
     <%= balance %>
   </span>
 
-  <%= button_to comment_vote_path(comment), method: :post, params: { vote: { value: -1 } }, class: "vote-btn vote-down #{'active' if user_vote&.value == -1}", data: { turbo_frame: "_top" } do %>
+  <%= button_to comment_vote_path(comment), method: :post, params: { vote: { value: -1 } }, class: "vote-btn vote-down #{'active' if user_vote&.value == -1}" do %>
     <i class="fa-solid fa-arrow-down"></i>
   <% end %>
 </div>

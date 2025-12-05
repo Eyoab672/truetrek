@@ -1,8 +1,6 @@
 require "open-uri"
 
 class CommentsController < ApplicationController
-  include DescriptionEnhancer
-
   SYSTEM_PROMPT = <<~PROMPT.freeze
     You are a helpful travel assistant that provides concise, engaging summaries about places.
     When enhancing descriptions, keep them informative but brief (2-3 paragraphs max).
@@ -20,7 +18,6 @@ class CommentsController < ApplicationController
       # Flow 2: Adding comment to existing place (nested route)
       @place = Place.find(params[:place_id])
       @comment = build_comment
-      enhance_description_with_comment if @comment.valid?
     else
       # Flow 1: Creating new place with first comment
       @place = Place.new(place_params)
@@ -35,6 +32,7 @@ class CommentsController < ApplicationController
     authorize @comment
 
     if @comment.save
+      UpdateEnhancedDescriptionJob.perform_later(@place.id)
       redirect_to city_place_path(@place.city, @place)
     else
       render :new, status: :unprocessable_entity
@@ -85,9 +83,5 @@ class CommentsController < ApplicationController
     @place.enhanced_description = step2.content
   rescue StandardError => e
     Rails.logger.error("Failed to generate place descriptions: #{e.message}")
-  end
-
-  def enhance_description_with_comment
-    enhance_description_with_content(@place, @comment.description, @comment.user&.username)
   end
 end

@@ -9,12 +9,19 @@ Rails.application.routes.draw do
   root to: "cities#index"
 
   get "/pages/home", to: "pages#home"
+  authenticate :user, ->(user) { user.admin? } do
+    mount MissionControl::Jobs::Engine, at: "/jobs"
+  end
 
   resources :cities, only: :index do
     resources :places, only: [:index, :show] do
       resources :comments, only: :create  # for existing places
     end
   end
+
+  get  "/camera", to: "captures#new",    as: :camera
+  post "/camera", to: "captures#create"
+  
 
   # Replies to comments
   resources :comments, only: [] do
