@@ -66,7 +66,7 @@ ActiveRecord::Schema[7.2].define(version: 2025_12_04_150258) do
     t.text "enhanced_description"
     t.float "longitude"
     t.float "latitude"
-    t.bigint "city_id", null: false
+    t.bigint "city_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "address"
