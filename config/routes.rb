@@ -23,6 +23,9 @@ Rails.application.routes.draw do
   resources :cities, only: :index do
     resources :places, only: [:index, :show] do
       resources :comments, only: :create  # for existing places
+      member do
+        post :regenerate_description
+      end
     end
   end
 

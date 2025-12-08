@@ -9,6 +9,10 @@ class PlacePolicy < ApplicationPolicy
     true
   end
 
+  def regenerate_description?
+    true
+  end
+  
   def destroy?
     user&.admin?
   end

@@ -1,5 +1,5 @@
 class PlacesController < ApplicationController
-  before_action :set_place, only: [:show, :destroy]
+  before_action :set_place, only: %i[show regenerate_description destroy]
 
   def index
     @city = City.find(params[:city_id])
@@ -103,6 +103,11 @@ class PlacesController < ApplicationController
     end
   end
 
+  def regenerate_description
+    UpdateEnhancedDescriptionJob.perform_now(@place.id)
+    redirect_to city_place_path(@place.city, @place), notice: "Description has been regenerated!"
+  end
+  
   def destroy
     city = @place.city
     @place.destroy
