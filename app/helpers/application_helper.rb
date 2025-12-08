@@ -7,15 +7,15 @@ module ApplicationHelper
 
     # Replace (username) with avatar + username
     description.gsub(/\(([a-z0-9_]+)\)/) do |match|
-      username = $1
+      username = ::Regexp.last_match(1)
       user = users_by_username[username]
 
       if user
         avatar_html = if user.avatar.attached? && user.avatar.blob&.persisted?
-          image_tag(url_for(user.avatar), alt: user.username, class: "inline-avatar")
-        else
-          content_tag(:span, user.username.first.upcase, class: "inline-avatar-placeholder")
-        end
+                        image_tag(url_for(user.avatar), alt: user.username, class: "inline-avatar")
+                      else
+                        content_tag(:span, user.username.first.upcase, class: "inline-avatar-placeholder")
+                      end
 
         content_tag(:span, class: "username-reference") do
           avatar_html + content_tag(:span, "#{user.username}", class: "username-text")
