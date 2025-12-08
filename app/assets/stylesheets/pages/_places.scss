@@ -8,6 +8,10 @@
 // #5d89ba - Medium blue (primary)
 // #533A33 - Dark brown
 
+html {
+  scroll-behavior: smooth;
+}
+
 .places-page {
   margin-top: -1rem; // Offset navbar spacing
 }
@@ -715,6 +719,15 @@
 }
 
 // Inline username references with avatars
+.username-reference-link {
+  text-decoration: none;
+  
+  &:hover .username-reference {
+    opacity: 0.8;
+    text-decoration: underline;
+  }
+}
+
 .username-reference {
   display: inline-flex;
   position: relative;
@@ -723,6 +736,7 @@
   font-weight: 500;
   margin: 0 2px;
   vertical-align: baseline;
+  transition: opacity 0.2s ease;
 }
 
 .inline-avatar {
