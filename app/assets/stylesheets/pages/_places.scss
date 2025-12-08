@@ -721,7 +721,7 @@ html {
 // Inline username references with avatars
 .username-reference-link {
   text-decoration: none;
-  
+
   &:hover .username-reference {
     opacity: 0.8;
     text-decoration: underline;
@@ -897,16 +897,28 @@ html {
     background: #e0e0e0;
   }
 
-  &.vote-up:hover,
-  &.vote-up.active {
-    background: #d4edda;
-    color: #28a745;
+  &.vote-up {
+    &:hover {
+      background: #d4edda;
+      color: #28a745;
+    }
+
+    &.active {
+      background: #28a745;
+      color: white;
+    }
   }
 
-  &.vote-down:hover,
-  &.vote-down.active {
-    background: #f8d7da;
-    color: #dc3545;
+  &.vote-down {
+    &:hover {
+      background: #f8d7da;
+      color: #dc3545;
+    }
+
+    &.active {
+      background: #dc3545;
+      color: white;
+    }
   }
 
   i {
