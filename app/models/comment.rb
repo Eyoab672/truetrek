@@ -53,8 +53,8 @@ class Comment < ApplicationRecord
   end
 
   pg_search_scope :search,
-    against: [:description],
-    using: {
-      tsearch: { prefix: true }
-    }
+                  against: [:description],
+                  using: {
+                    tsearch: { prefix: true }
+                  }
 end
