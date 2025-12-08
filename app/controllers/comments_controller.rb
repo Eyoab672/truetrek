@@ -83,6 +83,9 @@ class CommentsController < ApplicationController
     city = @place.city&.name
     location_context = [address, city].compact_blank.join(", ")
 
+    # Get the username of the comment author
+    username = current_user&.username || "anonymous"
+
     base_subject = location_context.present? ? "#{@place.title} located around #{location_context}" : @place.title
 
     # Step 1: Generate initial summary
@@ -96,6 +99,7 @@ class CommentsController < ApplicationController
       - Also incorporate this visitor review: "#{user_review}"
       - Location context: #{location_context.presence || 'Unknown'}
 
+      When including the visitor review, append the username (#{username}) in parentheses at the end of the sentence containing the review.
       If Wikipedia returns nothing useful, still produce a polished description using the review and location context without mentioning any tool errors.
     MSG
 
@@ -109,6 +113,7 @@ class CommentsController < ApplicationController
         Use the visitor review and the location context to craft an engaging, concise description.
         Visitor review: "#{user_review}"
         Location context: #{location_context.presence || 'Unknown'}
+        When including the visitor review, append the username (#{username}) in parentheses at the end of the sentence containing the review.
       MSG
 
       fallback = @chat.ask(fallback_prompt)
