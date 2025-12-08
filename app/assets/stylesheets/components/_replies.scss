@@ -140,6 +140,22 @@
   margin-bottom: 0.4rem;
 }
 
+// Reply avatar link
+.reply-avatar-link {
+  text-decoration: none;
+  display: block;
+  transition: transform 0.2s ease;
+
+  &:hover {
+    transform: scale(1.1);
+  }
+
+  &:hover .reply-avatar-img,
+  &:hover .reply-avatar-placeholder {
+    box-shadow: 0 2px 8px rgba(255, 107, 107, 0.3);
+  }
+}
+
 .reply-avatar {
   width: 24px;
   height: 24px;
@@ -166,10 +182,17 @@
   justify-content: center;
 }
 
+a.reply-author,
 .reply-author {
   font-weight: 600;
   font-size: 0.85rem;
   color: #1a1a2e;
+  text-decoration: none;
+  transition: color 0.2s ease;
+
+  &:hover {
+    color: #ff6b6b;
+  }
 }
 
 .reply-date {
@@ -342,7 +365,7 @@
 // ========================================
 
 .mention-dropdown {
-  position: absolute;
+  // position: absolute;
   bottom: 100%;
   left: 0;
   right: 0;

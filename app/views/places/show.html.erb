@@ -102,15 +102,17 @@
           <span class="contributors-label">Contributors:</span>
           <div class="contributors-avatars">
             <% contributors.each do |user| %>
-              <div class="contributor-avatar" title="<%= user.username %>">
-                <% if user.avatar.attached? && user.avatar.blob&.persisted? %>
-                  <%= image_tag url_for(user.avatar), alt: user.username, class: "contributor-avatar-img" %>
-                <% else %>
-                  <div class="contributor-avatar-placeholder">
-                    <%= user.username&.first&.upcase %>
-                  </div>
-                <% end %>
-              </div>
+              <%= link_to user_path(user), class: "contributor-avatar-link", title: user.username do %>
+                <div class="contributor-avatar">
+                  <% if user.avatar.attached? && user.avatar.blob&.persisted? %>
+                    <%= image_tag url_for(user.avatar), alt: user.username, class: "contributor-avatar-img" %>
+                  <% else %>
+                    <div class="contributor-avatar-placeholder">
+                      <%= user.username&.first&.upcase %>
+                    </div>
+                  <% end %>
+                </div>
+              <% end %>
             <% end %>
             <span class="contributors-count"><%= contributors.count %> <%= "contributor".pluralize(contributors.count) %></span>
           </div>
@@ -139,16 +141,18 @@
                     <span class="vote-count"><%= comment.vote_balance %></span>
                   </div>
                 <% end %>
-                <div class="comment-avatar">
-                  <% if comment.user.avatar.attached? && comment.user.avatar.blob&.persisted? %>
-                    <%= image_tag url_for(comment.user.avatar), alt: comment.user.username, class: "comment-avatar-img" %>
-                  <% else %>
-                    <span class="comment-avatar-placeholder"><%= comment.user.username&.first&.upcase %></span>
-                  <% end %>
-                </div>
+                <%= link_to user_path(comment.user), class: "comment-avatar-link" do %>
+                  <div class="comment-avatar">
+                    <% if comment.user.avatar.attached? && comment.user.avatar.blob&.persisted? %>
+                      <%= image_tag url_for(comment.user.avatar), alt: comment.user.username, class: "comment-avatar-img" %>
+                    <% else %>
+                      <span class="comment-avatar-placeholder"><%= comment.user.username&.first&.upcase %></span>
+                    <% end %>
+                  </div>
+                <% end %>
                 <div class="comment-meta">
                   <div class="comment-author-row">
-                    <span class="comment-author"><%= comment.user.username %></span>
+                    <%= link_to comment.user.username, user_path(comment.user), class: "comment-author" %>
                     <% if comment.user_is_local? %>
                       <span class="local-badge"><i class="fa-solid fa-location-dot"></i> Local</span>
                     <% end %>
