@@ -14,29 +14,29 @@ class PlacesController < ApplicationController
     lat = session[:captured_latitude]
     lng = session[:captured_longitude]
 
-    if lat.present? && lng.present?
-      @auto_city = City.closest_to(lat, lng)
-      @place.city = @auto_city if @auto_city
-    end
+    return unless lat.present? && lng.present?
+
+    @auto_city = City.closest_to(lat, lng)
+    @place.city = @auto_city if @auto_city
   end
 
   def show
     @comment = Comment.new
-    @comments = @place.comments.includes(:user, :votes).where(parent_id: nil).sort_by { |c| c.ordering_key(local_bonus: 2) }
+    @comments = @place.comments.includes(:user, :votes).where(parent_id: nil).sort_by do |c|
+      c.ordering_key(local_bonus: 2)
+    end
     @markers =
-    [{
-      lat: @place.latitude,
-      lng: @place.longitude
-    }]
+      [{
+        lat: @place.latitude,
+        lng: @place.longitude
+      }]
   end
 
   def create
     @place = Place.new(place_params)
 
-    if @place.camera_blob_id.present?
-      if (blob = ActiveStorage::Blob.find_signed(@place.camera_blob_id))
-        @place.photo.attach(blob)
-      end
+    if @place.camera_blob_id.present? && (blob = ActiveStorage::Blob.find_signed(@place.camera_blob_id))
+      @place.photo.attach(blob)
     end
 
     if @place.save
