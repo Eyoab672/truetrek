@@ -21,7 +21,7 @@ Rails.application.routes.draw do
 
   get  "/camera", to: "captures#new",    as: :camera
   post "/camera", to: "captures#create"
-  
+
 
   # Replies to comments
   resources :comments, only: [] do
@@ -30,7 +30,7 @@ Rails.application.routes.draw do
   end
 
   get 'my_travel_book', to: 'travel_books#show', as: :my_travel_book
-  resources :places, only: [] do
+  resources :places, only: [:new, :create, :update] do
     resources :travel_book_places, only: :create
   end
   resources :travel_book_places, only: :destroy

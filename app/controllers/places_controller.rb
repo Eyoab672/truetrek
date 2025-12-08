@@ -9,11 +9,29 @@ class PlacesController < ApplicationController
 
   def new
     @place = Place.new
+    authorize @place
 
     @camera_blob_id = session[:captured_blob_id]
     lat = session[:captured_latitude]
     lng = session[:captured_longitude]
 
+    if lat.present? && lng.present?
+      @place.latitude = lat
+      @place.longitude = lng
+
+      # Reverse geocode to get city and address
+      begin
+        results = Geocoder.search([lat, lng])
+        if results.present? && results.first
+          city_name = results.first.city || results.first.state || results.first.country
+          @auto_city = City.find_or_create_by(name: city_name) if city_name.present?
+          @place.city = @auto_city if @auto_city
+          @place.address = results.first.address
+        end
+      rescue => e
+        Rails.logger.error "Geocoding error: #{e.message}"
+      end
+    end
     return unless lat.present? && lng.present?
 
     @auto_city = City.closest_to(lat, lng)
@@ -22,6 +40,12 @@ class PlacesController < ApplicationController
 
   def show
     @comment = Comment.new
+
+    # Combine place photos and comment photos
+    @place_photos = @place.photo.map(&:blob)
+    @comment_photos = @place.comments.flat_map { |c| c.photos.map(&:blob) }
+    @all_photos = @place_photos + @comment_photos
+
     @comments = @place.comments.includes(:user, :votes).where(parent_id: nil).sort_by do |c|
       c.ordering_key(local_bonus: 2)
     end
@@ -34,23 +58,47 @@ class PlacesController < ApplicationController
 
   def create
     @place = Place.new(place_params)
+    authorize @place
 
+    if @place.save
+      # Attach photo from camera blob after saving
+      if @place.camera_blob_id.present?
+        begin
+          blob = ActiveStorage::Blob.find_signed(@place.camera_blob_id)
+          @place.photo.attach(blob) if blob
+          Rails.logger.info "Photo attached successfully to place #{@place.id}: blob #{blob&.id}"
+        rescue => e
+          Rails.logger.error "Failed to attach photo to place #{@place.id}: #{e.message}"
+        end
+      end
     if @place.camera_blob_id.present? && (blob = ActiveStorage::Blob.find_signed(@place.camera_blob_id))
       @place.photo.attach(blob)
     end
 
-    if @place.save
       # clear camera session
       session[:captured_blob_id] = nil
       session[:captured_latitude] = nil
       session[:captured_longitude] = nil
 
-      redirect_to @place, notice: "Place created!"
+      redirect_to city_place_path(@place.city, @place), notice: "Place created!"
     else
       @camera_blob_id = session[:captured_blob_id]
       lat = session[:captured_latitude]
       lng = session[:captured_longitude]
-      @auto_city = City.closest_to(lat, lng) if lat.present? && lng.present?
+
+      # Re-populate form data on validation error
+      if lat.present? && lng.present?
+        begin
+          results = Geocoder.search([lat, lng])
+          if results.present? && results.first
+            city_name = results.first.city || results.first.state || results.first.country
+            @auto_city = City.find_or_create_by(name: city_name) if city_name.present?
+          end
+        rescue => e
+          Rails.logger.error "Geocoding error: #{e.message}"
+        end
+      end
+
       render :new, status: :unprocessable_entity
     end
   end

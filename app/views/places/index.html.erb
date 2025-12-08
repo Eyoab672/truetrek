@@ -40,8 +40,10 @@
     <% if @places.any? %>
       <div class="places-grid">
         <% @places.each_with_index do |place, index| %>
-          <% photos = place.comments.flat_map { |c| c.photos.to_a }.first(5) %>
-          <div class="place-card <%= 'featured' if index < 2 %>">
+          <% place_photos = place.photo.map(&:blob) %>
+          <% comment_photos = place.comments.flat_map { |c| c.photos.map(&:blob) } %>
+          <% photos = (place_photos + comment_photos).first(5) %>
+          <div class="place-card <%= 'featured' if index < 2 %>">>
             <% if photos.any? %>
               <div id="placeCardCarousel<%= place.id %>" class="carousel slide card-carousel" data-bs-ride="carousel">
                 <div class="carousel-inner">

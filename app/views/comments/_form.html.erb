@@ -1,7 +1,39 @@
 <div class="comment-form-wrapper">
   <div class="comment-form-card">
-    <%= simple_form_for comment, html: { class: "styled-comment-form" } do |f| %>
-      <% if local_assigns[:place]&.new_record? %>
+    <%= simple_form_for comment, local: true, url: comments_path, html: { class: "styled-comment-form" } do |f| %>
+      <% # Show place selection if from_camera but no specific place selected yet %>
+      <% if params[:from_camera] && !params[:place_id] && @places.present? %>
+        <!-- Camera Flow: Select Existing Place -->
+        <div class="form-section">
+          <h3 class="form-section-title">
+            <i class="fa-solid fa-location-dot"></i>
+            Select a Place
+          </h3>
+
+          <div class="form-field">
+            <label class="styled-label">Where did you take this photo?</label>
+            <div class="place-select-container">
+              <% @places.each do |p| %>
+                <%= link_to new_comment_path(place_id: p.id, from_camera: true), class: "place-option" do %>
+                  <span class="place-option-name"><%= p.title %></span>
+                  <i class="fa-solid fa-arrow-right"></i>
+                <% end %>
+              <% end %>
+
+              <!-- Create New Place Option -->
+              <%= link_to new_place_path, class: "place-option create-new-place" do %>
+                <span class="place-option-name">
+                  <i class="fa-solid fa-plus"></i> Create a New Place
+                </span>
+                <i class="fa-solid fa-arrow-right"></i>
+              <% end %>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-divider"></div>
+      <% elsif local_assigns[:place]&.new_record? %>
+        <!-- Comment Flow: Create New Place -->
         <div class="form-section">
           <h3 class="form-section-title">
             <i class="fa-solid fa-location-dot"></i>
@@ -30,7 +62,7 @@
 
               <div class="form-field">
                 <label class="styled-label">Address</label>
-                <div class="geocoder-container" data-address-autocomplete-target="geocoderContainer"></div>
+                <div class="geocoder-container" data-address-autocomplete_target="geocoderContainer"></div>
                 <p class="form-hint" data-address-autocomplete-target="addressHint">
                   <i class="fa-solid fa-circle-info"></i> Please select a city first
                 </p>
@@ -60,21 +92,37 @@
           <p class="form-hint">Minimum 20 characters</p>
         </div>
 
-        <div class="form-field">
-          <%= f.input :photos,
-            as: :file,
-            direct_upload: true,
-            label: "Upload Photos",
-            input_html: { multiple: true, class: "styled-file-input", accept: "image/*" } %>
-          <p class="form-hint">
-            <i class="fa-solid fa-camera"></i> Share your best shots (optional)
-          </p>
-        </div>
+        <% # Show camera photo preview if from camera flow %>
+        <% if params[:from_camera] && session[:captured_blob_id].present? %>
+          <div class="form-field">
+            <label class="styled-label">
+              <i class="fa-solid fa-image"></i> Photo from Camera
+            </label>
+            <div class="camera-photo-preview-section">
+              <%= image_tag url_for(ActiveStorage::Blob.find_signed(session[:captured_blob_id])),
+                            class: "camera-photo-preview-img" %>
+            </div>
+            <p class="form-hint">
+              <i class="fa-solid fa-check-circle"></i> Your camera photo will be added to this place
+            </p>
+          </div>
+        <% end %>
       </div>
 
+      <!-- Hidden field to pass place_id if present -->
+      <% if params[:place_id].present? %>
+        <%= hidden_field_tag :place_id, params[:place_id] %>
+      <% end %>
+
       <div class="form-actions">
-        <%= f.submit local_assigns[:place]&.new_record? ? "Add Place" : "Add Comment",
-          class: "btn-submit-form" %>
+        <% button_text = if local_assigns[:place]&.new_record?
+          "Add Place"
+        elsif params[:from_camera]
+          "Add Photos to Place"
+        else
+          "Add Comment"
+        end %>
+        <%= f.submit button_text, class: "btn-submit-form" %>
       </div>
     <% end %>
   </div>

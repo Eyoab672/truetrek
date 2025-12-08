@@ -15,6 +15,30 @@ class CommentsController < ApplicationController
     @comment = Comment.new
     @place = Place.new
     authorize @comment
+
+    # If place_id is provided, load that place (user selected from camera flow)
+    if params[:place_id]
+      @place = Place.find(params[:place_id])
+    elsif params[:from_camera]
+      # Get city from geolocation for place selection
+      lat = session[:captured_latitude]
+      lng = session[:captured_longitude]
+
+      if lat.present? && lng.present?
+        begin
+          results = Geocoder.search([lat, lng])
+          if results.present? && results.first
+            city_name = results.first.city || results.first.state || results.first.country
+            @auto_city = City.find_or_create_by(name: city_name) if city_name.present?
+            @city = @auto_city if @auto_city
+          end
+        rescue => e
+          Rails.logger.error "Geocoding error: #{e.message}"
+        end
+      end
+
+      @places = @city.places if @city
+    end
   end
 
   def create
@@ -36,8 +60,21 @@ class CommentsController < ApplicationController
     authorize @comment
 
     if @comment.save
+      # Attach camera photo if present (camera flow)
+      if session[:captured_blob_id].present?
+        begin
+          blob = ActiveStorage::Blob.find_signed(session[:captured_blob_id])
+          @comment.photos.attach(blob) if blob
+          session[:captured_blob_id] = nil
+          session[:captured_latitude] = nil
+          session[:captured_longitude] = nil
+        rescue => e
+          Rails.logger.error "Failed to attach camera photo to comment: #{e.message}"
+        end
+      end
+
       UpdateEnhancedDescriptionJob.perform_later(@place.id)
-      redirect_to city_place_path(@place.city, @place)
+      redirect_to city_place_path(@place.city, @place), notice: "Photo added successfully!"
     else
       render :new, status: :unprocessable_entity
     end
