@@ -3,8 +3,12 @@ require "open-uri"
 class CommentsController < ApplicationController
   SYSTEM_PROMPT = <<~PROMPT.freeze
     You are a helpful travel assistant that provides concise, engaging summaries about places.
-    When enhancing descriptions, keep them informative but brief (2-3 paragraphs max).
-    Use the Wikipedia tool when you need factual information about a place.
+    Keep descriptions informative but brief (2-3 paragraphs max).
+
+    You MAY use the Wikipedia tool for factual details, but if it fails or returns no useful results:
+    - Do NOT mention the failure and do NOT include phrases like "couldn't find" or "no results".
+    - Instead, synthesize from what the visitor wrote, the address/location, the city/region, and general travel knowledge.
+    - Always return a polished description without tool errors or apologies.
   PROMPT
 
   def new
@@ -74,14 +78,54 @@ class CommentsController < ApplicationController
     @chat.with_instructions(SYSTEM_PROMPT)
     @chat.with_tool(WikipediaTool.new)
 
+    user_review = params.dig(:comment, :description).presence || "Visitor review not provided yet."
+    address = @place.address.presence
+    city = @place.city&.name
+    location_context = [address, city].compact_blank.join(", ")
+
+    base_subject = location_context.present? ? "#{@place.title} located around #{location_context}" : @place.title
+
     # Step 1: Generate initial summary
-    step1 = @chat.ask("Write a brief summary about #{@place.title}.")
+    step1 = @chat.ask("Write a brief summary about #{base_subject}.")
     @place.original_description = step1.content
 
     # Step 2: Enhance with Wikipedia data (conversation continues)
-    step2 = @chat.ask("Now use the Wikipedia tool to get factual information about #{@place.title} and enhance the summary.")
+    step2_prompt = <<~MSG
+      Enhance the summary using available sources.
+      - Try the Wikipedia tool for factual information about #{@place.title}.
+      - Also incorporate this visitor review: "#{user_review}"
+      - Location context: #{location_context.presence || 'Unknown'}
+
+      If Wikipedia returns nothing useful, still produce a polished description using the review and location context without mentioning any tool errors.
+    MSG
+
+    step2 = @chat.ask(step2_prompt)
     @place.enhanced_description = step2.content
+
+    # Fallback: detect and remove any Wikipedia failure phrasing
+    if contains_wikipedia_failure?(@place.enhanced_description)
+      fallback_prompt = <<~MSG
+        Rewrite the description without mentioning Wikipedia or any tool issues.
+        Use the visitor review and the location context to craft an engaging, concise description.
+        Visitor review: "#{user_review}"
+        Location context: #{location_context.presence || 'Unknown'}
+      MSG
+
+      fallback = @chat.ask(fallback_prompt)
+      @place.enhanced_description = fallback.content
+    end
   rescue StandardError => e
     Rails.logger.error("Failed to generate place descriptions: #{e.message}")
+  end
+
+  def contains_wikipedia_failure?(text)
+    return false if text.blank?
+
+    failure_indicators = [
+      "couldn't find", "could not find", "unable to find", "no results", "wikipedia", "error", "failed to", "not available"
+    ]
+
+    downcased = text.downcase
+    failure_indicators.any? { |indicator| downcased.include?(indicator) }
   end
 end
