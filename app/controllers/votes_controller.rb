@@ -3,17 +3,22 @@ class VotesController < ApplicationController
   before_action :set_comment
 
   def create
-    @vote = @comment.votes.find_or_initialize_by(user: current_user)
     new_value = vote_params[:value].to_i
 
-    # If clicking the same vote button, remove the vote (toggle off)
-    if @vote.persisted? && @vote.value == new_value
-      authorize @vote, :destroy?
-      @vote.destroy
-    else
-      @vote.value = new_value
-      authorize @vote
-      @vote.save
+    @comment.with_lock do
+      existing_vote = @comment.votes.find_by(user: current_user)
+
+      if existing_vote
+        # Any click on vote buttons removes the existing vote (toggle off or cancel opposite)
+        @vote = existing_vote
+        authorize @vote, :destroy?
+        @vote.destroy
+      else
+        # No existing vote, create a new one
+        @vote = @comment.votes.build(user: current_user, value: new_value)
+        authorize @vote, :create?
+        @vote.save
+      end
     end
 
     update_enhanced_description

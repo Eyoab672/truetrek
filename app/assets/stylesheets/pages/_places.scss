@@ -8,6 +8,10 @@
 // #5d89ba - Medium blue (primary)
 // #533A33 - Dark brown
 
+html {
+  scroll-behavior: smooth;
+}
+
 .places-page {
   margin-top: -1rem; // Offset navbar spacing
 }
@@ -218,12 +222,10 @@
     }
 
     .card-overlay {
-      background: linear-gradient(
-        to top,
-        rgba(83, 58, 51, 0.85) 0%,
-        rgba(83, 58, 51, 0.4) 50%,
-        rgba(93, 137, 186, 0.1) 100%
-      );
+      background: linear-gradient(to top,
+          rgba(83, 58, 51, 0.85) 0%,
+          rgba(83, 58, 51, 0.4) 50%,
+          rgba(93, 137, 186, 0.1) 100%);
     }
 
     .card-cta {
@@ -302,6 +304,7 @@
 }
 
 .place-card:hover .card-carousel {
+
   .carousel-control-prev,
   .carousel-control-next {
     opacity: 1;
@@ -379,12 +382,12 @@
   }
 
   .places-grid {
-      display: grid;
-  grid-template-columns: 1fr 1fr;
-  justify-items: stretch;
-  align-items: stretch;
-  column-gap: 29px;
-  row-gap: 23px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    justify-items: stretch;
+    align-items: stretch;
+    column-gap: 29px;
+    row-gap: 23px;
   }
 
   .place-card {
@@ -548,6 +551,7 @@
 .form-actions {
   text-align: center;
 }
+
 // Carousel Container
 .place-carousel-container {
   border-radius: 16px;
@@ -586,6 +590,7 @@
   }
 
   &:hover {
+
     .carousel-control-prev,
     .carousel-control-next {
       opacity: 1;
@@ -711,6 +716,58 @@
   line-height: 1.8;
   color: #533A33;
   opacity: 0.85;
+}
+
+// Inline username references with avatars
+.username-reference-link {
+  text-decoration: none;
+
+  &:hover .username-reference {
+    opacity: 0.8;
+    text-decoration: underline;
+  }
+}
+
+.username-reference {
+  display: inline-flex;
+  position: relative;
+  align-items: baseline;
+  color: #0066cc;
+  font-weight: 500;
+  margin: 0 2px;
+  vertical-align: baseline;
+  transition: opacity 0.2s ease;
+}
+
+.inline-avatar {
+  position: absolute;
+  top: 4px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  margin-right: 4px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.inline-avatar-placeholder {
+  display: inline-flex;
+  position: absolute;
+  top: 4px;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background-color: #6c757d;
+  color: white;
+  font-size: 10px;
+  margin-right: 4px;
+  flex-shrink: 0;
+}
+
+.username-text {
+  margin-left: 23px;
 }
 
 // Contributors Section
@@ -840,16 +897,28 @@
     background: #e0e0e0;
   }
 
-  &.vote-up:hover,
-  &.vote-up.active {
-    background: #d4edda;
-    color: #28a745;
+  &.vote-up {
+    &:hover {
+      background: #d4edda;
+      color: #28a745;
+    }
+
+    &.active {
+      background: #28a745;
+      color: white;
+    }
   }
 
-  &.vote-down:hover,
-  &.vote-down.active {
-    background: #f8d7da;
-    color: #dc3545;
+  &.vote-down {
+    &:hover {
+      background: #f8d7da;
+      color: #dc3545;
+    }
+
+    &.active {
+      background: #dc3545;
+      color: white;
+    }
   }
 
   i {
@@ -1158,6 +1227,7 @@ a.comment-author,
 }
 
 @media (max-width: 480px) {
+
   .place-carousel-container .carousel-image,
   .place-map {
     height: 220px;

@@ -94,12 +94,11 @@
     <!-- Description -->
     <section class="place-description-section">
       <h2 class="section-heading">About this place</h2>
-      <p class="place-description"><%= @place.enhanced_description %></p>
+      <p class="place-description"><%= format_description_with_avatars(@place.enhanced_description, @place) %></p>
 
       <% contributors = @place.comments.includes(:user).map(&:user).uniq %>
       <% if contributors.any? %>
         <div class="contributors-section">
-          <span class="contributors-label">Contributors:</span>
           <div class="contributors-avatars">
             <% contributors.each do |user| %>
               <%= link_to user_path(user), class: "contributor-avatar-link", title: user.username do %>
@@ -125,13 +124,13 @@
       <h2 class="section-heading section-heading-collapsible" data-action="click->collapsible#toggle">
         <i class="fa-solid fa-comments"></i>
         Reviews & Comments
-        <span class="comment-count">(<%= @place.comments.count %>)</span>
+        <span class="comment-count">(<%= @comments&.count || 0 %>)</span>
         <i class="fa-solid fa-chevron-down collapse-icon" data-collapsible-target="icon"></i>
       </h2>
 
-      <% if @place.comments.where(parent_id: nil).any? %>
+      <% if @comments.any? %>
         <div class="comments-list" data-collapsible-target="content">
-          <% @place.comments.where(parent_id: nil).order(created_at: :desc).each do |comment| %>
+          <% @comments.each do |comment| %>
             <div class="comment-card" id="comment_<%= comment.id %>">
               <div class="comment-header">
                 <% if user_signed_in? %>
