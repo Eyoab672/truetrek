@@ -94,7 +94,7 @@ class CommentsController < ApplicationController
       Enhance the summary using available sources.
       - Try the Wikipedia tool for factual information about #{@place.title}.
       - Also incorporate this visitor review: "#{user_review}"
-      - Location context: #{location_context.presence || "Unknown"}
+      - Location context: #{location_context.presence || 'Unknown'}
 
       If Wikipedia returns nothing useful, still produce a polished description using the review and location context without mentioning any tool errors.
     MSG
@@ -108,7 +108,7 @@ class CommentsController < ApplicationController
         Rewrite the description without mentioning Wikipedia or any tool issues.
         Use the visitor review and the location context to craft an engaging, concise description.
         Visitor review: "#{user_review}"
-        Location context: #{location_context.presence || "Unknown"}
+        Location context: #{location_context.presence || 'Unknown'}
       MSG
 
       fallback = @chat.ask(fallback_prompt)
