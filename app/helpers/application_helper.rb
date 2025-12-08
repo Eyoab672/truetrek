@@ -13,7 +13,7 @@ module ApplicationHelper
       if user
         # Find the first comment from this user
         first_comment = place.comments.find_by(user: user)
-        
+
         if first_comment
           avatar_html = if user.avatar.attached? && user.avatar.blob&.persisted?
                           image_tag(url_for(user.avatar), alt: user.username, class: "inline-avatar")
