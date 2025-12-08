@@ -32,10 +32,6 @@ class PlacesController < ApplicationController
         Rails.logger.error "Geocoding error: #{e.message}"
       end
     end
-    return unless lat.present? && lng.present?
-
-    @auto_city = City.closest_to(lat, lng)
-    @place.city = @auto_city if @auto_city
   end
 
   def show
