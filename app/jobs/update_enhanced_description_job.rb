@@ -51,9 +51,13 @@ class UpdateEnhancedDescriptionJob < ApplicationJob
 
       Please create an enhanced description (3-4 paragraphs) that incorporates these experiences naturally.
       Prioritize and highlight insights from LOCAL residents as they have authentic knowledge.
-      IMPORTANT: When incorporating a visitor experience, end that sentence with " (username)" in parentheses, where username is the lowercase username provided in the experience.
-      Example format: "The courtyard felt peaceful (john_doe)."
-      Do NOT mention usernames anywhere else in the text—only append them at the end of sentences containing their experiences.
+      
+      CRITICAL REQUIREMENTS:
+      1. You MUST incorporate ALL of the community experiences provided above into the final description.
+      2. Each experience MUST appear as a complete sentence or clause ending with " (username)" where username is the exact lowercase username provided.
+      3. Do NOT skip any experiences—all #{top_comments.size} experiences must be included.
+      4. Example format: "The courtyard felt peaceful (john_doe)."
+      5. Do NOT mention usernames anywhere else in the text—only append them at the end of sentences containing their experiences.
     MSG
 
     response = chat.ask(prompt)
