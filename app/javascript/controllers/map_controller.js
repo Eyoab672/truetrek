@@ -9,13 +9,15 @@ export default class extends Controller {
     pop: Boolean,
   }
   connect() {
+    console.log(mapboxgl.version);
+
     mapboxgl.accessToken = this.apiKeyValue
     this.map = new mapboxgl.Map({
       container: this.element,
       zoom: 9, // starting zoom
-      // style: "mapbox://styles/mapbox/standard-satellite", // not working
       style: "mapbox://styles/roukiasabry/cmist36hs001h01r6142a7chf", // not working
     });
+
     this.#addMarkersToMap()
     this.#fitMapToMarkers()
     this.map.addControl(new mapboxgl.NavigationControl());
