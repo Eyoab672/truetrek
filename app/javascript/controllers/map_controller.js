@@ -11,6 +11,8 @@ export default class extends Controller {
     zoom: { type: Number, default: 9 },
   }
   connect() {
+    console.log(mapboxgl.version);
+
     mapboxgl.accessToken = this.apiKeyValue
 
     const mapOptions = {
