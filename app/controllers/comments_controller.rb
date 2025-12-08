@@ -99,7 +99,9 @@ class CommentsController < ApplicationController
       - Also incorporate this visitor review: "#{user_review}"
       - Location context: #{location_context.presence || 'Unknown'}
 
-      When including the visitor review, append the username (#{username}) in parentheses at the end of the sentence containing the review.
+      IMPORTANT: When including content from the visitor review, end that sentence with " (#{username.downcase})" in parentheses.
+      Example format: "The place was peaceful and historic (username)."
+      Do NOT mention the username anywhere else in the text—only append it at the end of the sentence containing the review.
       If Wikipedia returns nothing useful, still produce a polished description using the review and location context without mentioning any tool errors.
     MSG
 
@@ -113,7 +115,9 @@ class CommentsController < ApplicationController
         Use the visitor review and the location context to craft an engaging, concise description.
         Visitor review: "#{user_review}"
         Location context: #{location_context.presence || 'Unknown'}
-        When including the visitor review, append the username (#{username}) in parentheses at the end of the sentence containing the review.
+        IMPORTANT: When including content from the visitor review, end that sentence with " (#{username.downcase})" in parentheses.
+        Example format: "The place was peaceful and historic (username)."
+        Do NOT mention the username anywhere else in the text—only append it at the end of the sentence containing the review.
       MSG
 
       fallback = @chat.ask(fallback_prompt)
