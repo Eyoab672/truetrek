@@ -1,0 +1,116 @@
+<div class="admin-page">
+  <div class="admin-header">
+    <h1><i class="fa-solid fa-flag"></i> Report Details</h1>
+    <%= link_to admin_reports_path, class: "back-link" do %>
+      <i class="fa-solid fa-arrow-left"></i> Back to Reports
+    <% end %>
+  </div>
+
+  <div class="report-detail-grid">
+    <!-- Report Info -->
+    <div class="report-info-card">
+      <h2>Report Information</h2>
+      <div class="info-row">
+        <span class="info-label">Status:</span>
+        <span class="status-badge <%= @report.status %>"><%= @report.status.humanize %></span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Reported By:</span>
+        <span class="info-value">
+          <%= @report.user.username %>
+          <% if @report.user.city&.downcase == @place.city.name&.downcase %>
+            <span class="local-tag">Local</span>
+          <% end %>
+        </span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Reporter's City:</span>
+        <span class="info-value"><%= @report.user.city || "Not specified" %></span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Reason:</span>
+        <span class="info-value"><%= @report.reason %></span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Reported:</span>
+        <span class="info-value"><%= @report.created_at.strftime("%B %d, %Y at %I:%M %p") %></span>
+      </div>
+
+      <!-- Update Status Form -->
+      <div class="status-form">
+        <h3>Update Status</h3>
+        <%= form_with model: [:admin, @report], method: :patch, class: "status-update-form" do |f| %>
+          <%= f.select :status, Report.statuses.keys.map { |s| [s.humanize, s] }, {}, class: "status-select" %>
+          <%= f.submit "Update", class: "btn-update" %>
+        <% end %>
+      </div>
+    </div>
+
+    <!-- Place Info -->
+    <div class="place-info-card">
+      <h2>Place Details</h2>
+      <div class="place-header-info">
+        <h3><%= @place.title %></h3>
+        <p class="place-city"><i class="fa-solid fa-location-dot"></i> <%= @place.city.name %></p>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Total Reports:</span>
+        <span class="info-value report-count"><%= @place.reports.count %></span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Comments:</span>
+        <span class="info-value"><%= @place.comments.count %></span>
+      </div>
+      <% if @place.enhanced_description.present? %>
+        <div class="place-description">
+          <span class="info-label">Description:</span>
+          <p><%= truncate(@place.enhanced_description, length: 300) %></p>
+        </div>
+      <% end %>
+
+      <div class="place-actions">
+        <%= link_to city_place_path(@place.city, @place), class: "btn-view", target: "_blank" do %>
+          <i class="fa-solid fa-external-link"></i> View Place
+        <% end %>
+        <%= button_to admin_place_path(@place), method: :delete, class: "btn-delete", data: { turbo_confirm: "Are you sure you want to delete this place? This action cannot be undone." } do %>
+          <i class="fa-solid fa-trash"></i> Delete Place
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <!-- Other Reports for this Place -->
+  <% other_reports = @place.reports.where.not(id: @report.id) %>
+  <% if other_reports.any? %>
+    <div class="other-reports-section">
+      <h2>Other Reports for this Place (<%= other_reports.count %>)</h2>
+      <div class="reports-table">
+        <table>
+          <thead>
+            <tr>
+              <th>Reported By</th>
+              <th>Reason</th>
+              <th>Status</th>
+              <th>Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% other_reports.includes(:user).each do |report| %>
+              <tr>
+                <td>
+                  <%= report.user.username %>
+                  <% if report.user.city&.downcase == @place.city.name&.downcase %>
+                    <span class="local-tag">Local</span>
+                  <% end %>
+                </td>
+                <td><%= report.reason %></td>
+                <td><span class="status-badge <%= report.status %>"><%= report.status.humanize %></span></td>
+                <td><%= time_ago_in_words(report.created_at) %> ago</td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  <% end %>
+</div>

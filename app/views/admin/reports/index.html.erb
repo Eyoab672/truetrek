@@ -1,0 +1,67 @@
+<div class="admin-page">
+  <div class="admin-header">
+    <h1><i class="fa-solid fa-flag"></i> Reports</h1>
+    <%= link_to admin_path, class: "back-link" do %>
+      <i class="fa-solid fa-arrow-left"></i> Back to Dashboard
+    <% end %>
+  </div>
+
+  <!-- Filter Tabs -->
+  <div class="filter-tabs">
+    <%= link_to "All", admin_reports_path, class: "filter-tab #{params[:status].blank? ? 'active' : ''}" %>
+    <%= link_to "Pending", admin_reports_path(status: :pending), class: "filter-tab #{params[:status] == 'pending' ? 'active' : ''}" %>
+    <%= link_to "Reviewed", admin_reports_path(status: :reviewed), class: "filter-tab #{params[:status] == 'reviewed' ? 'active' : ''}" %>
+    <%= link_to "Resolved", admin_reports_path(status: :resolved), class: "filter-tab #{params[:status] == 'resolved' ? 'active' : ''}" %>
+    <%= link_to "Dismissed", admin_reports_path(status: :dismissed), class: "filter-tab #{params[:status] == 'dismissed' ? 'active' : ''}" %>
+  </div>
+
+  <% if @reports.any? %>
+    <div class="reports-table">
+      <table>
+        <thead>
+          <tr>
+            <th>Place</th>
+            <th>Reported By</th>
+            <th>Reason</th>
+            <th>Status</th>
+            <th>Date</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @reports.each do |report| %>
+            <tr>
+              <td>
+                <%= link_to report.place.title, admin_report_path(report), class: "place-link" %>
+                <span class="report-count-badge" title="Total reports for this place">
+                  <%= report.place.reports.count %>
+                </span>
+              </td>
+              <td>
+                <span class="reporter">
+                  <%= report.user.username %>
+                  <% if report.user.city&.downcase == report.place.city.name&.downcase %>
+                    <span class="local-tag">Local</span>
+                  <% end %>
+                </span>
+              </td>
+              <td><%= report.reason %></td>
+              <td>
+                <span class="status-badge <%= report.status %>"><%= report.status.humanize %></span>
+              </td>
+              <td><%= time_ago_in_words(report.created_at) %> ago</td>
+              <td class="actions-cell">
+                <%= link_to "Review", admin_report_path(report), class: "btn-review" %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  <% else %>
+    <div class="empty-state">
+      <i class="fa-regular fa-folder-open"></i>
+      <p>No reports found.</p>
+    </div>
+  <% end %>
+</div>

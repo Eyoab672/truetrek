@@ -1,0 +1,76 @@
+<div class="admin-page">
+  <div class="admin-header">
+    <h1><i class="fa-solid fa-map-pin"></i> Manage Places</h1>
+    <%= link_to admin_path, class: "back-link" do %>
+      <i class="fa-solid fa-arrow-left"></i> Back to Dashboard
+    <% end %>
+  </div>
+
+  <!-- Search -->
+  <div class="admin-search">
+    <%= form_with url: admin_places_path, method: :get, class: "search-form" do %>
+      <div class="search-wrapper">
+        <i class="fa-solid fa-search"></i>
+        <%= text_field_tag :query, params[:query], placeholder: "Search places...", class: "search-input" %>
+        <%= submit_tag "Search", class: "btn-search" %>
+      </div>
+      <% if params[:query].present? %>
+        <%= link_to "Clear", admin_places_path, class: "clear-search" %>
+      <% end %>
+    <% end %>
+  </div>
+
+  <% if @places.any? %>
+    <div class="places-table">
+      <table>
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>City</th>
+            <th>Reports</th>
+            <th>Comments</th>
+            <th>Created</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @places.each do |place| %>
+            <tr class="<%= 'has-reports' if place.reports.pending.any? %>">
+              <td>
+                <%= link_to place.title, admin_place_path(place), class: "place-link" %>
+              </td>
+              <td><%= place.city.name %></td>
+              <td>
+                <% if place.reports.any? %>
+                  <span class="report-count <%= 'pending' if place.reports.pending.any? %>">
+                    <%= place.reports.count %>
+                    <% if place.reports.pending.any? %>
+                      (<%= place.reports.pending.count %> pending)
+                    <% end %>
+                  </span>
+                <% else %>
+                  <span class="no-reports">0</span>
+                <% end %>
+              </td>
+              <td><%= place.comments.count %></td>
+              <td><%= place.created_at.strftime("%b %d, %Y") %></td>
+              <td class="actions-cell">
+                <%= link_to city_place_path(place.city, place), class: "btn-view", target: "_blank", title: "View" do %>
+                  <i class="fa-solid fa-external-link"></i>
+                <% end %>
+                <%= button_to admin_place_path(place), method: :delete, class: "btn-delete", title: "Delete", data: { turbo_confirm: "Are you sure you want to delete '#{place.title}'? This cannot be undone." } do %>
+                  <i class="fa-solid fa-trash"></i>
+                <% end %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  <% else %>
+    <div class="empty-state">
+      <i class="fa-regular fa-folder-open"></i>
+      <p>No places found.</p>
+    </div>
+  <% end %>
+</div>

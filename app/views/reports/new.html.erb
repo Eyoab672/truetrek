@@ -1,0 +1,35 @@
+<div class="report-page">
+  <div class="report-container">
+    <div class="report-header">
+      <h1><i class="fa-solid fa-flag"></i> Report Place</h1>
+      <p>Help us maintain accurate information by reporting issues with this place.</p>
+    </div>
+
+    <div class="report-place-info">
+      <h2><%= @place.title %></h2>
+      <p class="place-location"><i class="fa-solid fa-location-dot"></i> <%= @place.city.name %></p>
+    </div>
+
+    <%= simple_form_for @report, url: place_reports_path(@place), class: "report-form" do |f| %>
+      <div class="form-group">
+        <label class="form-label">What's the issue?</label>
+        <div class="reason-options">
+          <% Report::REASONS.each do |reason| %>
+            <label class="reason-option">
+              <%= f.radio_button :reason, reason, class: "reason-radio" %>
+              <span class="reason-label"><%= reason %></span>
+            </label>
+          <% end %>
+        </div>
+        <% if @report.errors[:reason].any? %>
+          <span class="error-message"><%= @report.errors[:reason].first %></span>
+        <% end %>
+      </div>
+
+      <div class="form-actions">
+        <%= f.submit "Submit Report", class: "btn-submit" %>
+        <%= link_to "Cancel", city_place_path(@place.city, @place), class: "btn-cancel" %>
+      </div>
+    <% end %>
+  </div>
+</div>

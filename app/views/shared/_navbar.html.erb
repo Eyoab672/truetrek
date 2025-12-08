@@ -22,6 +22,13 @@
           <li class="nav-item active">
             <%= link_to "PROFILE", user_path(current_user), class: "nav-link" %>
           </li>
+          <% if current_user.admin? %>
+            <li class="nav-item active">
+              <%= link_to admin_root_path, class: "nav-link admin-link" do %>
+                <i class="fa-solid fa-shield-halved"></i> ADMIN
+              <% end %>
+            </li>
+          <% end %>
           <li class="nav-item active">
             <%= link_to "LOG OUT", destroy_user_session_path, method: :delete, data: { turbo_method: :delete }, class: "nav-link" %>
           </li>

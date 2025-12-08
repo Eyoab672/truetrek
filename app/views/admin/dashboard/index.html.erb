@@ -1,0 +1,115 @@
+<div class="admin-dashboard">
+  <div class="admin-header">
+    <h1><i class="fa-solid fa-shield-halved"></i> Admin Dashboard</h1>
+    <p class="admin-subtitle">Manage TrueTrek content and reports</p>
+  </div>
+
+  <!-- Stats Cards -->
+  <div class="admin-stats">
+    <div class="stat-card">
+      <div class="stat-icon pending">
+        <i class="fa-solid fa-flag"></i>
+      </div>
+      <div class="stat-info">
+        <span class="stat-number"><%= @pending_reports_count %></span>
+        <span class="stat-label">Pending Reports</span>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon places">
+        <i class="fa-solid fa-map-pin"></i>
+      </div>
+      <div class="stat-info">
+        <span class="stat-number"><%= @places_count %></span>
+        <span class="stat-label">Total Places</span>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon users">
+        <i class="fa-solid fa-users"></i>
+      </div>
+      <div class="stat-info">
+        <span class="stat-number"><%= @users_count %></span>
+        <span class="stat-label">Users</span>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon comments">
+        <i class="fa-solid fa-comments"></i>
+      </div>
+      <div class="stat-info">
+        <span class="stat-number"><%= @comments_count %></span>
+        <span class="stat-label">Comments</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick Actions -->
+  <div class="admin-section">
+    <h2>Quick Actions</h2>
+    <div class="admin-actions">
+      <%= link_to admin_reports_path, class: "action-card" do %>
+        <i class="fa-solid fa-flag"></i>
+        <span>View All Reports</span>
+      <% end %>
+      <%= link_to admin_reports_path(status: :pending), class: "action-card" do %>
+        <i class="fa-solid fa-clock"></i>
+        <span>Pending Reports</span>
+      <% end %>
+      <%= link_to admin_places_path, class: "action-card" do %>
+        <i class="fa-solid fa-map-pin"></i>
+        <span>Manage Places</span>
+      <% end %>
+    </div>
+  </div>
+
+  <!-- Recent Reports -->
+  <div class="admin-section">
+    <div class="section-header">
+      <h2>Recent Pending Reports</h2>
+      <%= link_to "View All", admin_reports_path(status: :pending), class: "view-all-link" %>
+    </div>
+    <% if @recent_reports.any? %>
+      <div class="reports-table">
+        <table>
+          <thead>
+            <tr>
+              <th>Place</th>
+              <th>Reported By</th>
+              <th>Reason</th>
+              <th>Date</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @recent_reports.each do |report| %>
+              <tr>
+                <td>
+                  <%= link_to report.place.title, admin_report_path(report), class: "place-link" %>
+                </td>
+                <td>
+                  <span class="reporter">
+                    <%= report.user.username %>
+                    <% if report.user.city == report.place.city.name %>
+                      <span class="local-tag">Local</span>
+                    <% end %>
+                  </span>
+                </td>
+                <td><%= report.reason %></td>
+                <td><%= time_ago_in_words(report.created_at) %> ago</td>
+                <td>
+                  <%= link_to "Review", admin_report_path(report), class: "btn-review" %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    <% else %>
+      <div class="empty-state">
+        <i class="fa-regular fa-check-circle"></i>
+        <p>No pending reports. All clear!</p>
+      </div>
+    <% end %>
+  </div>
+</div>

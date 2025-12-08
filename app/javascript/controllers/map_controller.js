@@ -7,17 +7,33 @@ export default class extends Controller {
     apiKey: String,
     markers: Array,
     pop: Boolean,
+    center: Array, // Optional [lng, lat] for initial center
+    zoom: { type: Number, default: 9 },
   }
   connect() {
+    console.log(mapboxgl.version);
+
     mapboxgl.accessToken = this.apiKeyValue
-    this.map = new mapboxgl.Map({
+
+    const mapOptions = {
       container: this.element,
-      zoom: 9, // starting zoom
-      // style: "mapbox://styles/mapbox/standard-satellite", // not working
-      style: "mapbox://styles/roukiasabry/cmist36hs001h01r6142a7chf", // not working
-    });
+      zoom: this.zoomValue,
+      style: "mapbox://styles/roukiasabry/cmist36hs001h01r6142a7chf",
+    }
+
+    // If center is provided, use it; otherwise map will fit to markers
+    if (this.hasCenterValue && this.centerValue.length === 2) {
+      mapOptions.center = this.centerValue
+    }
+
+    this.map = new mapboxgl.Map(mapOptions);
     this.#addMarkersToMap()
-    this.#fitMapToMarkers()
+
+    // Only fit to markers if no center was specified
+    if (!this.hasCenterValue || this.centerValue.length !== 2) {
+      this.#fitMapToMarkers()
+    }
+
     this.map.addControl(new mapboxgl.NavigationControl());
   }
   #addMarkersToMap() {

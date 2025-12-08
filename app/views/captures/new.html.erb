@@ -1,40 +1,41 @@
-<div class="container py-4">
-  <h2 class="mb-3">Take a photo</h2>
-  <p class="text-muted mb-4">
-    We’ll use this photo to create a new place or attach it to an existing one.
-  </p>
-
-  <div class="camera-section mb-4">
-    <div class="camera-preview-wrapper mb-3">
-      <video id="camera-video" autoplay playsinline class="w-100 border rounded"></video>
+<div class="camera-new-page">
+  <section class="camera-page-header">
+    <div class="camera-page-header-content">
+      <h1 class="camera-page-title">Capture a Moment</h1>
+      <p class="camera-page-subtitle">Take a photo to create a place or add to an existing one</p>
     </div>
+  </section>
 
-    <div class="camera-photo-wrapper mb-3">
-      <img id="camera-photo" alt="Your photo will appear here" class="w-100 border rounded" />
+  <section class="camera-form-section">
+    <div class="container">
+      <div class="camera-form-wrapper">
+        <div class="camera-form-card">
+          <video id="camera-video" autoplay playsinline class="camera-video mb-3"></video>
+          <canvas id="camera-canvas" style="display:none;"></canvas>
+
+          <div id="photo-preview" class="d-none">
+            <img id="preview-image" class="camera-photo-preview w-100 mb-3" alt="Photo preview">
+          </div>
+
+          <div class="d-grid gap-2" id="camera-controls">
+            <button type="button" id="take-photo" class="btn btn-primary btn-lg">
+              <i class="fa-solid fa-camera"></i> Capture Photo
+            </button>
+          </div>
+
+          <div id="action-buttons" class="d-grid gap-2 mt-3 d-none">
+            <button type="button" class="btn btn-success" id="use-for-new-place">
+              <i class="fa-solid fa-plus"></i> Create New Place
+            </button>
+            <button type="button" class="btn btn-outline-primary" id="use-for-existing-place">
+              <i class="fa-solid fa-location-dot"></i> Add to Existing Place
+            </button>
+            <button type="button" class="btn btn-outline-secondary" id="retake-photo">
+              <i class="fa-solid fa-redo"></i> Retake Photo
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
-
-    <div class="d-flex gap-2 mb-3">
-      <button type="button" id="start-camera" class="btn btn-primary">
-        Start camera
-      </button>
-      <button type="button" id="take-photo" class="btn btn-success" disabled>
-        Take photo
-      </button>
-      <button type="button" id="stop-camera" class="btn btn-outline-secondary" disabled>
-        Stop
-      </button>
-    </div>
-
-    <canvas id="camera-canvas" style="display:none;"></canvas>
-  </div>
-
-  <div class="d-grid gap-2">
-    <button type="button" class="btn btn-primary" id="use-for-new-place" disabled>
-      Use photo to create a new place
-    </button>
-
-    <button type="button" class="btn btn-outline-primary" id="use-for-existing-place" disabled>
-      Use photo for an existing place
-    </button>
-  </div>
+  </section>
 </div>

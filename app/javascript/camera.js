@@ -1,14 +1,16 @@
 function initCameraPage() {
-  const startButton = document.getElementById("start-camera");
-  const takePhotoButton = document.getElementById("take-photo");
-  const stopButton = document.getElementById("stop-camera");
   const video = document.getElementById("camera-video");
   const canvas = document.getElementById("camera-canvas");
-  const photo = document.getElementById("camera-photo");
+  const photoPreview = document.getElementById("photo-preview");
+  const previewImage = document.getElementById("preview-image");
+  const takePhotoBtn = document.getElementById("take-photo");
+  const cameraControls = document.getElementById("camera-controls");
+  const actionButtons = document.getElementById("action-buttons");
   const newPlaceButton = document.getElementById("use-for-new-place");
   const existingPlaceButton = document.getElementById("use-for-existing-place");
+  const retakeButton = document.getElementById("retake-photo");
 
-  if (!startButton || !video || !canvas || !photo) return; // not on /camera
+  if (!video || !canvas || !takePhotoBtn) return; // not on /camera
 
   let stream = null;
   let lastBlob = null;
@@ -18,92 +20,80 @@ function initCameraPage() {
   const csrfTokenEl = document.querySelector('meta[name="csrf-token"]');
   const csrfToken = csrfTokenEl ? csrfTokenEl.content : null;
 
+  // Auto-start camera when page loads
   async function startCamera() {
-    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-      alert("Camera API not supported in this browser.");
-      return;
-    }
-
     try {
       stream = await navigator.mediaDevices.getUserMedia({
         video: { facingMode: "environment" },
         audio: false
       });
-
       video.srcObject = stream;
-      takePhotoButton.disabled = false;
-      stopButton.disabled = false;
-      startButton.disabled = true;
+      video.style.display = "block";
     } catch (err) {
       console.error("Error accessing camera:", err);
-      alert("Could not access camera. Make sure you're on HTTPS and camera permissions are granted.");
+      alert("Could not access camera. Please check permissions.");
     }
   }
 
-  startButton.addEventListener("click", startCamera);
+  // Start camera on page load
+  startCamera();
 
-  // Take photo: draw to canvas -> create Blob -> get geolocation
-  takePhotoButton.addEventListener("click", () => {
+  // Take photo
+  takePhotoBtn.addEventListener("click", () => {
     if (!stream) return;
 
-    const videoTrack = stream.getVideoTracks()[0];
-    const settings = videoTrack.getSettings();
-
-    const width = settings.width || video.videoWidth;
-    const height = settings.height || video.videoHeight;
-
+    const width = video.videoWidth;
+    const height = video.videoHeight;
     canvas.width = width;
     canvas.height = height;
 
     const ctx = canvas.getContext("2d");
     ctx.drawImage(video, 0, 0, width, height);
 
-    canvas.toBlob(
-      (blob) => {
-        if (!blob) return;
-        lastBlob = blob;
+    canvas.toBlob((blob) => {
+      if (!blob) return;
+      lastBlob = blob;
 
-        // Show preview
-        const url = URL.createObjectURL(blob);
-        photo.src = url;
+      // Show preview and hide video
+      const url = URL.createObjectURL(blob);
+      previewImage.src = url;
+      photoPreview.classList.remove("d-none");
+      video.style.display = "none";
+      cameraControls.classList.add("d-none");
+      actionButtons.classList.remove("d-none");
 
-        // Get geolocation
-        if ("geolocation" in navigator) {
-          navigator.geolocation.getCurrentPosition(
-            (position) => {
-              lastLat = position.coords.latitude;
-              lastLng = position.coords.longitude;
-              newPlaceButton.disabled = false;
-              existingPlaceButton.disabled = false;
-            },
-            (error) => {
-              console.warn("Geolocation error:", error);
-              // Allow user to proceed, but we won't auto-select city
-              newPlaceButton.disabled = false;
-              existingPlaceButton.disabled = false;
-            },
-            { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
-          );
-        } else {
-          newPlaceButton.disabled = false;
-          existingPlaceButton.disabled = false;
-        }
-      },
-      "image/png"
-    );
+      // Stop camera stream
+      if (stream) {
+        stream.getTracks().forEach(track => track.stop());
+        stream = null;
+      }
+
+      // Get geolocation
+      if ("geolocation" in navigator) {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            lastLat = position.coords.latitude;
+            lastLng = position.coords.longitude;
+          },
+          (error) => console.warn("Geolocation error:", error),
+          { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+        );
+      }
+    }, "image/png");
   });
 
-  // Stop camera
-  stopButton.addEventListener("click", () => {
-    if (!stream) return;
-    stream.getTracks().forEach((track) => track.stop());
-    stream = null;
-
-    video.srcObject = null;
-    takePhotoButton.disabled = true;
-    stopButton.disabled = true;
-    startButton.disabled = false;
-  });
+  // Retake photo
+  if (retakeButton) {
+    retakeButton.addEventListener("click", () => {
+      photoPreview.classList.add("d-none");
+      actionButtons.classList.add("d-none");
+      cameraControls.classList.remove("d-none");
+      lastBlob = null;
+      lastLat = null;
+      lastLng = null;
+      startCamera();
+    });
+  }
 
   async function sendCapture(nextAction) {
     if (!lastBlob) {
@@ -117,6 +107,10 @@ function initCameraPage() {
     if (lastLng != null) formData.append("longitude", lastLng);
     formData.append("next_action", nextAction);
 
+    console.log("Sending capture with action:", nextAction);
+    console.log("Blob size:", lastBlob.size);
+    console.log("CSRF token:", csrfToken);
+
     try {
       const response = await fetch("/camera", {
         method: "POST",
@@ -127,24 +121,39 @@ function initCameraPage() {
         body: formData
       });
 
+      console.log("Response status:", response.status);
+
       if (!response.ok) {
-        console.error("Upload failed:", response);
-        alert("Error uploading photo.");
+        const errorText = await response.text();
+        console.error("Upload failed:", response.status, errorText);
+        let errorMessage = `Upload failed (${response.status})`;
+        try {
+          const errorData = JSON.parse(errorText);
+          errorMessage = errorData.error || errorMessage;
+        } catch (e) {
+          errorMessage = errorText || errorMessage;
+        }
+        alert(`Error uploading photo: ${errorMessage}`);
         return;
       }
 
       const data = await response.json();
+      console.log("Response data:", data);
       if (data.redirect_to) {
         window.location.href = data.redirect_to;
       }
     } catch (err) {
       console.error("Error sending capture:", err);
-      alert("Network error while sending photo.");
+      alert(`Network error while sending photo: ${err.message}`);
     }
   }
 
-  newPlaceButton.addEventListener("click", () => sendCapture("new_place"));
-  existingPlaceButton.addEventListener("click", () => sendCapture("existing_place"));
+  if (newPlaceButton) {
+    newPlaceButton.addEventListener("click", () => sendCapture("new_place"));
+  }
+  if (existingPlaceButton) {
+    existingPlaceButton.addEventListener("click", () => sendCapture("existing_place"));
+  }
 }
 
 document.addEventListener("turbo:load", initCameraPage);

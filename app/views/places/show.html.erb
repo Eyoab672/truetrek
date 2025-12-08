@@ -28,6 +28,23 @@
       <p class="place-location">
         <i class="fa-solid fa-location-dot"></i> <%= @place.city.name %>
       </p>
+
+      <% if user_signed_in? %>
+        <div class="place-header-actions">
+          <% if current_user.reports.exists?(place: @place) %>
+            <span class="reported-badge"><i class="fa-solid fa-check"></i> Reported</span>
+          <% else %>
+            <%= link_to new_place_report_path(@place), class: "report-btn" do %>
+              <i class="fa-solid fa-flag"></i> Report
+            <% end %>
+          <% end %>
+          <% if current_user.admin? %>
+            <%= button_to city_place_path(@place.city, @place), method: :delete, class: "admin-delete-btn", data: { turbo_confirm: "Are you sure you want to delete this place?" } do %>
+              <i class="fa-solid fa-trash"></i> Delete
+            <% end %>
+          <% end %>
+        </div>
+      <% end %>
     </div>
   </section>
 
@@ -37,12 +54,11 @@
       <div class="place-media-row">
         <!-- Photo Carousel -->
         <div class="place-carousel-container">
-          <% photos = @place.comments.flat_map { |c| c.photos.to_a } %>
-          <% if photos.any? %>
+          <% if @all_photos.any? %>
             <div id="placeCarousel" class="carousel slide" data-bs-ride="carousel">
               <!-- Indicators -->
               <div class="carousel-indicators">
-                <% photos.each_with_index do |photo, index| %>
+                <% @all_photos.each_with_index do |photo, index| %>
                   <button type="button" data-bs-target="#placeCarousel" data-bs-slide-to="<%= index %>"
                     class="<%= 'active' if index == 0 %>" aria-current="<%= 'true' if index == 0 %>"
                     aria-label="Slide <%= index + 1 %>"></button>
@@ -51,7 +67,7 @@
 
               <!-- Slides -->
               <div class="carousel-inner">
-                <% photos.each_with_index do |photo, index| %>
+                <% @all_photos.each_with_index do |photo, index| %>
                   <div class="carousel-item <%= 'active' if index == 0 %>">
                     <%= cl_image_tag photo.key, height: 500, width: 800, crop: :fill, class: "d-block w-100 carousel-image" %>
                   </div>
@@ -59,7 +75,7 @@
               </div>
 
               <!-- Controls -->
-              <% if photos.size > 1 %>
+              <% if @all_photos.size > 1 %>
                 <button class="carousel-control-prev" type="button" data-bs-target="#placeCarousel" data-bs-slide="prev">
                   <span class="carousel-control-prev-icon" aria-hidden="true"></span>
                   <span class="visually-hidden">Previous</span>

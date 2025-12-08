@@ -1,43 +1,91 @@
-<div class="container py-4">
-  <h2 class="mb-3">Create a new place</h2>
-
-  <%= form_with model: @place, local: true do |f| %>
-    <div class="mb-3">
-      <%= f.label :title, class: "form-label" %>
-      <%= f.text_field :title, class: "form-control" %>
+<div class="place-new-page">
+  <!-- Hero Header -->
+  <section class="place-header place-new-header">
+    <div class="place-header-content">
+      <h1 class="place-title">Create a New Place</h1>
+      <p class="place-header-subtitle">Share your discovery with other travelers</p>
     </div>
+  </section>
 
-    <div class="mb-3">
-      <%= f.label :enhanced_description, "Description", class: "form-label" %>
-      <%= f.text_area :enhanced_description, rows: 4, class: "form-control" %>
-    </div>
+  <div class="container">
+    <!-- Form Section -->
+    <section class="place-form-section">
+      <div class="place-form-wrapper">
+        <div class="place-form-card">
+          <%= form_with model: @place, local: true, html: { class: "place-form" } do |f| %>
+            <!-- Place Name -->
+            <div class="form-section">
+              <h3 class="form-section-title">
+                <i class="fa-solid fa-location-dot"></i>
+                Place Details
+              </h3>
 
-    <div class="mb-3">
-      <%= f.label :address, class: "form-label" %>
-      <%= f.text_field :address, class: "form-control" %>
-    </div>
+              <div class="form-field">
+                <%= f.label :title, "Place Name", class: "styled-label" %>
+                <%= f.text_field :title, placeholder: "e.g., Sagrada Familia", class: "styled-input" %>
+              </div>
 
-    <div class="mb-3">
-      <%= f.label :city_id, "City", class: "form-label" %>
-      <%= f.collection_select :city_id, City.all, :id, :name,
-            { selected: @place.city_id, prompt: "Select a city" },
-            { class: "form-select" } %>
-      <% if @auto_city.present? %>
-        <small class="text-muted">
-          Auto-selected from your location: <strong><%= @auto_city.name %></strong>
-        </small>
-      <% end %>
-    </div>
+              <div class="form-field">
+                <%= f.label :address, class: "styled-label" %>
+                <%= f.text_field :address, placeholder: "Enter the address", class: "styled-input" %>
+              </div>
 
-    <% if @camera_blob_id.present? %>
-      <div class="mb-3">
-        <p class="form-label">Photo from camera</p>
-        <%= image_tag url_for(ActiveStorage::Blob.find_signed(@camera_blob_id)),
-                      class: "img-fluid mb-2 border rounded" %>
-        <%= f.hidden_field :camera_blob_id, value: @camera_blob_id %>
+              <div class="form-field">
+                <%= f.label :city_id, "City", class: "styled-label" %>
+                <%= f.collection_select :city_id, City.all, :id, :name,
+                      { selected: @place.city_id, prompt: "Select a city" },
+                      { class: "styled-select" } %>
+                <% if @auto_city.present? %>
+                  <p class="form-hint">
+                    <i class="fa-solid fa-circle-info"></i> Auto-selected from your location: <strong><%= @auto_city.name %></strong>
+                  </p>
+                <% end %>
+              </div>
+            </div>
+
+            <div class="form-divider"></div>
+
+            <!-- Description -->
+            <div class="form-section">
+              <h3 class="form-section-title">
+                <i class="fa-solid fa-pen-to-square"></i>
+                Description
+              </h3>
+
+              <div class="form-field">
+                <%= f.label :enhanced_description, "Tell us about this place", class: "styled-label" %>
+                <%= f.text_area :enhanced_description, rows: 5, placeholder: "Describe what makes this place special...", class: "styled-textarea" %>
+                <p class="form-hint">Help other travelers understand why this place is worth visiting</p>
+              </div>
+            </div>
+
+            <div class="form-divider"></div>
+
+            <!-- Photo Preview -->
+            <% if @camera_blob_id.present? %>
+              <div class="form-section">
+                <h3 class="form-section-title">
+                  <i class="fa-solid fa-image"></i>
+                  Photo from Camera
+                </h3>
+
+                <div class="camera-photo-preview-section">
+                  <%= image_tag url_for(ActiveStorage::Blob.find_signed(@camera_blob_id)),
+                                class: "camera-photo-preview-img" %>
+                  <%= f.hidden_field :camera_blob_id, value: @camera_blob_id %>
+                </div>
+              </div>
+
+              <div class="form-divider"></div>
+            <% end %>
+
+            <!-- Submit -->
+            <div class="form-actions">
+              <%= f.submit "Create Place", class: "btn-submit-form" %>
+            </div>
+          <% end %>
+        </div>
       </div>
-    <% end %>
-
-    <%= f.submit "Create place", class: "btn btn-primary w-100" %>
-  <% end %>
+    </section>
+  </div>
 </div>

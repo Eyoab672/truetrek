@@ -20,9 +20,12 @@
 
         <div class="places-grid">
           <% places.each do |place| %>
+            <% photo = place.comments.flat_map { |c| c.photos.to_a }.first %>
             <div class="place-card">
               <%= link_to city_place_path(city, place), class: "place-card-link" do %>
-                <% if place.default_img_url %>
+                <% if photo %>
+                  <div class="place-card-image" style="background-image: url('<%= cl_image_path photo.key, height: 400, width: 600, crop: :fill %>');"></div>
+                <% elsif place.default_img_url %>
                   <div class="place-card-image" style="background-image: url('<%= place.default_img_url %>');"></div>
                 <% else %>
                   <div class="place-card-image place-card-image-placeholder">
