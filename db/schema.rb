@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_12_08_153250) do
+ActiveRecord::Schema[7.2].define(version: 2025_12_09_133407) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -72,6 +72,8 @@ ActiveRecord::Schema[7.2].define(version: 2025_12_08_153250) do
     t.string "address"
     t.string "default_img_url"
     t.text "original_description"
+    t.boolean "description_generating", default: false
+    t.boolean "description_generation_error", default: false
     t.index ["city_id"], name: "index_places_on_city_id"
   end
 
@@ -85,6 +87,16 @@ ActiveRecord::Schema[7.2].define(version: 2025_12_08_153250) do
     t.index ["place_id"], name: "index_reports_on_place_id"
     t.index ["user_id", "place_id"], name: "index_reports_on_user_id_and_place_id", unique: true
     t.index ["user_id"], name: "index_reports_on_user_id"
+  end
+
+  create_table "solid_cable_messages", force: :cascade do |t|
+    t.binary "channel", null: false
+    t.binary "payload", null: false
+    t.datetime "created_at", null: false
+    t.bigint "channel_hash", null: false
+    t.index ["channel"], name: "index_solid_cable_messages_on_channel"
+    t.index ["channel_hash"], name: "index_solid_cable_messages_on_channel_hash"
+    t.index ["created_at"], name: "index_solid_cable_messages_on_created_at"
   end
 
   create_table "solid_queue_blocked_executions", force: :cascade do |t|
