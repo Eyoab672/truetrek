@@ -54,6 +54,15 @@ class VotesController < ApplicationController
   end
 
   def update_enhanced_description
-    UpdateEnhancedDescriptionJob.perform_later(@comment.place_id)
+    place = @comment.place
+    # Broadcast loading state immediately
+    Turbo::StreamsChannel.broadcast_replace_to(
+      "place_#{place.id}",
+      target: "place_description",
+      partial: "places/description_loading",
+      locals: { place: place }
+    )
+    # Then queue the job to generate the new description
+    UpdateEnhancedDescriptionJob.perform_later(place.id)
   end
 end

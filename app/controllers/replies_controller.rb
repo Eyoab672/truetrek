@@ -10,6 +10,13 @@ class RepliesController < ApplicationController
     authorize @reply, policy_class: CommentPolicy
 
     if @reply.save
+      # Broadcast loading state immediately
+      Turbo::StreamsChannel.broadcast_replace_to(
+        "place_#{@place.id}",
+        target: "place_description",
+        partial: "places/description_loading",
+        locals: { place: @place }
+      )
       UpdateEnhancedDescriptionJob.perform_later(@place.id)
       respond_to do |format|
         format.turbo_stream

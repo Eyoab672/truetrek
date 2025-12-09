@@ -1,3 +1,7 @@
 <%= turbo_stream.replace "vote_buttons_#{@comment.id}" do %>
   <%= render partial: "votes/buttons", locals: { comment: @comment } %>
 <% end %>
+
+<%= turbo_stream.replace "place_description" do %>
+  <%= render partial: "places/description_loading", locals: { place: @comment.place } %>
+<% end %>
