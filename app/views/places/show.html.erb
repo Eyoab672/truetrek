@@ -109,8 +109,15 @@
 
     <!-- Description -->
     <section class="place-description-section">
+      <%= turbo_stream_from "place_#{@place.id}" %>
       <h2 class="section-heading">About this place</h2>
-      <p class="place-description"><%= format_description_with_avatars(@place.enhanced_description, @place) %></p>
+      <div id="place_description">
+        <% if @place.enhanced_description.present? %>
+          <%= render "places/description", place: @place %>
+        <% else %>
+          <%= render "places/description_loading", place: @place %>
+        <% end %>
+      </div>
       
       <div class="d-flex flex-column justify-content-between align-items-start gap-3 mt-3">
         <div>

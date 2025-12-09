@@ -759,6 +759,76 @@ html {
   opacity: 0.85;
 }
 
+// Description Loading State
+.description-loading {
+  padding: 1rem 0;
+}
+
+.loading-skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.skeleton-line {
+  height: 1rem;
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 4px;
+
+  &.skeleton-line-full {
+    width: 100%;
+  }
+
+  &.skeleton-line-medium {
+    width: 70%;
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+.loading-text {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #849DBB;
+  font-size: 0.95rem;
+
+  i {
+    color: #5d89ba;
+  }
+}
+
+// Description Error State
+.description-error {
+  padding: 1rem;
+  background: #fff5f5;
+  border-radius: 8px;
+  border: 1px solid #fed7d7;
+}
+
+.error-text {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #c53030;
+  font-size: 0.95rem;
+  margin: 0;
+
+  i {
+    color: #e53e3e;
+  }
+}
+
 // Inline username references with avatars
 .username-reference-link {
   text-decoration: none;

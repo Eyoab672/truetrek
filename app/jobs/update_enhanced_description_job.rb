@@ -15,6 +15,14 @@ class UpdateEnhancedDescriptionJob < ApplicationJob
 
     all_comments = place.comments.includes(:votes, :user)
     regenerate_description(place, all_comments)
+
+    # Broadcast the updated description via Turbo Streams
+    Turbo::StreamsChannel.broadcast_replace_to(
+      "place_#{place.id}",
+      target: "place_description",
+      partial: "places/description",
+      locals: { place: place }
+    )
   rescue StandardError => e
     Rails.logger.error("UpdateEnhancedDescriptionJob failed for place #{place_id}: #{e.message}")
   end
