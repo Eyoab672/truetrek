@@ -32,6 +32,14 @@
         <i class="fa-regular fa-calendar"></i>
         Member since <%= @user.created_at.strftime("%B %Y") %>
       </p>
+
+      <% if @user == current_user %>
+        <div class="profile-logout d-block d-md-none">
+          <%= button_to destroy_user_session_path, method: :delete, class: "profile-logout-btn" do %>
+            <i class="fa-solid fa-right-from-bracket"></i> Log out
+          <% end %>
+        </div>
+      <% end %>
     </div>
   </div>
 
