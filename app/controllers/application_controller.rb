@@ -15,15 +15,15 @@ class ApplicationController < ActionController::Base
 
   def configure_permitted_parameters
     # For additional fields in app/views/devise/registrations/new.html.erb
-    devise_parameter_sanitizer.permit(:sign_up, keys: [:username, :city, :avatar])
+    devise_parameter_sanitizer.permit(:sign_up, keys: %i[username city avatar])
 
     # For additional in app/views/devise/registrations/edit.html.erb
-    devise_parameter_sanitizer.permit(:account_update, keys: [:username, :city, :avatar])
+    devise_parameter_sanitizer.permit(:account_update, keys: %i[username city avatar])
   end
 
   private
 
   def skip_pundit?
-    devise_controller? || params[:controller] =~ /(^(rails_)?admin)|(^pages$)|(^mission_control)/
+    devise_controller? || params[:controller] =~ %r{(^(rails_)?admin)|(^pages$)|(^mission_control)|(^places/autocomplete$)}
   end
 end

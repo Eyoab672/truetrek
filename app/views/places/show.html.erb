@@ -239,11 +239,10 @@
               as: :text,
               label: "Your Review",
               input_html: { rows: 4, placeholder: "Tell others about your experience at this place..." } %>
-          <%= f.input :photos,
-              as: :file,
-              input_html: { multiple: true, class: "form-control" },
-              direct_upload: true,
-              label: "Add Photos" %>
+          <p class="form-hint">
+            <i class="fa-solid fa-camera"></i>
+            Want to add photos? <%= link_to "Use the camera", camera_path, class: "camera-link" %> to capture and upload.
+          </p>
           <div class="form-actions">
             <%= f.submit "Post Comment", class: "btn-submit-comment" %>
           </div>

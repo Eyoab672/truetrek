@@ -6,8 +6,7 @@ function initCameraPage() {
   const takePhotoBtn = document.getElementById("take-photo");
   const cameraControls = document.getElementById("camera-controls");
   const actionButtons = document.getElementById("action-buttons");
-  const newPlaceButton = document.getElementById("use-for-new-place");
-  const existingPlaceButton = document.getElementById("use-for-existing-place");
+  const looksGreatButton = document.getElementById("looks-great");
   const retakeButton = document.getElementById("retake-photo");
 
   if (!video || !canvas || !takePhotoBtn) return; // not on /camera
@@ -95,7 +94,7 @@ function initCameraPage() {
     });
   }
 
-  async function sendCapture(nextAction) {
+  async function sendCapture() {
     if (!lastBlob) {
       alert("Please take a photo first.");
       return;
@@ -105,9 +104,8 @@ function initCameraPage() {
     formData.append("image", lastBlob, "capture.png");
     if (lastLat != null) formData.append("latitude", lastLat);
     if (lastLng != null) formData.append("longitude", lastLng);
-    formData.append("next_action", nextAction);
 
-    console.log("Sending capture with action:", nextAction);
+    console.log("Uploading photo...");
     console.log("Blob size:", lastBlob.size);
     console.log("CSRF token:", csrfToken);
 
@@ -148,11 +146,8 @@ function initCameraPage() {
     }
   }
 
-  if (newPlaceButton) {
-    newPlaceButton.addEventListener("click", () => sendCapture("new_place"));
-  }
-  if (existingPlaceButton) {
-    existingPlaceButton.addEventListener("click", () => sendCapture("existing_place"));
+  if (looksGreatButton) {
+    looksGreatButton.addEventListener("click", sendCapture);
   }
 }
 

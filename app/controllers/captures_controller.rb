@@ -7,9 +7,7 @@ class CapturesController < ApplicationController
 
   def create
     uploaded_file = params[:image]
-    unless uploaded_file
-      render json: { error: "No image provided" }, status: :unprocessable_entity and return
-    end
+    render json: { error: "No image provided" }, status: :unprocessable_entity and return unless uploaded_file
 
     begin
       # Handle both regular file uploads and blob uploads from camera
@@ -22,7 +20,7 @@ class CapturesController < ApplicationController
         filename: filename || "capture.png",
         content_type: content_type || "image/png"
       )
-    rescue => e
+    rescue StandardError => e
       Rails.logger.error "Blob creation error: #{e.message}"
       Rails.logger.error e.backtrace.join("\n")
       render json: { error: "Upload failed: #{e.message}" }, status: :unprocessable_entity and return
@@ -32,20 +30,8 @@ class CapturesController < ApplicationController
     session[:captured_latitude] = params[:latitude]
     session[:captured_longitude] = params[:longitude]
 
-    redirect_to_url =
-      case params[:next_action]
-      when "new_place"
-        new_place_path
-      when "existing_place"
-        # For existing place, go to comments new page with place selection
-        if params[:place_id].present?
-          new_comment_path(place_id: params[:place_id], from_camera: true)
-        else
-          new_comment_path(from_camera: true)
-        end
-      else
-        root_path
-      end
+    # Always redirect to comments/new with from_camera flag
+    redirect_to_url = new_comment_path(from_camera: true)
 
     respond_to do |format|
       format.json { render json: { redirect_to: redirect_to_url } }

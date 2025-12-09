@@ -2,9 +2,9 @@
   <div class="comment-form-card">
     <%= simple_form_for comment, local: true, url: comments_path, html: { class: "styled-comment-form" } do |f| %>
       <% # Show place selection if from_camera but no specific place selected yet %>
-      <% if params[:from_camera] && !params[:place_id] && @places.present? %>
-        <!-- Camera Flow: Select Existing Place -->
-        <div class="form-section">
+      <% if params[:from_camera] && !params[:place_id] && !params[:new_place] %>
+        <!-- Camera Flow: Select Existing Place or Create New -->
+        <div class="form-section" data-controller="place-selector">
           <h3 class="form-section-title">
             <i class="fa-solid fa-location-dot"></i>
             Select a Place
@@ -12,22 +12,19 @@
 
           <div class="form-field">
             <label class="styled-label">Where did you take this photo?</label>
-            <div class="place-select-container">
-              <% @places.each do |p| %>
-                <%= link_to new_comment_path(place_id: p.id, from_camera: true), class: "place-option" do %>
-                  <span class="place-option-name"><%= p.title %></span>
-                  <i class="fa-solid fa-arrow-right"></i>
-                <% end %>
+            <select class="styled-select" data-action="change->place-selector#handleChange">
+              <option value="">Choose a place...</option>
+              <% if @nearby_places.present? %>
+                <optgroup label="Nearby Places (within 10km)">
+                  <% @nearby_places.each do |p| %>
+                    <option value="<%= new_comment_path(place_id: p.id, from_camera: true) %>">
+                      <%= p.title %>
+                    </option>
+                  <% end %>
+                </optgroup>
               <% end %>
-
-              <!-- Create New Place Option -->
-              <%= link_to new_place_path, class: "place-option create-new-place" do %>
-                <span class="place-option-name">
-                  <i class="fa-solid fa-plus"></i> Create a New Place
-                </span>
-                <i class="fa-solid fa-arrow-right"></i>
-              <% end %>
-            </div>
+              <option value="new_place">+ Add a New Place</option>
+            </select>
           </div>
         </div>
 
@@ -41,12 +38,27 @@
           </h3>
 
           <%= simple_fields_for :place, place do |p| %>
-            <div data-controller="address-autocomplete" data-address-autocomplete-api-key-value="<%= ENV['MAPBOX_API_KEY'] %>">
+            <div
+              data-controller="place-name-autocomplete"
+              data-place-name-autocomplete-lat-value="<%= place.latitude %>"
+              data-place-name-autocomplete-lng-value="<%= place.longitude %>"
+              data-place-name-autocomplete-mapbox-token-value="<%= ENV['MAPBOX_API_KEY'] %>">
               <div class="form-field">
                 <%= p.input :title,
                   label: "Place Name",
                   placeholder: "e.g. Sagrada Familia",
-                  input_html: { class: "styled-input" } %>
+                  input_html: {
+                    class: "styled-input",
+                    data: {
+                      place_name_autocomplete_target: "input",
+                      action: "input->place-name-autocomplete#search keydown->place-name-autocomplete#handleKeydown"
+                    }
+                  } %>
+                <% if params[:from_camera] && place.title.present? %>
+                  <p class="form-hint">
+                    <i class="fa-solid fa-circle-info"></i> Auto-detected from your location
+                  </p>
+                <% end %>
               </div>
 
               <div class="form-field">
@@ -58,17 +70,28 @@
                     class: "styled-select",
                     data: { address_autocomplete_target: "citySelect", action: "change->address-autocomplete#cityChanged" }
                   } %>
+                <% if params[:from_camera] && place.city.present? %>
+                  <p class="form-hint">
+                    <i class="fa-solid fa-circle-info"></i> Auto-selected from your location: <strong><%= place.city.name %></strong>
+                  </p>
+                <% end %>
               </div>
 
               <div class="form-field">
-                <label class="styled-label">Address</label>
-                <div class="geocoder-container" data-address-autocomplete_target="geocoderContainer"></div>
-                <p class="form-hint" data-address-autocomplete-target="addressHint">
-                  <i class="fa-solid fa-circle-info"></i> Please select a city first
-                </p>
-                <%= p.input :address, as: :hidden, input_html: { data: { address_autocomplete_target: "address" } } %>
-                <%= p.input :latitude, as: :hidden, input_html: { data: { address_autocomplete_target: "latitude" } } %>
-                <%= p.input :longitude, as: :hidden, input_html: { data: { address_autocomplete_target: "longitude" } } %>
+                <%= p.input :address,
+                  label: "Address",
+                  placeholder: "Enter the address",
+                  input_html: {
+                    class: "styled-input",
+                    data: { place_name_autocomplete_target: "address" }
+                  } %>
+                <% if params[:from_camera] && place.address.present? %>
+                  <p class="form-hint">
+                    <i class="fa-solid fa-circle-info"></i> Auto-detected from your location
+                  </p>
+                <% end %>
+                <%= p.input :latitude, as: :hidden, input_html: { data: { place_name_autocomplete_target: "latitude" } } %>
+                <%= p.input :longitude, as: :hidden, input_html: { data: { place_name_autocomplete_target: "longitude" } } %>
               </div>
             </div>
           <% end %>

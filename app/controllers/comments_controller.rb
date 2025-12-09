@@ -25,19 +25,36 @@ class CommentsController < ApplicationController
       lng = session[:captured_longitude]
 
       if lat.present? && lng.present?
+        @place.latitude = lat
+        @place.longitude = lng
+
         begin
           results = Geocoder.search([lat, lng])
           if results.present? && results.first
-            city_name = results.first.city || results.first.state || results.first.country
+            result = results.first
+            city_name = result.city || result.state || result.country
             @auto_city = City.find_or_create_by(name: city_name) if city_name.present?
             @city = @auto_city if @auto_city
+            @place.city = @auto_city if @auto_city
+            @place.address = result.address
+
+            # Auto-detect place name from reverse geocoding
+            @place.title = result.name ||
+                           result.poi ||
+                           result.amenity ||
+                           result.tourism ||
+                           result.building ||
+                           result.suburb ||
+                           result.neighbourhood ||
+                           result.address
           end
-        rescue => e
+        rescue StandardError => e
           Rails.logger.error "Geocoding error: #{e.message}"
         end
-      end
 
-      @places = @city.places if @city
+        # Find places within 10km of the photo location
+        @nearby_places = Place.near([lat, lng], 10, units: :km).order(:title)
+      end
     end
   end
 
@@ -51,6 +68,9 @@ class CommentsController < ApplicationController
       @place = Place.new(place_params)
       generate_place_descriptions
       unless @place.save
+        Rails.logger.error "Place save failed: #{@place.errors.full_messages.join(', ')}"
+        flash.now[:alert] = @place.errors.full_messages.join(", ")
+        @comment = Comment.new(comment_params)
         render :new, status: :unprocessable_entity
         return
       end
@@ -68,14 +88,17 @@ class CommentsController < ApplicationController
           session[:captured_blob_id] = nil
           session[:captured_latitude] = nil
           session[:captured_longitude] = nil
-        rescue => e
+        rescue StandardError => e
           Rails.logger.error "Failed to attach camera photo to comment: #{e.message}"
         end
       end
 
       UpdateEnhancedDescriptionJob.perform_later(@place.id)
-      redirect_to city_place_path(@place.city, @place), notice: "Photo added successfully!"
+      notice_message = @place.previously_new_record? ? "Place created successfully!" : "Photo added successfully!"
+      redirect_to city_place_path(@place.city, @place), notice: notice_message
     else
+      Rails.logger.error "Comment save failed: #{@comment.errors.full_messages.join(', ')}"
+      flash.now[:alert] = @comment.errors.full_messages.join(", ")
       render :new, status: :unprocessable_entity
     end
   end
