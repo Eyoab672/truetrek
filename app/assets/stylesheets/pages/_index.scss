@@ -3,15 +3,6 @@
 @import "travel_book";
 
 // ========================================
-// COLOR PALETTE
-// ========================================
-// $color-taupe: #B5ACA3;      // Warm gray - backgrounds
-// $color-ice: #abcdef;        // Light blue - highlights
-// $color-steel: #849DBB;      // Soft blue - secondary
-// $color-ocean: #5d89ba;      // Medium blue - primary accent
-// $color-coffee: #533A33;     // Dark brown - headers/text
-
-// ========================================
 // HOMEPAGE STYLES
 // ========================================
 
@@ -453,7 +444,7 @@ html {
 
   .cities-section {
     padding: 0rem 1rem 4rem;
-    background: #849DBB;
+    background: white;
   }
 
   .cities-grid {
@@ -474,7 +465,12 @@ html {
   }
 
   .section-subtitle {
-    color: white;
+    color: #533A33;
+    margin-bottom: 0;
+  }
+
+  .section-title {
+    margin-top: 1rem;
   }
 }
 
@@ -502,6 +498,11 @@ html {
 
   .section-title {
     color: #533A33
+  }
+
+  .cities-section {
+    padding: 0rem 1rem 4rem;
+    background: #849DBB;
   }
 }
 
