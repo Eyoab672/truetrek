@@ -110,14 +110,14 @@ sagrada_familia = Place.create!(
 bunkers_del_carmel = Place.create!(
   title: "Bunkers del Carmel",
   enhanced_description: "Bunkers del Carmel offers one of the best panoramic views of Barcelona. Once an anti-aircraft fort, it has become a beloved local hangout where residents gather to enjoy sunsets and cityscapes away from tourist crowds.",
-  address: "Carrer de Marià Labèrnia, Barcelona, Spain",
+  address: "Carrer de Marià Labernia, Horta-Guinardo, 08032 Barcelona",
   city: barcelona
 )
 
 parc_del_laberint = Place.create!(
   title: "Parc del Laberint d’Horta",
   enhanced_description: "Parc del Laberint d’Horta is Barcelona’s oldest garden, a peaceful oasis featuring a neoclassical maze, romantic paths, ponds, and historic statues. A quiet escape treasured by locals.",
-  address: "Passeig dels Castanyers, 1, Barcelona, Spain",
+  address: "Passeig dels Castanyers, 1, Horta-Guinardo, 08035 Barcelona",
   city: barcelona
 )
 
@@ -145,7 +145,7 @@ park_guell = Place.create!(
 montjuic_castle = Place.create!(
   title: "Montjuïc Castle",
   enhanced_description: "A historic fortress overlooking Barcelona’s port, offering sweeping views, cultural exhibitions, and scenic walking paths.",
-  address: "Ctra. de Montjuïc, 66, Barcelona, Spain",
+  address: "Ctra. de Montjuic, 66, Barcelona, Spain",
   city: barcelona
 )
 
@@ -297,9 +297,9 @@ pyramids = Place.create!(
 )
 
 el_fishawi_side_corners = Place.create!(
-  title: "El Fishawi Side Corners",
+  title: "El Fishawi Cafe",
   enhanced_description: "While the main café is famous, the hidden side corners and narrow alleys surrounding El Fishawi offer intimate seating, traditional shisha, and a nostalgic Old Cairo atmosphere cherished by locals.",
-  address: "El Fishawi Café Area, Khan el-Khalili, Cairo, Egypt",
+  address: "Khan Al Khalili, El Gamaliya, Cairo, Egypt",
   city: cairo
 )
 
@@ -307,13 +307,6 @@ erta_ale = Place.create!(
   title: "Erta Ale",
   enhanced_description: "Erta Ale is an active shield volcano located in the Afar Region of Ethiopia. It is famed for its persistent lava and salt lake, one of the few in the world.",
   address: "Danakil Depression, Afar Region, Ethiopia",
-  city: afar
-)
-
-dallol_colored_terraces = Place.create!(
-  title: "Dallol Colored Terraces",
-  enhanced_description: "The Dallol Terraces are a surreal landscape of neon yellows, greens, and reds created by bubbling sulfur springs. Remote, otherworldly, and unlike anywhere else on Earth, this geothermal gem is one of Afar’s most breathtaking secrets.",
-  address: "Dallol, Danakil Depression, Afar Region, Ethiopia",
   city: afar
 )
 
@@ -371,13 +364,6 @@ letna_beergarden_viewpoint = Place.create!(
   enhanced_description: "Tucked inside Letná Park, this relaxed beer garden offers incredible panoramic views of Prague's bridges and the Vltava River. A classic local hangout for warm evenings.",
   address: "Letenské sady, 170 00 Praha 7, Czech Republic",
   city: prague
-)
-
-bang_krachao = Place.create!(
-  title: "Bang Krachao",
-  enhanced_description: "Often called Bangkok’s 'Green Lung', Bang Krachao is a peaceful island of gardens, stilted walkways, and quiet bike paths. A perfect escape from the city’s noise, beloved by locals for weekend cycling and nature walks.",
-  address: "Bang Krachao, Phra Pradaeng District, Bangkok, Thailand",
-  city: bangkok
 )
 
 talat_rot_fai = Place.create!(
@@ -471,14 +457,6 @@ comment = Comment.create!(
   user: user5
 )
 attach_photo(comment, "Erta Ale")
-
-comment = Comment.create!(
-  description: "Absolutely surreal! The colors and formations look like something from another planet. One of the most unique landscapes I’ve ever seen — truly unforgettable.",
-  place: dallol_colored_terraces,
-  user: user6
-)
-
-attach_photo(comment, "Dallol Colored Terraces")
 
 comment = Comment.create!(
   description: "Visited at sunset and the views were magical. The elevator ride up offers stunning panoramic views of Paris. Book tickets in advance online to skip the long queues at the base.",
@@ -617,7 +595,7 @@ comment = Comment.create!(
   place: el_fishawi_side_corners,
   user: user2
 )
-attach_photo(comment, "El Fishawi Side Corners")
+attach_photo(comment, "El Fishawi Cafe")
 
 comment = Comment.create!(
   description: "Such a stunning spot! The short climb rewards you with amazing views over the city and ocean. A perfect place for sunset and a favorite with locals.",
@@ -677,14 +655,6 @@ comment = Comment.create!(
   user: user7
 )
 attach_photo(comment, "Letná Beer Garden Viewpoint")
-
-comment = Comment.create!(
-  description: "An amazing escape from the city! Biking through the greenery and quiet paths of Bang Krachao felt like a completely different world. Such a peaceful spot.",
-  place: bang_krachao,
-  user: user1
-)
-attach_photo(comment, "Bang Krachao")
-
 
 comment = Comment.create!(
   description: "Loved this night market! So many unique vintage shops and incredible food stalls. The atmosphere is lively but still feels very local. One of my favorites in Bangkok!",
