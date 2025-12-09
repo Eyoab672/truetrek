@@ -3,8 +3,10 @@
   <section class="place-header">
     <div class="place-header-content">
       <nav class="place-breadcrumb">
+        <%= link_to "Home", root_path, class: "breadcrumb-link" %>
+        <span class="breadcrumb-separator">></span>
         <%= link_to @place.city.name, city_places_path(@place.city), class: "breadcrumb-link" %>
-        <i class="fa-solid fa-chevron-right"></i>
+        <span class="breadcrumb-separator">></span>
         <span><%= @place.title %></span>
       </nav>
       <div class="side-btn">

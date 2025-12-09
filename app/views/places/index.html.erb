@@ -1,7 +1,12 @@
 <div class="places-page">
   <!-- Hero Section -->
-  <section class="places-hero-section">
-    <div class="places-hero-content">
+  <section class="place-header">
+    <div class="place-header-content">
+      <nav class="place-breadcrumb">
+        <%= link_to "Home", root_path, class: "breadcrumb-link" %>
+        <span class="breadcrumb-separator">></span>
+        <span><%= @city.name %></span>
+      </nav>
       <h1 class="places-hero-title">Explore <%= @city.name %></h1>
       <%# <p class="places-hero-subtitle">Discover amazing places and hidden gems</p> %>
 

@@ -37,11 +37,17 @@ class UpdateEnhancedDescriptionJob < ApplicationJob
   end
 
   def regenerate_description(place, all_comments)
-    chat = RubyLLM.chat
-    chat.with_instructions(ENHANCEMENT_PROMPT)
-
     # Rank comments: positives first, locals boosted; take top 3 overall.
     top_comments = all_comments.sort_by { |c| c.ordering_key(local_bonus: 2) }.first(3)
+
+    # If no comments, revert to original description
+    if top_comments.empty?
+      place.update(enhanced_description: place.original_description)
+      return
+    end
+
+    chat = RubyLLM.chat
+    chat.with_instructions(ENHANCEMENT_PROMPT)
 
     local_experiences = top_comments.select(&:user_is_local?)
     visitor_experiences = top_comments.reject(&:user_is_local?)

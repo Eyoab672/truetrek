@@ -91,8 +91,16 @@ class CommentsController < ApplicationController
 
     @comment.destroy
 
+    # Regenerate description after comment/reply deletion
+    UpdateEnhancedDescriptionJob.perform_later(@place.id)
+
     respond_to do |format|
-      format.turbo_stream { render turbo_stream: turbo_stream.remove("comment_#{@comment.id}") }
+      format.turbo_stream do
+        render turbo_stream: [
+          turbo_stream.remove("comment_#{@comment.id}"),
+          turbo_stream.replace("place_description", partial: "places/description_loading", locals: { place: @place })
+        ]
+      end
       format.html { redirect_to city_place_path(@place.city, @place), notice: "Comment deleted." }
     end
   end

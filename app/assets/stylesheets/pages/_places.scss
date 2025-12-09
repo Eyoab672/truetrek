@@ -14,6 +14,7 @@ html {
 
 .places-page {
   margin-top: -1rem; // Offset navbar spacing
+  background-color: white;
 }
 
 // ========================================
@@ -175,7 +176,6 @@ html {
 
 .places-section {
   padding: 1rem 2rem 6rem;
-  background: linear-gradient(180deg, #f5f3f1 0%, #ffffff 100%);
   min-height: 50vh;
 }
 
@@ -184,12 +184,8 @@ html {
 // ========================================
 
 .places-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr;
-  justify-items: stretch;
-  align-items: stretch;
-  column-gap: 29px;
-  row-gap: 23px;
+  display: flex;
+  flex-direction: column;
 
   // Ensure place-cards fill grid cells
   .place-card {
@@ -382,12 +378,8 @@ html {
   }
 
   .places-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    justify-items: stretch;
-    align-items: stretch;
-    column-gap: 29px;
-    row-gap: 23px;
+    display: flex;
+    flex-direction: column;
   }
 
   .place-card {
@@ -507,6 +499,11 @@ html {
   i.fa-chevron-right {
     color: rgba(255, 255, 255, 0.4);
     font-size: 0.7rem;
+  }
+
+  .breadcrumb-separator {
+    color: rgba(255, 255, 255, 0.4);
+    font-size: 0.8rem;
   }
 
   span {
