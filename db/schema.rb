@@ -72,8 +72,6 @@ ActiveRecord::Schema[7.2].define(version: 2025_12_09_133407) do
     t.string "address"
     t.string "default_img_url"
     t.text "original_description"
-    t.boolean "description_generating", default: false
-    t.boolean "description_generation_error", default: false
     t.index ["city_id"], name: "index_places_on_city_id"
   end
 

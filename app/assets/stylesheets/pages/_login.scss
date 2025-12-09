@@ -115,6 +115,28 @@
   border-bottom-color: #1f3654 !important;
 }
 
+/* show password */
+
+.auth-show-password {
+  margin-top: 8px;
+}
+
+.auth-checkbox-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.85rem;
+  color: #4b5563;
+  cursor: pointer;
+
+  input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+    accent-color: #132742;
+  }
+}
+
 /* remember me */
 
 .auth-remember-row {

@@ -72,7 +72,7 @@ puts "Created Bangkok"
 puts "Finished! Created #{City.count} cities."
 
 puts "Creating users..."
-user1 = User.create!(email: "traveler1@example.com", password: "password123", username: "Eyoab", city: "Barcelona")
+user1 = User.create!(email: "traveler1@example.com", password: "password123", username: "Eyoab", city: "Barcelona", admin: true)
 user2 = User.create!(email: "traveler2@example.com", password: "password123", username: "Egor", city: "Moscow")
 user3 = User.create!(email: "admin@admin.com", password: "123456", username: "owen", city: "Amsterdam", admin: true)
 user4 = User.create!(email: "traveler3@example.com", password: "password123", username: "Jordan", city: "Lima")

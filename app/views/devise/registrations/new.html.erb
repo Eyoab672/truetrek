@@ -53,7 +53,7 @@
                       } %>
         </div>
 
-        <div class="auth-field-group">
+        <div class="auth-field-group" data-controller="password-visibility">
           <%= f.label :password, "Password", class: "auth-label" %>
 
           <% if @minimum_password_length %>
@@ -67,19 +67,25 @@
                       required: true,
                       input_html: {
                         autocomplete: "new-password",
-                        class: "auth-input-field"
+                        class: "auth-input-field",
+                        data: { password_visibility_target: "input" }
                       } %>
-        </div>
 
-        <div class="auth-field-group">
           <%= f.label :password_confirmation, "Confirm password", class: "auth-label" %>
           <%= f.input :password_confirmation,
                       label: false,
                       required: true,
                       input_html: {
                         autocomplete: "new-password",
-                        class: "auth-input-field"
+                        class: "auth-input-field",
+                        data: { password_visibility_target: "input" }
                       } %>
+          <div class="auth-show-password">
+            <label class="auth-checkbox-label">
+              <input type="checkbox" data-action="change->password-visibility#toggle">
+              <span>Show password</span>
+            </label>
+          </div>
         </div>
 
         <div class="auth-actions">

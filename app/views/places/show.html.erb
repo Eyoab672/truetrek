@@ -29,19 +29,10 @@
         <i class="fa-solid fa-location-dot"></i> <%= @place.city.name %>
       </p>
 
-      <% if user_signed_in? %>
+      <% if user_signed_in? && current_user.admin? %>
         <div class="place-header-actions">
-          <% if current_user.reports.exists?(place: @place) %>
-            <span class="reported-badge"><i class="fa-solid fa-check"></i> Reported</span>
-          <% else %>
-            <%= link_to new_place_report_path(@place), class: "report-btn" do %>
-              <i class="fa-solid fa-flag"></i> Report
-            <% end %>
-          <% end %>
-          <% if current_user.admin? %>
-            <%= button_to city_place_path(@place.city, @place), method: :delete, class: "admin-delete-btn", data: { turbo_confirm: "Are you sure you want to delete this place?" } do %>
-              <i class="fa-solid fa-trash"></i> Delete
-            <% end %>
+          <%= button_to city_place_path(@place.city, @place), method: :delete, class: "admin-delete-btn", data: { turbo_confirm: "Are you sure you want to delete this place?" } do %>
+            <i class="fa-solid fa-trash"></i> Delete
           <% end %>
         </div>
       <% end %>
