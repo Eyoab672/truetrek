@@ -1,14 +1,49 @@
 import { Controller } from "@hotwired/stimulus"
-import MapboxGeocoder from "@mapbox/mapbox-gl-geocoder"
 
 // Connects to data-controller="address-autocomplete"
 export default class extends Controller {
   static values = { apiKey: String }
-  static targets = ["address", "latitude", "longitude", "citySelect", "geocoderContainer", "addressHint"]
+  static targets = ["address", "latitude", "longitude", "citySelect"]
 
   connect() {
-    this.geocoder = null
     this.selectedCity = null
+    this.cityCoords = null
+    this.suggestionsContainer = null
+    this.debounceTimer = null
+
+    // Create suggestions container
+    this.#createSuggestionsContainer()
+
+    // Add input listener to address field
+    if (this.hasAddressTarget) {
+      this.addressTarget.addEventListener("input", this.#handleInput.bind(this))
+      this.addressTarget.addEventListener("focus", this.#handleFocus.bind(this))
+    }
+
+    // Close suggestions when clicking outside
+    document.addEventListener("click", this.#handleClickOutside.bind(this))
+
+    // Check for pre-selected city on connect
+    if (this.hasCitySelectTarget) {
+      this.#initializeFromSelectedCity()
+    }
+  }
+
+  #initializeFromSelectedCity() {
+    const select = this.citySelectTarget
+    const selectedOption = select.options[select.selectedIndex]
+
+    if (selectedOption && selectedOption.value) {
+      this.selectedCity = selectedOption.text
+      this.#geocodeCity()
+    }
+  }
+
+  disconnect() {
+    if (this.suggestionsContainer) {
+      this.suggestionsContainer.remove()
+    }
+    document.removeEventListener("click", this.#handleClickOutside.bind(this))
   }
 
   cityChanged() {
@@ -16,54 +51,120 @@ export default class extends Controller {
     const selectedOption = select.options[select.selectedIndex]
 
     if (!selectedOption || !selectedOption.value) {
-      this.#removeGeocoder()
-      this.#showHint("Please select a city first")
+      this.selectedCity = null
+      this.cityCoords = null
       return
     }
 
     this.selectedCity = selectedOption.text
-    this.#initializeGeocoder()
-    this.#showHint(`Search for addresses in ${this.selectedCity}`)
+    this.#geocodeCity()
   }
 
-  #initializeGeocoder() {
-    // Remove existing geocoder if any
-    this.#removeGeocoder()
+  #createSuggestionsContainer() {
+    if (!this.hasAddressTarget) return
 
-    this.geocoder = new MapboxGeocoder({
-      accessToken: this.apiKeyValue,
-      types: "address,poi",
-      placeholder: `Search address in ${this.selectedCity}...`,
-      marker: false,
-      flyTo: false,
-      // Bias results to the selected city
-      proximity: null, // Will be set after geocoding the city
-      filter: (item) => {
-        // Filter results to only show those in or near the selected city
-        return this.#isInSelectedCity(item)
+    this.suggestionsContainer = document.createElement("div")
+    this.suggestionsContainer.className = "address-suggestions"
+    this.suggestionsContainer.style.cssText = `
+      position: absolute;
+      z-index: 1000;
+      background: white;
+      border: 1px solid #ddd;
+      border-top: none;
+      border-radius: 0 0 4px 4px;
+      max-height: 200px;
+      overflow-y: auto;
+      display: none;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+      width: 100%;
+      left: 0;
+      top: 100%;
+      margin-top: 0;
+    `
+
+    // Position relative to the input wrapper
+    const inputWrapper = this.addressTarget.closest(".input") || this.addressTarget.parentElement
+    inputWrapper.style.position = "relative"
+    inputWrapper.appendChild(this.suggestionsContainer)
+  }
+
+  #handleInput(event) {
+    const query = event.target.value
+
+    // Clear previous timer
+    if (this.debounceTimer) {
+      clearTimeout(this.debounceTimer)
+    }
+
+    if (query.length < 3) {
+      this.#hideSuggestions()
+      return
+    }
+
+    // Debounce the search
+    this.debounceTimer = setTimeout(() => {
+      this.#searchAddress(query)
+    }, 300)
+  }
+
+  #handleFocus() {
+    const query = this.addressTarget.value
+    if (query.length >= 3) {
+      this.#searchAddress(query)
+    }
+  }
+
+  #handleClickOutside(event) {
+    if (!this.addressTarget.contains(event.target) && !this.suggestionsContainer.contains(event.target)) {
+      this.#hideSuggestions()
+    }
+  }
+
+  async #searchAddress(query) {
+    if (!this.apiKeyValue) return
+
+    // Build search query - if city is selected, append it to improve results
+    let searchQuery = query
+    if (this.selectedCity && !query.toLowerCase().includes(this.selectedCity.toLowerCase())) {
+      searchQuery = `${query}, ${this.selectedCity}`
+    }
+
+    let url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(searchQuery)}.json?access_token=${this.apiKeyValue}&types=address&limit=5&autocomplete=true`
+
+    // Add proximity bias if we have city coordinates
+    if (this.cityCoords) {
+      url += `&proximity=${this.cityCoords.longitude},${this.cityCoords.latitude}`
+    }
+
+    try {
+      const response = await fetch(url)
+      const data = await response.json()
+
+      if (data.features && data.features.length > 0) {
+        // Filter results to selected city if available
+        let results = data.features
+        if (this.selectedCity) {
+          results = results.filter(item => this.#isInSelectedCity(item))
+        }
+        this.#showSuggestions(results)
+      } else {
+        this.#hideSuggestions()
       }
-    })
-
-    // First, geocode the city to get coordinates for proximity bias
-    this.#geocodeCity()
-
-    this.geocoderContainerTarget.innerHTML = ""
-    this.geocoder.addTo(this.geocoderContainerTarget)
-
-    this.geocoder.on("result", event => this.#setInputValue(event))
-    this.geocoder.on("clear", () => this.#clearInputValue())
+    } catch (error) {
+      console.error("Error searching address:", error)
+      this.#hideSuggestions()
+    }
   }
 
   #geocodeCity() {
-    // Use Mapbox to get city coordinates for proximity bias
+    if (!this.selectedCity || !this.apiKeyValue) return
+
     fetch(`https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(this.selectedCity)}.json?access_token=${this.apiKeyValue}&types=place&limit=1`)
       .then(response => response.json())
       .then(data => {
         if (data.features && data.features.length > 0) {
-          const cityCoords = data.features[0].center
-          if (this.geocoder) {
-            this.geocoder.setProximity({ longitude: cityCoords[0], latitude: cityCoords[1] })
-          }
+          const coords = data.features[0].center
+          this.cityCoords = { longitude: coords[0], latitude: coords[1] }
         }
       })
       .catch(error => console.error("Error geocoding city:", error))
@@ -75,47 +176,54 @@ export default class extends Controller {
     const placeName = item.place_name.toLowerCase()
     const cityName = this.selectedCity.toLowerCase()
 
-    // Check if the result contains the city name
     return placeName.includes(cityName)
   }
 
-  #removeGeocoder() {
-    if (this.geocoder) {
-      this.geocoder.onRemove()
-      this.geocoder = null
-    }
-    if (this.hasGeocoderContainerTarget) {
-      this.geocoderContainerTarget.innerHTML = ""
+  #showSuggestions(results) {
+    if (!this.suggestionsContainer) return
+
+    this.suggestionsContainer.innerHTML = ""
+
+    results.forEach(result => {
+      const item = document.createElement("div")
+      item.className = "address-suggestion-item"
+      item.style.cssText = `
+        padding: 10px 12px;
+        cursor: pointer;
+        border-bottom: 1px solid #eee;
+        font-size: 14px;
+      `
+      item.textContent = result.place_name
+      item.addEventListener("mouseenter", () => {
+        item.style.backgroundColor = "#f5f5f5"
+      })
+      item.addEventListener("mouseleave", () => {
+        item.style.backgroundColor = "white"
+      })
+      item.addEventListener("click", () => {
+        this.#selectSuggestion(result)
+      })
+
+      this.suggestionsContainer.appendChild(item)
+    })
+
+    this.suggestionsContainer.style.display = "block"
+  }
+
+  #hideSuggestions() {
+    if (this.suggestionsContainer) {
+      this.suggestionsContainer.style.display = "none"
     }
   }
 
-  #showHint(message) {
-    if (this.hasAddressHintTarget) {
-      this.addressHintTarget.innerHTML = `<i class="fas fa-info-circle me-1"></i>${message}`
-    }
-  }
-
-  #setInputValue(event) {
-    const result = event.result
+  #selectSuggestion(result) {
     this.addressTarget.value = result.place_name
 
-    // Set coordinates if targets exist
     if (this.hasLatitudeTarget && this.hasLongitudeTarget && result.center) {
       this.longitudeTarget.value = result.center[0]
       this.latitudeTarget.value = result.center[1]
     }
 
-    this.#showHint(`<i class="fas fa-check-circle text-success me-1"></i>Address selected in ${this.selectedCity}`)
-  }
-
-  #clearInputValue() {
-    this.addressTarget.value = ""
-    if (this.hasLatitudeTarget) this.latitudeTarget.value = ""
-    if (this.hasLongitudeTarget) this.longitudeTarget.value = ""
-    this.#showHint(`Search for addresses in ${this.selectedCity}`)
-  }
-
-  disconnect() {
-    this.#removeGeocoder()
+    this.#hideSuggestions()
   }
 }
