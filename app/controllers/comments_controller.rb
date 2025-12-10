@@ -111,12 +111,21 @@ class CommentsController < ApplicationController
       # Set flag to show loading skeleton on redirect
       flash[:description_loading] = true
       notice_message = @is_new_place ? "Place created successfully!" : "Comment added successfully!"
-      redirect_to city_place_path(@place.city, @place), notice: notice_message
+
+      respond_to do |format|
+        format.html { redirect_to city_place_path(@place.city, @place), notice: notice_message }
+        format.json { render json: { success: true, comment_id: @comment.id, place_id: @place.id }, status: :created }
+      end
 
     else
       Rails.logger.error "Comment save failed: #{@comment.errors.full_messages.join(', ')}"
-      flash.now[:alert] = @comment.errors.full_messages.join(", ")
-      render :new, status: :unprocessable_entity
+      respond_to do |format|
+        format.html do
+          flash.now[:alert] = @comment.errors.full_messages.join(", ")
+          render :new, status: :unprocessable_entity
+        end
+        format.json { render json: { success: false, errors: @comment.errors.full_messages }, status: :unprocessable_entity }
+      end
     end
   end
 

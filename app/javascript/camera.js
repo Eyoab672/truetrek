@@ -1,3 +1,5 @@
+import offlineDB from "pwa/offline_db"
+
 function initCameraPage() {
   const video = document.getElementById("camera-video");
   const canvas = document.getElementById("camera-canvas");
@@ -98,9 +100,58 @@ function initCameraPage() {
     });
   }
 
+  // Save photo offline to IndexedDB
+  async function savePhotoOffline() {
+    if (!lastBlob) {
+      alert("Please take a photo first.");
+      return;
+    }
+
+    try {
+      await offlineDB.init();
+      await offlineDB.addPendingPhoto({
+        blob: lastBlob,
+        latitude: lastLat,
+        longitude: lastLng,
+        place_id: placeId ? parseInt(placeId) : null
+      });
+
+      // Show offline saved notification
+      showOfflineNotification();
+
+      // Notify offline controller to update pending count
+      window.dispatchEvent(new CustomEvent('pwa:pending-updated'));
+
+    } catch (err) {
+      console.error("Failed to save photo offline:", err);
+      alert("Failed to save photo. Please try again.");
+    }
+  }
+
+  // Show notification that photo was saved offline
+  function showOfflineNotification() {
+    const notification = document.createElement('div');
+    notification.className = 'offline-saved-notice';
+    notification.style.cssText = 'position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%); z-index: 9999;';
+    notification.innerHTML = `
+      <i class="fa-solid fa-cloud-arrow-up"></i>
+      <span>Photo saved! It will be uploaded when you're back online.</span>
+    `;
+    document.body.appendChild(notification);
+
+    // Auto-remove after 5 seconds
+    setTimeout(() => notification.remove(), 5000);
+  }
+
   async function sendCapture() {
     if (!lastBlob) {
       alert("Please take a photo first.");
+      return;
+    }
+
+    // Check if offline - save to IndexedDB instead
+    if (!navigator.onLine) {
+      await savePhotoOffline();
       return;
     }
 
@@ -147,7 +198,13 @@ function initCameraPage() {
       }
     } catch (err) {
       console.error("Error sending capture:", err);
-      alert(`Network error while sending photo: ${err.message}`);
+      // If network error, try to save offline
+      if (!navigator.onLine || err.name === 'TypeError') {
+        console.log("Network error, saving photo offline...");
+        await savePhotoOffline();
+      } else {
+        alert(`Network error while sending photo: ${err.message}`);
+      }
     }
   }
 
