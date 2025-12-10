@@ -8,8 +8,12 @@ function initCameraPage() {
   const actionButtons = document.getElementById("action-buttons");
   const looksGreatButton = document.getElementById("looks-great");
   const retakeButton = document.getElementById("retake-photo");
+  const cameraPage = document.querySelector(".camera-new-page");
 
   if (!video || !canvas || !takePhotoBtn) return; // not on /camera
+
+  // Get place_id if coming from a place page
+  const placeId = cameraPage?.dataset?.placeId;
 
   let stream = null;
   let lastBlob = null;
@@ -104,6 +108,7 @@ function initCameraPage() {
     formData.append("image", lastBlob, "capture.png");
     if (lastLat != null) formData.append("latitude", lastLat);
     if (lastLng != null) formData.append("longitude", lastLng);
+    if (placeId) formData.append("place_id", placeId);
 
     console.log("Uploading photo...");
     console.log("Blob size:", lastBlob.size);

@@ -239,7 +239,7 @@
               input_html: { rows: 4, placeholder: "Tell others about your experience at this place..." } %>
           <p class="form-hint">
             <i class="fa-solid fa-camera"></i>
-            Want to add photos? <%= link_to "Use the camera", camera_path, class: "camera-link" %> to capture and upload.
+            Want to add photos? <%= link_to "Use the camera", camera_path(place_id: @place.id), class: "camera-link" %> to capture and upload.
           </p>
           <div class="form-actions">
             <%= f.submit "Post Comment", class: "btn-submit-comment" %>

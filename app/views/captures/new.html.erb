@@ -1,8 +1,13 @@
-<div class="camera-new-page">
+<div class="camera-new-page" data-place-id="<%= params[:place_id] %>">
   <section class="camera-page-header">
     <div class="camera-page-header-content">
       <h1 class="camera-page-title">Capture a Moment</h1>
-      <p class="camera-page-subtitle">Take a photo to create a place or add to an existing one</p>
+      <% if params[:place_id].present? %>
+        <% place = Place.find_by(id: params[:place_id]) %>
+        <p class="camera-page-subtitle">Add a photo to <%= place&.title || "this place" %></p>
+      <% else %>
+        <p class="camera-page-subtitle">Take a photo to create a place or add to an existing one</p>
+      <% end %>
     </div>
   </section>
 

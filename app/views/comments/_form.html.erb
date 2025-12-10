@@ -1,8 +1,22 @@
 <div class="comment-form-wrapper">
   <div class="comment-form-card">
-    <%= simple_form_for comment, local: true, url: comments_path, html: { class: "styled-comment-form" } do |f| %>
+    <% form_url = params[:place_id].present? ? comments_path(place_id: params[:place_id]) : comments_path %>
+    <%= simple_form_for comment, local: true, url: form_url, html: { class: "styled-comment-form" } do |f| %>
+      <% # Show place info if adding to an existing place from camera flow %>
+      <% if params[:from_camera] && params[:place_id].present? && place.persisted? %>
+        <div class="form-section">
+          <h3 class="form-section-title">
+            <i class="fa-solid fa-location-dot"></i>
+            Adding Photo to Place
+          </h3>
+          <div class="existing-place-info">
+            <p class="place-name"><strong><%= place.title %></strong></p>
+            <p class="place-address text-muted"><%= place.address %></p>
+          </div>
+        </div>
+        <div class="form-divider"></div>
       <% # Show place selection if from_camera but no specific place selected yet %>
-      <% if params[:from_camera] && !params[:place_id] && !params[:new_place] %>
+      <% elsif params[:from_camera] && !params[:place_id] && !params[:new_place] %>
         <!-- Camera Flow: Select Existing Place or Create New -->
         <div class="form-section" data-controller="place-selector">
           <h3 class="form-section-title">
@@ -15,7 +29,7 @@
             <select class="styled-select" data-action="change->place-selector#handleChange">
               <option value="">Choose a place...</option>
               <% if @nearby_places.present? %>
-                <optgroup label="Nearby Places (within 10km)">
+                <optgroup label="Nearby Places (within 1km)">
                   <% @nearby_places.each do |p| %>
                     <option value="<%= new_comment_path(place_id: p.id, from_camera: true) %>">
                       <%= p.title %>
@@ -140,7 +154,7 @@
 
       <div class="form-actions">
         <% button_text = if local_assigns[:place]&.new_record?
-          "Add Place"
+          "Add Photos"
         elsif params[:from_camera]
           "Add Photos to Place"
         else

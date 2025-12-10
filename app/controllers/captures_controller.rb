@@ -30,8 +30,13 @@ class CapturesController < ApplicationController
     session[:captured_latitude] = params[:latitude]
     session[:captured_longitude] = params[:longitude]
 
-    # Always redirect to comments/new with from_camera flag
-    redirect_to_url = new_comment_path(from_camera: true)
+    # Redirect to comments/new with from_camera flag
+    # If place_id is provided, include it to skip place selection
+    if params[:place_id].present?
+      redirect_to_url = new_comment_path(from_camera: true, place_id: params[:place_id])
+    else
+      redirect_to_url = new_comment_path(from_camera: true)
+    end
 
     respond_to do |format|
       format.json { render json: { redirect_to: redirect_to_url } }

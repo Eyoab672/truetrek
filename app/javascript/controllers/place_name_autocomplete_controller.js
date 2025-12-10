@@ -89,7 +89,8 @@ export default class extends Controller {
   async fetchAppPlaces(query) {
     try {
       const params = new URLSearchParams({ query })
-      if (this.hasLatValue && this.hasLngValue) {
+      // Only send coordinates if they're valid (non-zero)
+      if (this.hasLatValue && this.hasLngValue && this.latValue !== 0 && this.lngValue !== 0) {
         params.append("latitude", this.latValue)
         params.append("longitude", this.lngValue)
       }
@@ -125,16 +126,45 @@ export default class extends Controller {
       if (!response.ok) return []
 
       const data = await response.json()
-      return data.features.map(feature => ({
+      const places = data.features.map(feature => ({
         title: feature.text || feature.place_name.split(",")[0],
         address: feature.place_name,
         latitude: feature.center[1],
         longitude: feature.center[0]
       }))
+
+      // Filter by 1km radius if valid coordinates are available (non-zero)
+      if (this.hasLatValue && this.hasLngValue && this.latValue !== 0 && this.lngValue !== 0) {
+        return places.filter(place => {
+          const distance = this.calculateDistance(
+            this.latValue, this.lngValue,
+            place.latitude, place.longitude
+          )
+          return distance <= 1 // 1 km
+        })
+      }
+
+      return places
     } catch (error) {
       console.error("Error fetching Mapbox places:", error)
       return []
     }
+  }
+
+  // Calculate distance between two points using Haversine formula (returns km)
+  calculateDistance(lat1, lng1, lat2, lng2) {
+    const R = 6371 // Earth's radius in km
+    const dLat = this.toRad(lat2 - lat1)
+    const dLng = this.toRad(lng2 - lng1)
+    const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+              Math.cos(this.toRad(lat1)) * Math.cos(this.toRad(lat2)) *
+              Math.sin(dLng / 2) * Math.sin(dLng / 2)
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
+    return R * c
+  }
+
+  toRad(deg) {
+    return deg * (Math.PI / 180)
   }
 
   displaySuggestions(suggestions) {
