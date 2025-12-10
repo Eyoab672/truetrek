@@ -39,10 +39,11 @@
 
           <%= simple_fields_for :place, place do |p| %>
             <div
-              data-controller="place-name-autocomplete"
+              data-controller="place-name-autocomplete address-autocomplete"
               data-place-name-autocomplete-lat-value="<%= place.latitude %>"
               data-place-name-autocomplete-lng-value="<%= place.longitude %>"
-              data-place-name-autocomplete-mapbox-token-value="<%= ENV['MAPBOX_API_KEY'] %>">
+              data-place-name-autocomplete-mapbox-token-value="<%= ENV['MAPBOX_API_KEY'] %>"
+              data-address-autocomplete-api-key-value="<%= ENV['MAPBOX_API_KEY'] %>">
               <div class="form-field">
                 <%= p.input :title,
                   label: "Place Name",
@@ -83,15 +84,15 @@
                   placeholder: "Enter the address",
                   input_html: {
                     class: "styled-input",
-                    data: { place_name_autocomplete_target: "address" }
+                    data: { address_autocomplete_target: "address", place_name_autocomplete_target: "address" }
                   } %>
                 <% if params[:from_camera] && place.address.present? %>
                   <p class="form-hint">
                     <i class="fa-solid fa-circle-info"></i> Auto-detected from your location
                   </p>
                 <% end %>
-                <%= p.input :latitude, as: :hidden, input_html: { data: { place_name_autocomplete_target: "latitude" } } %>
-                <%= p.input :longitude, as: :hidden, input_html: { data: { place_name_autocomplete_target: "longitude" } } %>
+                <%= p.input :latitude, as: :hidden, input_html: { data: { address_autocomplete_target: "latitude", place_name_autocomplete_target: "latitude" } } %>
+                <%= p.input :longitude, as: :hidden, input_html: { data: { address_autocomplete_target: "longitude", place_name_autocomplete_target: "longitude" } } %>
               </div>
             </div>
           <% end %>
