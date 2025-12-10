@@ -30,8 +30,9 @@
         <!-- PROFILE -->
     <% if user_signed_in? %>
       <%= link_to user_path(current_user), class: "bottom-nav-item" do %>
-        <div class="bottom-nav-icon">
+        <div class="bottom-nav-icon" data-controller="sync-badge">
           <i class="fa-solid fa-user" style="color: #000000;"></i>
+          <span class="sync-badge d-none" data-sync-badge-target="count">0</span>
         </div>
      <% end %>
      <% end %>

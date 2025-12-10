@@ -32,6 +32,14 @@
           <li class="nav-item active">
             <%= link_to "LOG OUT", destroy_user_session_path, method: :delete, data: { turbo_method: :delete }, class: "nav-link" %>
           </li>
+          <li class="nav-item active" data-controller="sync-badge">
+            <span class="sync-badge-container">
+              <span class="sync-badge d-none" data-sync-badge-target="count">0</span>
+              <span class="sync-status-icon d-none" data-sync-badge-target="icon">
+                <i class="fa-solid fa-cloud-arrow-up"></i>
+              </span>
+            </span>
+          </li>
           <li class="nav-item dropdown">
         <% else %>
           <li class="nav-item">

@@ -1,0 +1,18 @@
+<div data-controller="offline">
+  <!-- Offline Banner -->
+  <div class="offline-indicator d-none" data-offline-target="indicator">
+    <div class="offline-banner">
+      <i class="fa-solid fa-wifi-slash"></i>
+      <span>You're offline</span>
+      <span class="pending-badge d-none" data-offline-target="badge">0</span>
+    </div>
+  </div>
+
+  <!-- Sync Button (floating) -->
+  <button class="sync-button d-none"
+          data-offline-target="syncButton"
+          data-action="click->offline#triggerSync">
+    <i class="fa-solid fa-rotate"></i>
+    <span data-offline-target="syncStatus">Sync Now</span>
+  </button>
+</div>
