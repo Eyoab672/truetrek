@@ -1,6 +1,6 @@
 <div class="place-show-page">
   <!-- Hero Header -->
-  <section class="place-header">
+  <section class="place-header-show">
     <div class="place-header-content">
       <nav class="place-breadcrumb">
         <%= link_to "Home", root_path, class: "breadcrumb-link" %>
@@ -109,7 +109,7 @@
       <% else %>
         <%= render "places/description", place: @place %>
       <% end %>
-      
+
       <div class="d-flex flex-column justify-content-between align-items-start gap-3 mt-3">
         <div>
           <%= button_to regenerate_description_city_place_path(@place.city, @place), method: :post, class: "ai-badge", title: "Regenerate AI description" do %>

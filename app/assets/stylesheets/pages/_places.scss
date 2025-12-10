@@ -58,11 +58,13 @@ html {
   font-size: clamp(2rem, 5vw, 3rem);
   font-weight: 800;
   color: #ffffff;
-  margin-bottom: 0.75rem;
+  margin-bottom: 1rem;
   line-height: 1.1;
   letter-spacing: -0.02em;
   text-shadow: 0 4px 30px rgba(83, 58, 51, 0.4);
   animation: fadeInUp 0.8s ease-out;
+  text-align: center;
+  margin-top: 0.5rem;
 }
 
 .places-hero-subtitle {
@@ -422,14 +424,21 @@ html {
 // Place Header
 .place-header {
   background: #849DBB;
-  padding: 2rem 0 3rem;
+  padding: 2rem 0 1rem;
+  margin-top: -1rem;
+  border-radius: 0px 0px 40px 40px;
+}
+
+.place-header-show {
+  background: #849DBB;
+  padding: 2rem 0 2.8rem;
   margin-top: -1rem;
 }
 
 .place-header-content {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0 2rem;
+  padding: 2rem 0 1rem;
 }
 
 .side-btn {
@@ -975,7 +984,8 @@ html {
 
 .comment-header {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
+  justify-content: flex-start;
   gap: 1rem;
   margin-bottom: 1rem;
 }
@@ -1198,7 +1208,7 @@ a.comment-author,
 // Add Comment Section
 .place-add-comment-section {
   max-width: 1200px;
-  margin: 0 auto 4rem;
+  margin: 0 auto 4.5rem;
   padding: 0 2rem;
 }
 
@@ -1284,7 +1294,7 @@ a.comment-author,
   }
 
   .place-header-content {
-    padding: 1rem 1rem;
+    padding: 1rem 1rem 0 1rem;
   }
 
   .place-breadcrumb {
@@ -1357,7 +1367,7 @@ a.comment-author,
   }
 
   .places-section {
-    margin: 0 0.5rem 0 0.5rem;
+    margin: 0 0.5rem 0.9rem 0.5rem;
   }
 
 }
@@ -1621,6 +1631,10 @@ a.comment-author,
 @media (max-width: 480px) {
   .place-form-card {
     padding: 1.25rem;
+  }
+
+  .places-search-wrapper {
+    gap: 6rem;
   }
 
   .place-form-section {

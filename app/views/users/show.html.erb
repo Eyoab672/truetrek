@@ -69,20 +69,23 @@
           <%= link_to "View All", my_travel_book_path, class: "section-link" %>
         <% end %>
       </div>
-      <div class="travel-book-preview">
-        <% @travel_book.places.limit(6).each do |place| %>
-          <%= link_to city_place_path(place.city, place), class: "travel-book-item" do %>
-            <div class="place-card-mini">
-              <% if place.comments.flat_map(&:photos).any? %>
-                <%= cl_image_tag place.comments.flat_map(&:photos).first.key, height: 120, width: 120, crop: :fill, class: "place-thumb" %>
-              <% elsif place.default_img_url.present? %>
-                <%= image_tag place.default_img_url, class: "place-thumb" %>
-              <% else %>
-                <div class="place-thumb-placeholder">
-                  <i class="fa-solid fa-map-pin"></i>
-                </div>
-              <% end %>
-              <span class="place-name"><%= truncate(place.title, length: 20) %></span>
+      <div class="travel-book-slider">
+        <% @travel_book.places.limit(10).each do |place| %>
+          <%= link_to city_place_path(place.city, place), class: "travel-book-card" do %>
+            <% photo = place.comments.flat_map { |c| c.photos.to_a }.first %>
+            <% if photo %>
+              <div class="card-image" style="background-image: url('<%= cl_image_path photo.key, height: 300, width: 400, crop: :fill %>');"></div>
+            <% elsif place.default_img_url.present? %>
+              <div class="card-image" style="background-image: url('<%= place.default_img_url %>');"></div>
+            <% else %>
+              <div class="card-image card-image-placeholder">
+                <i class="fa-solid fa-map-pin"></i>
+              </div>
+            <% end %>
+            <div class="card-overlay"></div>
+            <div class="card-info">
+              <h3 class="card-title"><%= truncate(place.title, length: 25) %></h3>
+              <p class="card-location"><i class="fa-solid fa-location-dot"></i> <%= place.city.name %></p>
             </div>
           <% end %>
         <% end %>
@@ -96,9 +99,9 @@
       <h2><i class="fa-solid fa-comment"></i> Recent Reviews</h2>
     </div>
     <% if @comments.any? %>
-      <div class="reviews-list">
-        <% @comments.limit(5).each do |comment| %>
-          <div class="review-card">
+      <div class="reviews-list" data-controller="load-more" data-load-more-items-per-page-value="3">
+        <% @comments.each_with_index do |comment, index| %>
+          <div class="review-card" data-load-more-target="item" <%= 'style=display:none;' if index >= 3 %>>
             <div class="review-header">
               <%= link_to city_place_path(comment.place.city, comment.place), class: "review-place-link" do %>
                 <i class="fa-solid fa-location-dot"></i>
@@ -118,6 +121,11 @@
               </div>
             <% end %>
           </div>
+        <% end %>
+        <% if @comments.count > 3 %>
+          <button class="load-more-btn" data-load-more-target="button" data-action="click->load-more#loadMore">
+            Load more <i class="fa-solid fa-chevron-down"></i>
+          </button>
         <% end %>
       </div>
     <% else %>
