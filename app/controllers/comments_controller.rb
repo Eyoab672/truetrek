@@ -85,10 +85,6 @@ class CommentsController < ApplicationController
       end
 
 
-      UpdateEnhancedDescriptionJob.perform_later(@place.id)
-      notice_message = @place.previously_new_record? ? "Place created successfully!" : "Photo added successfully!"
-      redirect_to city_place_path(@place.city, @place), notice: notice_message
-
       # Queue async description generation
       user_review = @comment.description.presence || "Visitor review not provided yet."
       username = current_user&.username || "anonymous"
@@ -103,7 +99,8 @@ class CommentsController < ApplicationController
 
       # Set flag to show loading skeleton on redirect
       flash[:description_loading] = true
-      redirect_to city_place_path(@place.city, @place), notice: "Comment added successfully!"
+      notice_message = @is_new_place ? "Place created successfully!" : "Comment added successfully!"
+      redirect_to city_place_path(@place.city, @place), notice: notice_message
 
     else
       Rails.logger.error "Comment save failed: #{@comment.errors.full_messages.join(', ')}"
