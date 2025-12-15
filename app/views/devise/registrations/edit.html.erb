@@ -58,6 +58,21 @@
                       } %>
         </div>
 
+        <div class="auth-separator">
+          <span class="auth-separator-line"></span>
+          <span class="auth-separator-text">Privacy</span>
+          <span class="auth-separator-line"></span>
+        </div>
+
+        <%= f.fields_for :travel_book, resource.travel_book || resource.build_travel_book do |tb| %>
+          <div class="auth-field-group">
+            <div class="form-check">
+              <%= tb.check_box :hidden, class: "form-check-input", id: "travel_book_hidden" %>
+              <%= tb.label :hidden, "Hide my travel book from profile visitors", class: "form-check-label" %>
+            </div>
+          </div>
+        <% end %>
+
         <div class="auth-field-group">
           <%= f.label :email, "Email", class: "auth-label" %>
           <%= f.input :email,

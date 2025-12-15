@@ -54,7 +54,8 @@ User (Devise auth)
 ├── has_many Votes
 ├── has_many Reports
 ├── has_one_attached avatar
-└── attributes: username (required), city (required), admin (boolean)
+├── attributes: username (required), city (required), admin (boolean), banned (boolean)
+└── methods: ban!(reason:), unban!, banned? - prevents login via active_for_authentication?
 
 TravelBook
 ├── belongs_to User
@@ -80,7 +81,8 @@ Comment
 ├── has_many :replies (nested comments)
 ├── has_many Votes
 ├── has_many_attached photos
-└── validates description: presence, minimum 20 chars
+├── validates description: presence, minimum 5 chars
+└── methods: vote_balance, weighted_score(local_bonus:), user_is_local? - local residents get ranking bonus
 
 Vote
 ├── belongs_to User
@@ -120,13 +122,13 @@ Report
 - `/camera` for photo capture feature (stores blob in session, redirects to comment form)
 - `/users/search` for user autocomplete (@mentions)
 - `/jobs` Mission Control dashboard (admin only)
-- `/admin` namespace for admin dashboard, reports management, and place moderation
+- `/admin` namespace for admin dashboard, reports management, place moderation, and user ban/unban
 - `/places/autocomplete` for place name suggestions during place creation
 - PWA routes: `/service-worker` and `/manifest` for Progressive Web App support
 
 ### Stimulus Controllers
 Key JavaScript controllers in `app/javascript/controllers/`:
-- `reply_toggle_controller.js` - Shows reply form
+- `reply_toggle_controller.js`, `reply_form_controller.js` - Reply form handling
 - `replies_expand_controller.js` - Expands/collapses reply threads
 - `mention_autocomplete_controller.js` - @mention dropdown in comments
 - `map_controller.js` - Map integration
@@ -134,6 +136,7 @@ Key JavaScript controllers in `app/javascript/controllers/`:
 - `place_name_autocomplete_controller.js` - Place name suggestions
 - `address_autocomplete_controller.js` - Address autocomplete
 - `offline_controller.js`, `offline_comment_controller.js`, `sync_badge_controller.js` - PWA offline functionality
+- `load_more_controller.js` - Pagination/infinite scroll
 
 ### Devise Configuration
 Custom permitted parameters in `ApplicationController`:
