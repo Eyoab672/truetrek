@@ -5,6 +5,7 @@ class User < ApplicationRecord
          :recoverable, :rememberable, :validatable
 
   has_one :travel_book, dependent: :destroy
+  accepts_nested_attributes_for :travel_book
   has_many :comments, dependent: :destroy
   has_many :votes, dependent: :destroy
   has_many :reports, dependent: :destroy

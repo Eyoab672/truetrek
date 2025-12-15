@@ -61,7 +61,7 @@
 
 
   <!-- Travel Book Section -->
-  <% if @travel_book && @travel_book.places.any? %>
+  <% if @travel_book && @travel_book.places.any? && (@user == current_user || !@travel_book.hidden?) %>
     <div class="profile-section">
       <div class="section-header">
         <h2><i class="fa-solid fa-book"></i> Travel Book</h2>
