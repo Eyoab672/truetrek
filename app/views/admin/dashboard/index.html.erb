@@ -42,6 +42,15 @@
         <span class="stat-label">Comments</span>
       </div>
     </div>
+    <div class="stat-card">
+      <div class="stat-icon banned">
+        <i class="fa-solid fa-ban"></i>
+      </div>
+      <div class="stat-info">
+        <span class="stat-number"><%= @banned_users_count %></span>
+        <span class="stat-label">Banned Users</span>
+      </div>
+    </div>
   </div>
 
   <!-- Quick Actions -->
@@ -59,6 +68,14 @@
       <%= link_to admin_places_path, class: "action-card" do %>
         <i class="fa-solid fa-map-pin"></i>
         <span>Manage Places</span>
+      <% end %>
+      <%= link_to admin_users_path, class: "action-card" do %>
+        <i class="fa-solid fa-users"></i>
+        <span>Manage Users</span>
+      <% end %>
+      <%= link_to admin_comments_path, class: "action-card" do %>
+        <i class="fa-solid fa-comments"></i>
+        <span>Manage Comments</span>
       <% end %>
     </div>
   </div>

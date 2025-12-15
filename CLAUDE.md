@@ -43,6 +43,7 @@ bin/rails solid_queue:start
 - Geocoder with Nominatim for coordinates
 - RubyLLM for AI-powered description enhancement
 - Solid Queue for background jobs + Mission Control dashboard
+- Progressive Web App (PWA) with offline comment support
 
 ### Data Model
 
@@ -120,6 +121,8 @@ Report
 - `/users/search` for user autocomplete (@mentions)
 - `/jobs` Mission Control dashboard (admin only)
 - `/admin` namespace for admin dashboard, reports management, and place moderation
+- `/places/autocomplete` for place name suggestions during place creation
+- PWA routes: `/service-worker` and `/manifest` for Progressive Web App support
 
 ### Stimulus Controllers
 Key JavaScript controllers in `app/javascript/controllers/`:
@@ -130,6 +133,7 @@ Key JavaScript controllers in `app/javascript/controllers/`:
 - `place_selector_controller.js` - Place selection UI
 - `place_name_autocomplete_controller.js` - Place name suggestions
 - `address_autocomplete_controller.js` - Address autocomplete
+- `offline_controller.js`, `offline_comment_controller.js`, `sync_badge_controller.js` - PWA offline functionality
 
 ### Devise Configuration
 Custom permitted parameters in `ApplicationController`:

@@ -945,3 +945,239 @@
     align-items: stretch;
   }
 }
+
+// ========================================
+// USER MANAGEMENT STYLES
+// ========================================
+
+.admin-badge {
+  display: inline-block;
+  padding: 0.15rem 0.5rem;
+  background: linear-gradient(135deg, #5d89ba, #849DBB);
+  color: #ffffff;
+  font-size: 0.7rem;
+  font-weight: 600;
+  border-radius: 10px;
+  text-transform: uppercase;
+  margin-left: 0.5rem;
+}
+
+.banned-row {
+  background: #fff5f5 !important;
+}
+
+.status-badge.active {
+  background: #d4edda;
+  color: #155724;
+}
+
+.status-badge.banned {
+  background: #f8d7da;
+  color: #721c24;
+}
+
+.btn-ban {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: #dc3545;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: #c82333;
+  }
+}
+
+.btn-unban {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: #28a745;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: #218838;
+  }
+}
+
+.stat-icon.banned {
+  background: #f8d7da;
+  color: #721c24;
+}
+
+// Comment/Reply ban buttons on place page
+.comment-ban-btn,
+.reply-ban-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.25rem 0.5rem;
+  background: transparent;
+  color: #dc3545;
+  border: 1px solid #dc3545;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: #dc3545;
+    color: #ffffff;
+  }
+}
+
+// ========================================
+// COMMENTS MANAGEMENT
+// ========================================
+
+.filter-info {
+  background: #e8f4fd;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  color: #004085;
+}
+
+.place-link-external {
+  color: #5d89ba;
+  text-decoration: none;
+  font-size: 0.9rem;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.user-comments-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.user-comment-item {
+  padding: 0.75rem 0;
+  border-bottom: 1px solid #f8f9fa;
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  p {
+    margin: 0 0 0.25rem 0;
+    color: #495057;
+  }
+
+  small {
+    color: #849DBB;
+
+    a {
+      color: #5d89ba;
+      text-decoration: none;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+}
+
+.empty-state-small {
+  text-align: center;
+  padding: 1.5rem;
+  color: #849DBB;
+}
+
+.banned-reason {
+  color: #6c757d;
+  margin-top: 0.25rem;
+}
+
+.comment-content-admin {
+  background: #f8f9fa;
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+
+  p {
+    margin: 0;
+    color: #495057;
+    line-height: 1.6;
+  }
+}
+
+.comment-photos-admin {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.replies-list-admin {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.reply-item-admin {
+  padding: 1rem;
+  background: #f8f9fa;
+  border-radius: 8px;
+
+  p {
+    margin: 0.5rem 0;
+    color: #495057;
+  }
+}
+
+.reply-header-admin {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+
+  strong {
+    color: #533A33;
+  }
+}
+
+.reply-date-admin {
+  color: #849DBB;
+  font-size: 0.85rem;
+  margin-left: auto;
+}
+
+.reply-actions-admin {
+  margin-top: 0.75rem;
+}
+
+.btn-delete-small {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.25rem 0.5rem;
+  background: #dc3545;
+  color: #ffffff;
+  border: none;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: #c82333;
+  }
+}

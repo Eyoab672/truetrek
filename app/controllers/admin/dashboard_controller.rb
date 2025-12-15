@@ -5,6 +5,7 @@ module Admin
       @total_reports_count = Report.count
       @places_count = Place.count
       @users_count = User.count
+      @banned_users_count = User.where(banned: true).count
       @comments_count = Comment.count
       @recent_reports = Report.pending.includes(:user, :place).order(created_at: :desc).limit(5)
     end

@@ -1,0 +1,113 @@
+<div class="admin-page">
+  <div class="admin-header">
+    <h1><i class="fa-solid fa-comment"></i> Comment Details</h1>
+    <%= link_to admin_comments_path, class: "back-link" do %>
+      <i class="fa-solid fa-arrow-left"></i> Back to Comments
+    <% end %>
+  </div>
+
+  <div class="report-detail-grid">
+    <!-- Comment Info -->
+    <div class="report-info-card">
+      <h2>Comment</h2>
+      <div class="comment-content-admin">
+        <p><%= @comment.description %></p>
+      </div>
+      <% if @comment.photos.attached? %>
+        <div class="comment-photos-admin">
+          <% @comment.photos.each do |photo| %>
+            <%= cl_image_tag photo.key, height: 100, width: 100, crop: :fill, class: "comment-thumbnail" %>
+          <% end %>
+        </div>
+      <% end %>
+      <div class="info-row">
+        <span class="info-label">Votes</span>
+        <span class="info-value"><%= @comment.vote_balance %></span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Posted</span>
+        <span class="info-value"><%= @comment.created_at.strftime("%B %d, %Y at %I:%M %p") %></span>
+      </div>
+
+      <div class="place-actions">
+        <%= link_to city_place_path(@place.city, @place, anchor: "comment_#{@comment.id}"), class: "btn-view", target: "_blank" do %>
+          <i class="fa-solid fa-external-link"></i> View on Place
+        <% end %>
+        <%= button_to admin_comment_path(@comment), method: :delete, class: "btn-delete", data: { turbo_confirm: "Delete this comment?" } do %>
+          <i class="fa-solid fa-trash"></i> Delete Comment
+        <% end %>
+      </div>
+    </div>
+
+    <!-- Author Info -->
+    <div class="place-info-card">
+      <h2>Author: <%= @user.username %></h2>
+      <div class="info-row">
+        <span class="info-label">Email</span>
+        <span class="info-value"><%= @user.email %></span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">City</span>
+        <span class="info-value"><%= @user.city %></span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Status</span>
+        <span class="info-value">
+          <% if @user.banned? %>
+            <span class="status-badge banned">Banned</span>
+          <% else %>
+            <span class="status-badge active">Active</span>
+          <% end %>
+        </span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Total Comments</span>
+        <span class="info-value"><%= @user.comments.count %></span>
+      </div>
+
+      <div class="place-actions">
+        <%= link_to admin_user_path(@user), class: "btn-review" do %>
+          View User Details
+        <% end %>
+        <% unless @user.admin? || @user.banned? %>
+          <%= button_to ban_admin_user_path(@user), method: :post, class: "btn-ban", data: { turbo_confirm: "Ban #{@user.username}?" } do %>
+            <i class="fa-solid fa-ban"></i> Ban User
+          <% end %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <!-- Place Info -->
+  <div class="admin-section">
+    <h2>Place: <%= @place.title %></h2>
+    <p class="place-city"><i class="fa-solid fa-location-dot"></i> <%= @place.city.name %></p>
+    <%= link_to "View Place", city_place_path(@place.city, @place), target: "_blank", class: "btn-view" %>
+  </div>
+
+  <!-- Replies -->
+  <% if @replies.any? %>
+    <div class="admin-section">
+      <h2>Replies (<%= @replies.count %>)</h2>
+      <div class="replies-list-admin">
+        <% @replies.each do |reply| %>
+          <div class="reply-item-admin">
+            <div class="reply-header-admin">
+              <strong><%= reply.user.username %></strong>
+              <% if reply.user.banned? %>
+                <span class="status-badge banned">Banned</span>
+              <% end %>
+              <span class="reply-date-admin"><%= time_ago_in_words(reply.created_at) %> ago</span>
+            </div>
+            <p><%= reply.description %></p>
+            <div class="reply-actions-admin">
+              <%= button_to admin_comment_path(reply), method: :delete, class: "btn-delete-small", data: { turbo_confirm: "Delete this reply?" } do %>
+                <i class="fa-solid fa-trash"></i> Delete
+              <% end %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+</div>

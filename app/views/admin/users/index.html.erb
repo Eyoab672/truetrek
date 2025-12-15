@@ -1,0 +1,91 @@
+<div class="admin-page">
+  <div class="admin-header">
+    <h1><i class="fa-solid fa-users"></i> Manage Users</h1>
+    <%= link_to admin_root_path, class: "back-link" do %>
+      <i class="fa-solid fa-arrow-left"></i> Back to Dashboard
+    <% end %>
+  </div>
+
+  <!-- Filter Tabs -->
+  <div class="filter-tabs">
+    <%= link_to "All", admin_users_path, class: "filter-tab #{params[:filter].blank? ? 'active' : ''}" %>
+    <%= link_to "Banned", admin_users_path(filter: :banned), class: "filter-tab #{params[:filter] == 'banned' ? 'active' : ''}" %>
+    <%= link_to "Admins", admin_users_path(filter: :admins), class: "filter-tab #{params[:filter] == 'admins' ? 'active' : ''}" %>
+  </div>
+
+  <!-- Search -->
+  <div class="admin-search">
+    <%= form_with url: admin_users_path, method: :get, class: "search-form" do %>
+      <div class="search-wrapper">
+        <i class="fa-solid fa-search"></i>
+        <%= text_field_tag :query, params[:query], placeholder: "Search users...", class: "search-input" %>
+        <%= submit_tag "Search", class: "btn-search" %>
+      </div>
+      <% if params[:query].present? %>
+        <%= link_to "Clear", admin_users_path, class: "clear-search" %>
+      <% end %>
+    <% end %>
+  </div>
+
+  <% if @users.any? %>
+    <div class="reports-table">
+      <table>
+        <thead>
+          <tr>
+            <th>User</th>
+            <th>Email</th>
+            <th>City</th>
+            <th>Comments</th>
+            <th>Status</th>
+            <th>Joined</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @users.each do |user| %>
+            <tr id="admin_user_<%= user.id %>" class="<%= 'banned-row' if user.banned? %>">
+              <td>
+                <%= link_to user.username, admin_user_path(user), class: "place-link" %>
+                <% if user.admin? %>
+                  <span class="admin-badge">Admin</span>
+                <% end %>
+              </td>
+              <td><%= user.email %></td>
+              <td><%= user.city %></td>
+              <td><%= user.comments.count %></td>
+              <td>
+                <% if user.banned? %>
+                  <span class="status-badge banned">Banned</span>
+                <% else %>
+                  <span class="status-badge active">Active</span>
+                <% end %>
+              </td>
+              <td><%= user.created_at.strftime("%b %d, %Y") %></td>
+              <td class="actions-cell">
+                <%= link_to user_path(user), class: "btn-view", target: "_blank", title: "View Profile" do %>
+                  <i class="fa-solid fa-external-link"></i>
+                <% end %>
+                <% unless user.admin? %>
+                  <% if user.banned? %>
+                    <%= button_to unban_admin_user_path(user), method: :post, class: "btn-unban", title: "Unban" do %>
+                      <i class="fa-solid fa-check"></i>
+                    <% end %>
+                  <% else %>
+                    <%= button_to ban_admin_user_path(user), method: :post, class: "btn-ban", title: "Ban", data: { turbo_confirm: "Ban #{user.username}?" } do %>
+                      <i class="fa-solid fa-ban"></i>
+                    <% end %>
+                  <% end %>
+                <% end %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  <% else %>
+    <div class="empty-state">
+      <i class="fa-regular fa-folder-open"></i>
+      <p>No users found.</p>
+    </div>
+  <% end %>
+</div>

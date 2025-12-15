@@ -16,4 +16,28 @@ class User < ApplicationRecord
   def admin?
     admin
   end
+
+  def banned?
+    banned
+  end
+
+  # Devise override: prevent banned users from signing in
+  def active_for_authentication?
+    super && !banned?
+  end
+
+  # Custom message shown to banned users
+  def inactive_message
+    banned? ? :banned : super
+  end
+
+  # Convenience method for banning
+  def ban!(reason: nil)
+    update!(banned: true, banned_at: Time.current, banned_reason: reason)
+  end
+
+  # Convenience method for unbanning
+  def unban!
+    update!(banned: false, banned_at: nil, banned_reason: nil)
+  end
 end

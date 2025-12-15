@@ -1,0 +1,90 @@
+<div class="admin-page">
+  <div class="admin-header">
+    <h1><i class="fa-solid fa-comments"></i> Manage Comments</h1>
+    <%= link_to admin_root_path, class: "back-link" do %>
+      <i class="fa-solid fa-arrow-left"></i> Back to Dashboard
+    <% end %>
+  </div>
+
+  <!-- Search -->
+  <div class="admin-search">
+    <%= form_with url: admin_comments_path, method: :get, class: "search-form" do %>
+      <div class="search-wrapper">
+        <i class="fa-solid fa-search"></i>
+        <%= text_field_tag :query, params[:query], placeholder: "Search comments...", class: "search-input" %>
+        <%= submit_tag "Search", class: "btn-search" %>
+      </div>
+      <% if params[:query].present? || params[:user_id].present? %>
+        <%= link_to "Clear", admin_comments_path, class: "clear-search" %>
+      <% end %>
+    <% end %>
+  </div>
+
+  <% if params[:user_id].present? %>
+    <% filter_user = User.find_by(id: params[:user_id]) %>
+    <% if filter_user %>
+      <div class="filter-info">
+        Showing comments by <strong><%= filter_user.username %></strong>
+      </div>
+    <% end %>
+  <% end %>
+
+  <% if @comments.any? %>
+    <div class="reports-table">
+      <table>
+        <thead>
+          <tr>
+            <th>Comment</th>
+            <th>Author</th>
+            <th>Place</th>
+            <th>Votes</th>
+            <th>Replies</th>
+            <th>Date</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @comments.each do |comment| %>
+            <tr id="admin_comment_<%= comment.id %>">
+              <td>
+                <%= link_to truncate(comment.description, length: 50), admin_comment_path(comment), class: "place-link" %>
+              </td>
+              <td>
+                <span class="reporter">
+                  <%= link_to comment.user.username, admin_user_path(comment.user) %>
+                  <% if comment.user.banned? %>
+                    <span class="status-badge banned">Banned</span>
+                  <% end %>
+                </span>
+              </td>
+              <td>
+                <%= link_to comment.place.title, city_place_path(comment.place.city, comment.place), target: "_blank", class: "place-link-external" %>
+              </td>
+              <td><%= comment.vote_balance %></td>
+              <td><%= comment.replies.count %></td>
+              <td><%= time_ago_in_words(comment.created_at) %> ago</td>
+              <td class="actions-cell">
+                <%= link_to admin_comment_path(comment), class: "btn-review" do %>
+                  View
+                <% end %>
+                <%= button_to admin_comment_path(comment), method: :delete, class: "btn-delete", title: "Delete", data: { turbo_confirm: "Delete this comment?" } do %>
+                  <i class="fa-solid fa-trash"></i>
+                <% end %>
+                <% unless comment.user.admin? || comment.user.banned? %>
+                  <%= button_to ban_admin_user_path(comment.user), method: :post, class: "btn-ban", title: "Ban User", data: { turbo_confirm: "Ban #{comment.user.username}?" } do %>
+                    <i class="fa-solid fa-ban"></i>
+                  <% end %>
+                <% end %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  <% else %>
+    <div class="empty-state">
+      <i class="fa-regular fa-folder-open"></i>
+      <p>No comments found.</p>
+    </div>
+  <% end %>
+</div>

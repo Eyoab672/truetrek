@@ -18,6 +18,13 @@ Rails.application.routes.draw do
     get "/", to: "dashboard#index", as: :root
     resources :reports, only: [:index, :show, :update, :destroy]
     resources :places, only: [:index, :show, :destroy]
+    resources :users, only: [:index, :show, :destroy] do
+      member do
+        post :ban
+        post :unban
+      end
+    end
+    resources :comments, only: [:index, :show, :destroy]
   end
 
   resources :cities, only: :index do

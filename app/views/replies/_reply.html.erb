@@ -35,9 +35,14 @@
                 data-reply-toggle-mention-value="<%= reply.user.username %>">
           <i class="fa-solid fa-reply"></i> Reply
         </button>
-        <% if reply.user == current_user %>
+        <% if reply.user == current_user || current_user&.admin? %>
           <%= button_to comment_path(reply), method: :delete, class: "reply-delete-btn", data: { turbo_confirm: "Delete this reply?" } do %>
             <i class="fa-solid fa-trash"></i>
+          <% end %>
+        <% end %>
+        <% if current_user&.admin? && reply.user != current_user && !reply.user.admin? && !reply.user.banned? %>
+          <%= button_to ban_admin_user_path(reply.user), method: :post, class: "reply-ban-btn", title: "Ban user", data: { turbo_confirm: "Ban user #{reply.user.username}?" } do %>
+            <i class="fa-solid fa-ban"></i>
           <% end %>
         <% end %>
       </div>

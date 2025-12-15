@@ -1,0 +1,97 @@
+<div class="admin-page">
+  <div class="admin-header">
+    <h1><i class="fa-solid fa-user"></i> <%= @user.username %></h1>
+    <%= link_to admin_users_path, class: "back-link" do %>
+      <i class="fa-solid fa-arrow-left"></i> Back to Users
+    <% end %>
+  </div>
+
+  <div class="report-detail-grid">
+    <!-- User Info -->
+    <div class="report-info-card">
+      <h2>User Information</h2>
+      <div class="info-row">
+        <span class="info-label">Email</span>
+        <span class="info-value"><%= @user.email %></span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">City</span>
+        <span class="info-value"><%= @user.city %></span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Joined</span>
+        <span class="info-value"><%= @user.created_at.strftime("%B %d, %Y") %></span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Status</span>
+        <span class="info-value">
+          <% if @user.banned? %>
+            <span class="status-badge banned">Banned</span>
+            <% if @user.banned_reason.present? %>
+              <br><small class="banned-reason">Reason: <%= @user.banned_reason %></small>
+            <% end %>
+            <% if @user.banned_at.present? %>
+              <br><small class="banned-reason">Banned on: <%= @user.banned_at.strftime("%B %d, %Y") %></small>
+            <% end %>
+          <% else %>
+            <span class="status-badge active">Active</span>
+          <% end %>
+        </span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Role</span>
+        <span class="info-value">
+          <% if @user.admin? %>
+            <span class="admin-badge">Admin</span>
+          <% else %>
+            User
+          <% end %>
+        </span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Total Comments</span>
+        <span class="info-value"><%= @user.comments.count %></span>
+      </div>
+
+      <div class="place-actions">
+        <%= link_to user_path(@user), class: "btn-view", target: "_blank" do %>
+          <i class="fa-solid fa-external-link"></i> View Profile
+        <% end %>
+        <% unless @user.admin? %>
+          <% if @user.banned? %>
+            <%= button_to unban_admin_user_path(@user), method: :post, class: "btn-unban" do %>
+              <i class="fa-solid fa-check"></i> Unban User
+            <% end %>
+          <% else %>
+            <%= button_to ban_admin_user_path(@user), method: :post, class: "btn-ban", data: { turbo_confirm: "Ban #{@user.username}?" } do %>
+              <i class="fa-solid fa-ban"></i> Ban User
+            <% end %>
+          <% end %>
+        <% end %>
+      </div>
+    </div>
+
+    <!-- Recent Comments -->
+    <div class="place-info-card">
+      <h2>Recent Comments</h2>
+      <% if @comments.any? %>
+        <div class="user-comments-list">
+          <% @comments.each do |comment| %>
+            <div class="user-comment-item">
+              <p><%= truncate(comment.description, length: 100) %></p>
+              <small>
+                on <%= link_to comment.place.title, city_place_path(comment.place.city, comment.place), target: "_blank" %>
+                - <%= time_ago_in_words(comment.created_at) %> ago
+              </small>
+            </div>
+          <% end %>
+        </div>
+        <%= link_to "View all comments", admin_comments_path(user_id: @user.id), class: "view-all-link" %>
+      <% else %>
+        <div class="empty-state-small">
+          <p>No comments yet.</p>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
