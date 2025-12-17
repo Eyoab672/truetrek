@@ -1,0 +1,15 @@
+<%= turbo_stream.replace "user_status_#{@user.id}" do %>
+  <%= render "admin/users/user_status", user: @user %>
+<% end %>
+
+<%= turbo_stream.replace "ban_actions_#{@user.id}" do %>
+  <%= render "admin/users/ban_actions", user: @user %>
+<% end %>
+
+<%= turbo_stream.replace "user_row_status_#{@user.id}" do %>
+  <%= render "admin/users/row_status", user: @user %>
+<% end %>
+
+<%= turbo_stream.replace "user_row_actions_#{@user.id}" do %>
+  <%= render "admin/users/row_actions", user: @user %>
+<% end %>

@@ -1,10 +1,29 @@
 <div class="homepage">
   <!-- Hero Section -->
   <section class="hero-section">
-    <div class="hero-content">
-      <div class="d-block d-md-none">
-        <p id="logo-phone">TrueTrek</p>
+    <!-- Mobile Floating Header -->
+    <% if user_signed_in? %>
+      <div class="hero-floating-header d-flex d-md-none">
+        <p class="hero-logo">TrueTrek</p>
+        <div class="hero-icons">
+          <%= link_to conversations_path, class: "hero-icon-link" do %>
+            <i class="fa-regular fa-paper-plane"></i>
+            <% unread_dm = current_user.unread_messages_count + current_user.pending_message_requests_count %>
+            <% if unread_dm > 0 %>
+              <span class="hero-icon-badge"><%= unread_dm %></span>
+            <% end %>
+          <% end %>
+          <%= link_to notifications_path, class: "hero-icon-link" do %>
+            <i class="fa-regular fa-heart"></i>
+            <% if current_user.unread_notifications_count > 0 %>
+              <span class="hero-icon-badge"><%= current_user.unread_notifications_count %></span>
+            <% end %>
+          <% end %>
+        </div>
       </div>
+    <% end %>
+
+    <div class="hero-content">
       <h1 class="hero-title">Discover Your Next Adventure</h1>
       <p class="hero-subtitle">Explore breathtaking destinations and create unforgettable memories</p>
 

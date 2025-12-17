@@ -4,6 +4,25 @@
       <p>TrueTrek</p>
     <% end %>
 
+    <% if user_signed_in? %>
+      <!-- Mobile Top Right Icons -->
+      <div class="navbar-mobile-icons d-flex d-md-none">
+        <%= link_to conversations_path, class: "mobile-icon-link" do %>
+          <i class="fa-regular fa-paper-plane"></i>
+          <% unread_dm = current_user.unread_messages_count + current_user.pending_message_requests_count %>
+          <% if unread_dm > 0 %>
+            <span class="mobile-icon-badge"><%= unread_dm %></span>
+          <% end %>
+        <% end %>
+        <%= link_to notifications_path, class: "mobile-icon-link" do %>
+          <i class="fa-regular fa-heart"></i>
+          <% if current_user.unread_notifications_count > 0 %>
+            <span class="mobile-icon-badge"><%= current_user.unread_notifications_count %></span>
+          <% end %>
+        <% end %>
+      </div>
+    <% end %>
+
     <div id="navbarSupportedContent">
       <ul class="navbar-nav me-auto">
         <% if user_signed_in? %>
@@ -21,6 +40,23 @@
           </li>
           <li class="nav-item active">
             <%= link_to "PROFILE", user_path(current_user), class: "nav-link" %>
+          </li>
+          <li class="nav-item active desktop-nav-icon">
+            <%= link_to conversations_path, class: "nav-link notification-link" do %>
+              <i class="fa-regular fa-paper-plane"></i>
+              <% unread_dm = current_user.unread_messages_count + current_user.pending_message_requests_count %>
+              <% if unread_dm > 0 %>
+                <span class="notification-badge"><%= unread_dm %></span>
+              <% end %>
+            <% end %>
+          </li>
+          <li class="nav-item active desktop-nav-icon">
+            <%= link_to notifications_path, class: "nav-link notification-link" do %>
+              <i class="fa-regular fa-heart"></i>
+              <% if current_user.unread_notifications_count > 0 %>
+                <span class="notification-badge"><%= current_user.unread_notifications_count %></span>
+              <% end %>
+            <% end %>
           </li>
           <% if current_user.admin? %>
             <li class="nav-item active">

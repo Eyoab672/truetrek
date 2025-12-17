@@ -1,0 +1,9 @@
+<%= turbo_stream.append "messages_container" do %>
+  <%= render "messages/message", message: @message %>
+<% end %>
+
+<%= turbo_stream.replace "message_form" do %>
+  <div class="chat-input-container" id="message_form">
+    <%= render "messages/form", conversation: @conversation, message: Message.new %>
+  </div>
+<% end %>

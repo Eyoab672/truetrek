@@ -1,0 +1,39 @@
+<div class="message-wrapper <%= message.user == current_user ? 'wrapper-sent' : 'wrapper-received' %>"
+     data-controller="message-actions"
+     data-message-actions-message-id-value="<%= message.id %>"
+     data-message-actions-message-body-value="<%= message.body&.truncate(50) %>"
+     data-message-actions-sender-name-value="<%= message.user.username %>">
+  <div class="reply-swipe-icon" data-message-actions-target="replyIcon">
+    <i class="fa-solid fa-reply"></i>
+  </div>
+  <div class="message <%= message.user == current_user ? 'message-sent' : 'message-received' %>" id="message_<%= message.id %>" data-message-id="<%= message.id %>">
+    <% if message.replied_to_message.present? %>
+      <div class="message-reply-preview">
+        <span class="reply-author"><%= message.replied_to_message.user.username %></span>
+        <span class="reply-body"><%= message.replied_to_message.body&.truncate(40) || "Photo" %></span>
+      </div>
+    <% end %>
+    <div class="message-content">
+      <% if message.photos.attached? %>
+        <div class="message-photos">
+          <% message.photos.each do |photo| %>
+            <a href="#" class="message-photo-link" data-action="click->lightbox#open" data-image-url="<%= cl_image_path(photo.key, width: 1200, quality: "auto") %>">
+              <%= cl_image_tag photo.key, width: 200, height: 200, crop: :fill, class: "message-photo" %>
+            </a>
+          <% end %>
+        </div>
+      <% end %>
+      <% if message.body.present? %>
+        <p class="message-text"><%= message.body %></p>
+      <% end %>
+      <div class="message-meta">
+        <span class="message-time"><%= message.created_at.strftime("%l:%M %p") %></span>
+        <% if message.user == current_user && message.can_unsend? %>
+          <%= button_to conversation_message_path(message.conversation, message), method: :delete, class: "unsend-btn desktop-only", data: { turbo_stream: true, turbo_confirm: "Unsend this message?" } do %>
+            <i class="fa-solid fa-trash-can"></i>
+          <% end %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

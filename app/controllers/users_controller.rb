@@ -10,6 +10,18 @@ class UsersController < ApplicationController
     @places_count = @travel_book&.places&.count || 0
   end
 
+  def followers
+    @user = User.find(params[:id])
+    authorize @user, :show?
+    @followers = @user.followers.includes(avatar_attachment: :blob)
+  end
+
+  def following
+    @user = User.find(params[:id])
+    authorize @user, :show?
+    @following = @user.following.includes(avatar_attachment: :blob)
+  end
+
   def search
     query = params[:q].to_s.strip
     if query.present?

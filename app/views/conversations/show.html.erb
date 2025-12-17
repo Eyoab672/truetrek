@@ -1,0 +1,103 @@
+<div class="chat-page" data-controller="lightbox chat-scroll chat" data-action="keydown@window->lightbox#closeWithKey">
+  <!-- Chat Header -->
+  <div class="chat-header">
+    <%= link_to conversations_path, class: "back-btn" do %>
+      <i class="fa-solid fa-arrow-left"></i>
+    <% end %>
+    <%= link_to user_path(@other_user), class: "chat-user-info" do %>
+      <div class="chat-avatar">
+        <% if @other_user.avatar.attached? %>
+          <%= cl_image_tag @other_user.avatar.key, width: 40, height: 40, crop: :fill, class: "avatar-img" %>
+        <% else %>
+          <div class="avatar-placeholder-sm">
+            <%= @other_user.username&.first&.upcase %>
+          </div>
+        <% end %>
+      </div>
+      <div class="chat-user-details">
+        <span class="chat-username"><%= @other_user.username %></span>
+        <span class="chat-user-location"><%= @other_user.city %></span>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- Pending Request Notice -->
+  <% if !@conversation.accepted? && @conversation.sender == current_user %>
+    <div class="pending-notice">
+      <i class="fa-solid fa-clock"></i>
+      Waiting for <%= @other_user.username %> to accept your message request
+    </div>
+  <% end %>
+
+  <!-- Accept/Decline for Recipient -->
+  <% if !@conversation.accepted? && @conversation.recipient == current_user %>
+    <div class="request-notice">
+      <p><strong><%= @other_user.username %></strong> wants to send you a message</p>
+      <div class="request-notice-actions">
+        <%= button_to accept_conversation_path(@conversation), method: :post, class: "btn-accept-sm" do %>
+          Accept
+        <% end %>
+        <%= button_to decline_conversation_path(@conversation), method: :delete, class: "btn-decline-sm", data: { turbo_confirm: "Decline this message request?" } do %>
+          Decline
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+
+  <!-- Messages -->
+  <div class="chat-messages" id="messages_container">
+    <% if @messages.any? %>
+      <% current_date = nil %>
+      <% @messages.each do |message| %>
+        <% message_date = message.created_at.to_date %>
+        <% if message_date != current_date %>
+          <% current_date = message_date %>
+          <div class="chat-date-separator">
+            <a href="#date_<%= message_date.strftime('%Y%m%d') %>" class="chat-date" data-action="click->chat-scroll#scrollToDate">
+              <% if message_date == Date.today %>
+                Today
+              <% elsif message_date == Date.yesterday %>
+                Yesterday
+              <% elsif message_date > 1.week.ago.to_date %>
+                <%= message_date.strftime("%A") %>
+              <% else %>
+                <%= message_date.strftime("%B %d, %Y") %>
+              <% end %>
+            </a>
+          </div>
+          <div id="date_<%= message_date.strftime('%Y%m%d') %>" class="date-anchor"></div>
+        <% end %>
+        <%= render "messages/message", message: message %>
+      <% end %>
+    <% else %>
+      <div class="chat-empty">
+        <p>No messages yet. Say hi!</p>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- Message Input -->
+  <% if @conversation.can_send_message?(current_user) %>
+    <div class="chat-input-container" id="message_form">
+      <%= render "messages/form", conversation: @conversation, message: Message.new %>
+    </div>
+  <% end %>
+
+  <!-- Lightbox Modal -->
+  <div class="lightbox-modal" data-lightbox-target="modal" data-action="click->lightbox#close">
+    <button class="lightbox-close" type="button">&times;</button>
+    <img src="" alt="Full size image" data-lightbox-target="image" class="lightbox-image">
+  </div>
+
+  <!-- Context Menu (Mobile) -->
+  <div class="message-context-menu" data-chat-target="contextMenu">
+    <button class="context-menu-item" data-action="click->chat#replyFromMenu">
+      <i class="fa-solid fa-reply"></i>
+      <span>Reply</span>
+    </button>
+    <button class="context-menu-item context-menu-delete" data-action="click->chat#deleteFromMenu">
+      <i class="fa-solid fa-trash-can"></i>
+      <span>Unsend</span>
+    </button>
+  </div>
+</div>

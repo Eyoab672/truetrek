@@ -105,6 +105,61 @@
   }
 }
 
+/* Keep Tabs Button */
+.keep-tabs-action {
+  margin-top: 16px;
+}
+
+.keep-tabs-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 24px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  background: #132742;
+  color: #ffffff;
+  border: 2px solid #132742;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: #1a3a5c;
+    border-color: #1a3a5c;
+    transform: translateY(-2px);
+  }
+
+  &.keeping-tabs {
+    background: #849DBB;
+    border-color: #849DBB;
+    color: #ffffff;
+
+    &:hover {
+      background: #6b8299;
+      border-color: #6b8299;
+    }
+  }
+
+  i {
+    font-size: 0.85rem;
+  }
+}
+
+/* Stat links */
+.stat-link {
+  text-decoration: none;
+  transition: all 0.2s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+
+    .stat-number {
+      color: #849DBB;
+    }
+  }
+}
+
 /* Stats Section */
 .profile-stats {
   display: flex;
@@ -480,7 +535,7 @@
 /* Responsive */
 @media (max-width: 576px) {
   .profile-stats {
-    gap: 20px;
+    gap: 13px;
     padding: 20px 16px;
     // background-color: white;
   }

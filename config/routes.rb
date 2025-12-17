@@ -4,6 +4,28 @@ Rails.application.routes.draw do
     collection do
       get :search
     end
+    member do
+      get :followers
+      get :following
+    end
+    resource :keep_tab, only: [:create, :destroy]
+  end
+
+  resources :notifications, only: [:index] do
+    member do
+      patch :mark_read
+    end
+    collection do
+      patch :mark_all_read
+    end
+  end
+
+  resources :conversations, only: [:index, :show, :create] do
+    member do
+      post :accept
+      delete :decline
+    end
+    resources :messages, only: [:create, :destroy]
   end
 
   root to: "cities#index"

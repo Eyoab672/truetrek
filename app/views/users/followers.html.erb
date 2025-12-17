@@ -1,0 +1,43 @@
+<div class="users-list-page">
+  <div class="users-list-header">
+    <%= link_to user_path(@user), class: "back-link" do %>
+      <i class="fa-solid fa-arrow-left"></i>
+    <% end %>
+    <h1>Followers</h1>
+    <span class="users-count"><%= @followers.count %></span>
+  </div>
+
+  <% if @followers.any? %>
+    <div class="users-list">
+      <% @followers.each do |user| %>
+        <%= link_to user_path(user), class: "user-card" do %>
+          <div class="user-avatar">
+            <% if user.avatar.attached? %>
+              <%= cl_image_tag user.avatar.key, width: 50, height: 50, crop: :fill, class: "avatar-img" %>
+            <% else %>
+              <div class="avatar-placeholder">
+                <%= user.username&.first&.upcase || user.email.first.upcase %>
+              </div>
+            <% end %>
+          </div>
+          <div class="user-info">
+            <span class="user-name"><%= user.username %></span>
+            <span class="user-location"><i class="fa-solid fa-location-dot"></i> <%= user.city %></span>
+          </div>
+          <% if current_user != user %>
+            <div class="user-action">
+              <% if current_user.keeping_tabs_on?(user) %>
+                <span class="keeping-tabs-badge"><i class="fa-solid fa-eye"></i></span>
+              <% end %>
+            </div>
+          <% end %>
+        <% end %>
+      <% end %>
+    </div>
+  <% else %>
+    <div class="empty-state">
+      <i class="fa-regular fa-user"></i>
+      <p>No followers yet</p>
+    </div>
+  <% end %>
+</div>

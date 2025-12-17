@@ -22,22 +22,7 @@
         <span class="info-label">Joined</span>
         <span class="info-value"><%= @user.created_at.strftime("%B %d, %Y") %></span>
       </div>
-      <div class="info-row">
-        <span class="info-label">Status</span>
-        <span class="info-value">
-          <% if @user.banned? %>
-            <span class="status-badge banned">Banned</span>
-            <% if @user.banned_reason.present? %>
-              <br><small class="banned-reason">Reason: <%= @user.banned_reason %></small>
-            <% end %>
-            <% if @user.banned_at.present? %>
-              <br><small class="banned-reason">Banned on: <%= @user.banned_at.strftime("%B %d, %Y") %></small>
-            <% end %>
-          <% else %>
-            <span class="status-badge active">Active</span>
-          <% end %>
-        </span>
-      </div>
+      <%= render "admin/users/user_status", user: @user %>
       <div class="info-row">
         <span class="info-label">Role</span>
         <span class="info-value">
@@ -57,17 +42,7 @@
         <%= link_to user_path(@user), class: "btn-view", target: "_blank" do %>
           <i class="fa-solid fa-external-link"></i> View Profile
         <% end %>
-        <% unless @user.admin? %>
-          <% if @user.banned? %>
-            <%= button_to unban_admin_user_path(@user), method: :post, class: "btn-unban" do %>
-              <i class="fa-solid fa-check"></i> Unban User
-            <% end %>
-          <% else %>
-            <%= button_to ban_admin_user_path(@user), method: :post, class: "btn-ban", data: { turbo_confirm: "Ban #{@user.username}?" } do %>
-              <i class="fa-solid fa-ban"></i> Ban User
-            <% end %>
-          <% end %>
-        <% end %>
+        <%= render "admin/users/ban_actions", user: @user %>
       </div>
     </div>
 

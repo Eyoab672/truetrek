@@ -1,0 +1,18 @@
+<div id="user_status_<%= user.id %>">
+  <div class="info-row">
+    <span class="info-label">Status</span>
+    <span class="info-value">
+      <% if user.banned? %>
+        <span class="status-badge banned">Banned</span>
+        <% if user.banned_reason.present? %>
+          <br><small class="banned-reason">Reason: <%= user.banned_reason %></small>
+        <% end %>
+        <% if user.banned_at.present? %>
+          <br><small class="banned-reason">Banned on: <%= user.banned_at.strftime("%B %d, %Y") %></small>
+        <% end %>
+      <% else %>
+        <span class="status-badge active">Active</span>
+      <% end %>
+    </span>
+  </div>
+</div>

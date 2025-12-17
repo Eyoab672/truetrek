@@ -54,28 +54,14 @@
               <td><%= user.city %></td>
               <td><%= user.comments.count %></td>
               <td>
-                <% if user.banned? %>
-                  <span class="status-badge banned">Banned</span>
-                <% else %>
-                  <span class="status-badge active">Active</span>
-                <% end %>
+                <%= render "admin/users/row_status", user: user %>
               </td>
               <td><%= user.created_at.strftime("%b %d, %Y") %></td>
               <td class="actions-cell">
                 <%= link_to user_path(user), class: "btn-view", target: "_blank", title: "View Profile" do %>
                   <i class="fa-solid fa-external-link"></i>
                 <% end %>
-                <% unless user.admin? %>
-                  <% if user.banned? %>
-                    <%= button_to unban_admin_user_path(user), method: :post, class: "btn-unban", title: "Unban" do %>
-                      <i class="fa-solid fa-check"></i>
-                    <% end %>
-                  <% else %>
-                    <%= button_to ban_admin_user_path(user), method: :post, class: "btn-ban", title: "Ban", data: { turbo_confirm: "Ban #{user.username}?" } do %>
-                      <i class="fa-solid fa-ban"></i>
-                    <% end %>
-                  <% end %>
-                <% end %>
+                <%= render "admin/users/row_actions", user: user %>
               </td>
             </tr>
           <% end %>

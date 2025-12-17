@@ -109,6 +109,9 @@ class CommentsController < ApplicationController
         UpdateEnhancedDescriptionJob.perform_later(@place.id)
       end
 
+      # Notify followers of the new comment
+      NotifyFollowersJob.perform_later(@comment.id)
+
       # Set flag to show loading skeleton on redirect
       flash[:description_loading] = true
       notice_message = @is_new_place ? "Place created successfully!" : "Comment added successfully!"
@@ -203,6 +206,7 @@ class CommentsController < ApplicationController
     if @comment.save
       attach_camera_photo
       queue_description_update
+      NotifyFollowersJob.perform_later(@comment.id)
       flash[:description_loading] = true
       redirect_to city_place_path(@place.city, @place), notice: "Comment added to existing place!"
     else

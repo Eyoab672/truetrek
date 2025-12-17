@@ -1,0 +1,47 @@
+<%= form_with model: [conversation, message], class: "message-form", data: { turbo_stream: true } do |f| %>
+  <!-- Reply Preview -->
+  <div class="reply-preview" data-chat-target="replyPreview">
+    <div class="reply-preview-content">
+      <div class="reply-preview-bar"></div>
+      <div class="reply-preview-text">
+        <span class="reply-preview-name" data-chat-target="replyName"></span>
+        <span class="reply-preview-body" data-chat-target="replyText"></span>
+      </div>
+    </div>
+    <button type="button" class="reply-preview-close" data-action="click->chat#cancelReply">
+      <i class="fa-solid fa-xmark"></i>
+    </button>
+  </div>
+  <%= f.hidden_field :replied_to_message_id, data: { chat_target: "replyInput" } %>
+
+  <div class="photo-preview" id="photo_preview"></div>
+
+  <div class="message-input-wrapper">
+    <label for="message_photos" class="photo-upload-btn">
+      <i class="fa-solid fa-image"></i>
+      <%= f.file_field :photos, multiple: true, accept: "image/*", class: "photo-input", id: "message_photos" %>
+    </label>
+    <%= f.text_field :body, placeholder: "Type a message...", class: "message-input", autocomplete: "off", data: { chat_target: "messageInput" } %>
+    <button type="submit" class="send-btn">
+      <i class="fa-solid fa-paper-plane"></i>
+    </button>
+  </div>
+<% end %>
+
+<script>
+  document.getElementById('message_photos')?.addEventListener('change', function(e) {
+    const preview = document.getElementById('photo_preview');
+    preview.innerHTML = '';
+
+    Array.from(e.target.files).forEach(file => {
+      const reader = new FileReader();
+      reader.onload = function(event) {
+        const img = document.createElement('img');
+        img.src = event.target.result;
+        img.className = 'preview-img';
+        preview.appendChild(img);
+      };
+      reader.readAsDataURL(file);
+    });
+  });
+</script>

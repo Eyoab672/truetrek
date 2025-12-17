@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_12_15_172928) do
+ActiveRecord::Schema[7.2].define(version: 2025_12_16_203433) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -59,6 +59,56 @@ ActiveRecord::Schema[7.2].define(version: 2025_12_15_172928) do
     t.index ["parent_id"], name: "index_comments_on_parent_id"
     t.index ["place_id"], name: "index_comments_on_place_id"
     t.index ["user_id"], name: "index_comments_on_user_id"
+  end
+
+  create_table "conversations", force: :cascade do |t|
+    t.bigint "sender_id", null: false
+    t.bigint "recipient_id", null: false
+    t.boolean "accepted", default: false, null: false
+    t.datetime "accepted_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["recipient_id"], name: "index_conversations_on_recipient_id"
+    t.index ["sender_id", "recipient_id"], name: "index_conversations_on_sender_id_and_recipient_id", unique: true
+    t.index ["sender_id"], name: "index_conversations_on_sender_id"
+  end
+
+  create_table "keep_tabs", force: :cascade do |t|
+    t.bigint "follower_id", null: false
+    t.bigint "followed_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["followed_id"], name: "index_keep_tabs_on_followed_id"
+    t.index ["follower_id", "followed_id"], name: "index_keep_tabs_on_follower_id_and_followed_id", unique: true
+    t.index ["follower_id"], name: "index_keep_tabs_on_follower_id"
+  end
+
+  create_table "messages", force: :cascade do |t|
+    t.bigint "conversation_id", null: false
+    t.bigint "user_id", null: false
+    t.text "body"
+    t.datetime "read_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "replied_to_message_id"
+    t.index ["conversation_id"], name: "index_messages_on_conversation_id"
+    t.index ["replied_to_message_id"], name: "index_messages_on_replied_to_message_id"
+    t.index ["user_id"], name: "index_messages_on_user_id"
+  end
+
+  create_table "notifications", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "actor_id", null: false
+    t.string "action", null: false
+    t.string "notifiable_type", null: false
+    t.bigint "notifiable_id", null: false
+    t.datetime "read_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["actor_id"], name: "index_notifications_on_actor_id"
+    t.index ["notifiable_type", "notifiable_id"], name: "index_notifications_on_notifiable"
+    t.index ["user_id", "read_at"], name: "index_notifications_on_user_id_and_read_at"
+    t.index ["user_id"], name: "index_notifications_on_user_id"
   end
 
   create_table "places", force: :cascade do |t|
@@ -269,6 +319,15 @@ ActiveRecord::Schema[7.2].define(version: 2025_12_15_172928) do
   add_foreign_key "comments", "comments", column: "parent_id"
   add_foreign_key "comments", "places"
   add_foreign_key "comments", "users"
+  add_foreign_key "conversations", "users", column: "recipient_id"
+  add_foreign_key "conversations", "users", column: "sender_id"
+  add_foreign_key "keep_tabs", "users", column: "followed_id"
+  add_foreign_key "keep_tabs", "users", column: "follower_id"
+  add_foreign_key "messages", "conversations"
+  add_foreign_key "messages", "messages", column: "replied_to_message_id"
+  add_foreign_key "messages", "users"
+  add_foreign_key "notifications", "users"
+  add_foreign_key "notifications", "users", column: "actor_id"
   add_foreign_key "places", "cities"
   add_foreign_key "reports", "places"
   add_foreign_key "reports", "users"

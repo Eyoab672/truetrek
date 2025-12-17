@@ -39,6 +39,17 @@
             <i class="fa-solid fa-right-from-bracket"></i> Log out
           <% end %>
         </div>
+      <% else %>
+        <!-- Keep Tabs Button -->
+        <div class="keep-tabs-action">
+          <%= render "keep_tabs/button", user: @user %>
+        </div>
+        <!-- Message Button -->
+        <div class="message-action">
+          <%= link_to conversation_path(current_user.find_or_create_conversation_with(@user)), class: "btn-message" do %>
+            <i class="fa-solid fa-envelope"></i> Message
+          <% end %>
+        </div>
       <% end %>
     </div>
   </div>
@@ -53,10 +64,14 @@
       <span class="stat-number"><%= @comments.count %></span>
       <span class="stat-label">Reviews</span>
     </div>
-    <div class="stat-item">
-      <span class="stat-number"><%= @comments.joins(:photos_attachments).distinct.count %></span>
-      <span class="stat-label">Photos</span>
-    </div>
+    <%= link_to followers_user_path(@user), class: "stat-item stat-link" do %>
+      <span class="stat-number"><span id="followers_count_<%= @user.id %>"><%= @user.followers.count %></span></span>
+      <span class="stat-label">Followers</span>
+    <% end %>
+    <%= link_to following_user_path(@user), class: "stat-item stat-link" do %>
+      <span class="stat-number"><%= @user.following.count %></span>
+      <span class="stat-label">Following</span>
+    <% end %>
   </div>
 
 

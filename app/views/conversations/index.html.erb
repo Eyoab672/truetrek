@@ -1,0 +1,55 @@
+<div class="messages-page" data-controller="tabs swipe-nav" data-swipe-nav-right-url-value="<%= notifications_path %>">
+  <div class="messages-header">
+    <h1><i class="fa-regular fa-paper-plane"></i> Messages</h1>
+  </div>
+
+  <!-- Tabs -->
+  <div class="messages-tabs">
+    <button class="tab-btn" data-tabs-target="tab" data-action="click->tabs#switch">
+      Messages
+      <% if @conversations.any? { |c| c.unread_count_for(current_user) > 0 } %>
+        <span class="tab-badge"><%= @conversations.sum { |c| c.unread_count_for(current_user) } %></span>
+      <% end %>
+    </button>
+    <button class="tab-btn" data-tabs-target="tab" data-action="click->tabs#switch">
+      Requests
+      <% if @requests.any? %>
+        <span class="tab-badge"><%= @requests.count %></span>
+      <% end %>
+    </button>
+  </div>
+
+  <!-- Conversations Tab -->
+  <div class="tab-content" data-tabs-target="content">
+    <% if @conversations.any? %>
+      <div class="conversations-list">
+        <% @conversations.each do |conversation| %>
+          <%= render "conversations/conversation", conversation: conversation %>
+        <% end %>
+      </div>
+    <% else %>
+      <div class="empty-state">
+        <i class="fa-regular fa-comments"></i>
+        <p>No messages yet</p>
+        <span class="empty-hint">Start a conversation from someone's profile</span>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- Requests Tab -->
+  <div class="tab-content" data-tabs-target="content" style="display: none;">
+    <% if @requests.any? %>
+      <div class="requests-list" id="requests_list">
+        <% @requests.each do |request| %>
+          <%= render "conversations/request", conversation: request %>
+        <% end %>
+      </div>
+    <% else %>
+      <div class="empty-state">
+        <i class="fa-regular fa-envelope-open"></i>
+        <p>No message requests</p>
+        <span class="empty-hint">Message requests from people you don't follow will appear here</span>
+      </div>
+    <% end %>
+  </div>
+</div>

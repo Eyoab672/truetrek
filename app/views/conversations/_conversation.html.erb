@@ -1,0 +1,35 @@
+<%= link_to conversation_path(conversation), class: "conversation-card #{'unread' if conversation.unread_count_for(current_user) > 0}", id: "conversation_#{conversation.id}" do %>
+  <% other_user = conversation.other_user(current_user) %>
+  <div class="conversation-avatar">
+    <% if other_user.avatar.attached? %>
+      <%= cl_image_tag other_user.avatar.key, width: 56, height: 56, crop: :fill, class: "avatar-img" %>
+    <% else %>
+      <div class="avatar-placeholder">
+        <%= other_user.username&.first&.upcase %>
+      </div>
+    <% end %>
+  </div>
+  <div class="conversation-info">
+    <div class="conversation-header">
+      <span class="conversation-name"><%= other_user.username %></span>
+      <% if conversation.last_message %>
+        <span class="conversation-time"><%= time_ago_in_words(conversation.last_message.created_at) %></span>
+      <% end %>
+    </div>
+    <div class="conversation-preview">
+      <% if conversation.last_message %>
+        <% if conversation.last_message.user == current_user %>
+          <span class="preview-you">You: </span>
+        <% end %>
+        <%= truncate(conversation.last_message.body || "Sent a photo", length: 40) %>
+      <% else %>
+        <span class="preview-empty">No messages yet</span>
+      <% end %>
+    </div>
+  </div>
+  <% if conversation.unread_count_for(current_user) > 0 %>
+    <div class="conversation-badge">
+      <span class="unread-count"><%= conversation.unread_count_for(current_user) %></span>
+    </div>
+  <% end %>
+<% end %>

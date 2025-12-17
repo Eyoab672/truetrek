@@ -1,0 +1,56 @@
+<div class="notifications-page" data-controller="swipe-nav" data-swipe-nav-left-url-value="<%= conversations_path %>">
+  <div class="notifications-header">
+    <h1><i class="fa-regular fa-heart"></i> Activity</h1>
+    <% if @notifications.unread.any? %>
+      <%= button_to mark_all_read_notifications_path, method: :patch, class: "mark-all-read-btn" do %>
+        Mark all as read
+      <% end %>
+    <% end %>
+  </div>
+
+  <% if @notifications.any? %>
+    <div class="notifications-list">
+      <% @notifications.each do |notification| %>
+        <div class="notification-card <%= 'unread' unless notification.read? %>" id="notification_<%= notification.id %>">
+          <div class="notification-avatar">
+            <% if notification.actor.avatar.attached? %>
+              <%= cl_image_tag notification.actor.avatar.key, width: 50, height: 50, crop: :fill, class: "avatar-img" %>
+            <% else %>
+              <div class="avatar-placeholder">
+                <%= notification.actor.username&.first&.upcase %>
+              </div>
+            <% end %>
+          </div>
+          <div class="notification-content">
+            <p class="notification-text">
+              <strong><%= link_to notification.actor.username, user_path(notification.actor) %></strong>
+              <% case notification.action %>
+              <% when "new_comment" %>
+                posted a new review on
+                <% if notification.notifiable.present? %>
+                  <strong><%= link_to notification.notifiable.place.title, city_place_path(notification.notifiable.place.city, notification.notifiable.place) %></strong>
+                <% else %>
+                  a place
+                <% end %>
+              <% end %>
+            </p>
+            <span class="notification-time"><%= time_ago_in_words(notification.created_at) %> ago</span>
+          </div>
+          <% unless notification.read? %>
+            <div class="notification-action">
+              <%= button_to mark_read_notification_path(notification), method: :patch, class: "mark-read-btn" do %>
+                <i class="fa-solid fa-check"></i>
+              <% end %>
+            </div>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+  <% else %>
+    <div class="empty-state">
+      <i class="fa-regular fa-bell"></i>
+      <p>No notifications yet</p>
+      <span class="empty-hint">When people you follow post reviews, you'll see them here</span>
+    </div>
+  <% end %>
+</div>

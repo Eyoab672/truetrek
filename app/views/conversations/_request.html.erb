@@ -1,0 +1,33 @@
+<div class="request-card" id="request_<%= conversation.id %>">
+  <div class="request-user">
+    <% sender = conversation.sender %>
+    <div class="request-avatar">
+      <% if sender.avatar.attached? %>
+        <%= cl_image_tag sender.avatar.key, width: 56, height: 56, crop: :fill, class: "avatar-img" %>
+      <% else %>
+        <div class="avatar-placeholder">
+          <%= sender.username&.first&.upcase %>
+        </div>
+      <% end %>
+    </div>
+    <div class="request-info">
+      <%= link_to sender.username, user_path(sender), class: "request-name" %>
+      <span class="request-location"><i class="fa-solid fa-location-dot"></i> <%= sender.city %></span>
+    </div>
+  </div>
+
+  <% if conversation.messages.any? %>
+    <div class="request-preview">
+      <p><%= truncate(conversation.messages.first.body || "Sent a photo", length: 100) %></p>
+    </div>
+  <% end %>
+
+  <div class="request-actions">
+    <%= button_to accept_conversation_path(conversation), method: :post, class: "btn-accept", data: { turbo_stream: true } do %>
+      <i class="fa-solid fa-check"></i> Accept
+    <% end %>
+    <%= button_to decline_conversation_path(conversation), method: :delete, class: "btn-decline", data: { turbo_stream: true, turbo_confirm: "Decline this message request?" } do %>
+      <i class="fa-solid fa-xmark"></i> Decline
+    <% end %>
+  </div>
+</div>

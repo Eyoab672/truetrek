@@ -1,41 +1,44 @@
-<%if user_signed_in? %>
+<% if user_signed_in? %>
   <nav class="bottom-nav">
     <div class="bottom-nav-inner">
-
-          <!-- BOOK -->
+      <!-- HOME -->
       <%= link_to root_path, class: "bottom-nav-item" do %>
         <div class="bottom-nav-icon">
-          <i class="fa-solid fa-house" style="color: #000000;"></i>
+          <i class="fa-solid fa-house"></i>
         </div>
       <% end %>
 
-      <%= link_to pages_home_path, class: "bottom-nav-item bottom-nav-item-main" do %>
-        <div class="bottom-nav-main-circle">
-          <i class="fa-solid fa-location-dot" style="color: #000000;"></i>
+      <!-- MAP -->
+      <%= link_to pages_home_path, class: "bottom-nav-item" do %>
+        <div class="bottom-nav-icon">
+          <i class="fa-solid fa-map-location-dot"></i>
         </div>
       <% end %>
 
-      <!-- CAMERA (HIGHLIGHTED, INLINE) -->
-      <%= link_to camera_path, class: "bottom-nav-item bottom-nav-item-main" do %>
-        <div class="bottom-nav-main-circle">
-          <i class="fa-solid fa-camera" id="camera"></i>
+      <!-- CAMERA (CENTER) -->
+      <%= link_to camera_path, class: "bottom-nav-item bottom-nav-item-center" do %>
+        <div class="bottom-nav-center-btn">
+          <i class="fa-solid fa-camera"></i>
         </div>
       <% end %>
 
-      <%= link_to my_travel_book_path, class: "bottom-nav-item bottom-nav-item-main" do %>
-        <div class="bottom-nav-main-circle">
-          <i class="fa-solid fa-bookmark" style="color: #000000;"></i>
+      <!-- TRAVEL BOOK -->
+      <%= link_to my_travel_book_path, class: "bottom-nav-item" do %>
+        <div class="bottom-nav-icon">
+          <i class="fa-regular fa-bookmark"></i>
         </div>
       <% end %>
 
-          <!-- PROFILE -->
-      <% if user_signed_in? %>
-        <%= link_to user_path(current_user), class: "bottom-nav-item" do %>
-          <div class="bottom-nav-icon" data-controller="sync-badge">
-            <i class="fa-solid fa-user" style="color: #000000;"></i>
-            <span class="sync-badge d-none" data-sync-badge-target="count">0</span>
-          </div>
-      <% end %>
+      <!-- PROFILE -->
+      <%= link_to user_path(current_user), class: "bottom-nav-item" do %>
+        <div class="bottom-nav-icon" data-controller="sync-badge">
+          <% if current_user.avatar.attached? %>
+            <%= cl_image_tag current_user.avatar.key, width: 28, height: 28, crop: :fill, class: "bottom-nav-avatar" %>
+          <% else %>
+            <i class="fa-regular fa-user"></i>
+          <% end %>
+          <span class="sync-badge d-none" data-sync-badge-target="count">0</span>
+        </div>
       <% end %>
     </div>
   </nav>

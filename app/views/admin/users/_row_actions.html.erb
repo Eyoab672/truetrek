@@ -1,0 +1,13 @@
+<span id="user_row_actions_<%= user.id %>">
+  <% unless user.admin? %>
+    <% if user.banned? %>
+      <%= button_to unban_admin_user_path(user), method: :post, class: "btn-unban", title: "Unban", data: { turbo_stream: true } do %>
+        <i class="fa-solid fa-check"></i>
+      <% end %>
+    <% else %>
+      <%= button_to ban_admin_user_path(user), method: :post, class: "btn-ban", title: "Ban", data: { turbo_stream: true, turbo_confirm: "Ban #{user.username}?" } do %>
+        <i class="fa-solid fa-ban"></i>
+      <% end %>
+    <% end %>
+  <% end %>
+</span>

@@ -53,97 +53,144 @@ a.dropdown-item {
   text-decoration: none;
 }
 
+/* Mobile Top Right Icons */
+.navbar-mobile-icons {
+  align-items: center;
+  gap: 20px;
+  margin-right: 8px;
+}
 
-/* ----- Page reset + background (like screenshot) ----- */
+.mobile-icon-link {
+  position: relative;
+  color: white;
+  font-size: 1.4rem;
+  text-decoration: none;
+  transition: transform 0.2s ease;
+
+  &:hover {
+    transform: scale(1.1);
+  }
+
+  i {
+    color: white;
+  }
+}
+
+.mobile-icon-badge {
+  position: absolute;
+  top: -8px;
+  right: -10px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: #ffffff;
+  background: #ef4444;
+  border-radius: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Hide desktop nav icons on mobile */
+@media (max-width: 768px) {
+  .desktop-nav-icon {
+    display: none !important;
+  }
+}
 
 
-/* ----- Outer container (fixed, bottom) ----- */
+/* ----- Bottom Navigation ----- */
+
 .bottom-nav {
   position: fixed;
   left: 0;
   right: 0;
   bottom: 0;
-  padding-bottom: env(safe-area-inset-bottom, 16px);
-  padding-top: 12px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  pointer-events: none; /* let only inner bar capture clicks */
+  background: #ffffff;
+  border-top: 1px solid #efefef;
+  padding-bottom: env(safe-area-inset-bottom, 0px);
   z-index: 1000;
+  display: none;
 }
 
-/* ----- Floating pill bar ----- */
-.bottom-nav-inner {
-  pointer-events: auto;
-  width: 100%;
-  // max-width: 420px;
-  background: rgba(255, 255, 255, 1); /* slightly darker strip */
-  // border-radius: 24px;
-  padding: 8px 18px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  box-shadow:
-    0 10px 25px rgba(0, 0, 0, 0.35),
-    0 0 0 1px rgba(255, 255, 255, 0.04);
-}
-
-/* ----- Home indicator line under the bar ----- */
-.bottom-nav-indicator {
-  margin-top: 10px;
-  width: 96px;
-  height: 4px;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.85);
-  pointer-events: none;
-}
-
-/* ----- Items ----- */
-.bottom-nav-item {
-  flex: 1;
-  display: inline-flex;
-  justify-content: center;
-  align-items: center;
-  gap: 6px;
-  text-decoration: none;
-  color: rgba(255, 255, 255, 0.7);
-  font-size: 13px;
-  font-weight: 500;
-  border-radius: 999px;
-  padding: 8px 10px;
-  transition:
-    background 0.18s ease-out,
-    color 0.18s ease-out,
-    transform 0.18s ease-out,
-    box-shadow 0.18s ease-out;
-}
-
-/* icons inside items */
-.bottom-nav-item svg,
-.bottom-nav-item i {
-  font-size: 17px;   /* for FA */
-  color: #000000 !important;   /* FontAwesome icons */
-  fill: #000000 !important;    /* SVG icons */
-}
-
-/* ----- ACTIVE item (the white pill like “Discover”) ----- */
-.bottom-nav-item-active {
-  background: #f7f3ef;
-  color: #3a2f2a; /* dark brown text/icon */
-  box-shadow:
-    0 6px 12px rgba(0, 0, 0, 0.25),
-    0 0 0 1px rgba(255, 255, 255, 0.6);
-  transform: translateY(-1px);
-}
-
-/* Slight hover feedback (optional, desktop only) */
-@media (hover: hover) and (pointer: fine) {
-  .bottom-nav-item:hover:not(.bottom-nav-item-active) {
-    background: rgba(255, 255, 255, 0.06);
-    color: rgba(255, 255, 255, 0.85);
+@media (max-width: 768px) {
+  .bottom-nav {
+    display: block;
   }
 }
 
-#camera {
-  font-size: 26px;
+.bottom-nav-inner {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  height: 50px;
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.bottom-nav-item {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-decoration: none;
+  padding: 8px 0;
+  transition: transform 0.15s ease;
+
+  &:active {
+    transform: scale(0.9);
+  }
+}
+
+.bottom-nav-icon {
+  position: relative;
+
+  i {
+    font-size: 24px;
+    color: #262626;
+  }
+}
+
+/* Center button (Create/Camera) */
+.bottom-nav-item-center {
+  flex: none;
+}
+
+.bottom-nav-center-btn {
+  width: 44px;
+  height: 44px;
+  background: linear-gradient(135deg, #132742 0%, #1a3a5c 100%);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(19, 39, 66, 0.3);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+
+  i {
+    font-size: 20px;
+    color: #ffffff;
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+}
+
+/* Profile avatar in bottom nav */
+.bottom-nav-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid transparent;
+}
+
+/* Hide bottom nav on desktop */
+@media (min-width: 769px) {
+  .bottom-nav {
+    display: none;
+  }
 }
