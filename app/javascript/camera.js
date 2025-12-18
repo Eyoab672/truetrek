@@ -10,6 +10,7 @@ function initCameraPage() {
   const actionButtons = document.getElementById("action-buttons");
   const looksGreatButton = document.getElementById("looks-great");
   const retakeButton = document.getElementById("retake-photo");
+  const rotateCameraBtn = document.getElementById("rotate-camera");
   const cameraPage = document.querySelector(".camera-new-page");
 
   if (!video || !canvas || !takePhotoBtn) return; // not on /camera
@@ -21,23 +22,45 @@ function initCameraPage() {
   let lastBlob = null;
   let lastLat = null;
   let lastLng = null;
+  let facingMode = "environment"; // "environment" = back camera, "user" = front camera
 
   const csrfTokenEl = document.querySelector('meta[name="csrf-token"]');
   const csrfToken = csrfTokenEl ? csrfTokenEl.content : null;
 
   // Auto-start camera when page loads
   async function startCamera() {
+    // Stop existing stream first
+    if (stream) {
+      stream.getTracks().forEach(track => track.stop());
+      stream = null;
+    }
+
     try {
       stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: "environment" },
+        video: { facingMode: facingMode },
         audio: false
       });
       video.srcObject = stream;
       video.style.display = "block";
+
+      // Mirror the video for front camera
+      if (facingMode === "user") {
+        video.style.transform = "scaleX(-1)";
+      } else {
+        video.style.transform = "scaleX(1)";
+      }
     } catch (err) {
       console.error("Error accessing camera:", err);
       alert("Could not access camera. Please check permissions.");
     }
+  }
+
+  // Rotate camera (switch between front and back)
+  if (rotateCameraBtn) {
+    rotateCameraBtn.addEventListener("click", () => {
+      facingMode = facingMode === "environment" ? "user" : "environment";
+      startCamera();
+    });
   }
 
   // Start camera on page load

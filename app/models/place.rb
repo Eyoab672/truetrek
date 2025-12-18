@@ -3,7 +3,7 @@ class Place < ApplicationRecord
 
   belongs_to :city
   has_many :comments, dependent: :destroy
-  has_many :reports, dependent: :destroy
+  has_many :reports, as: :reportable, dependent: :destroy
   has_many_attached :photo
   geocoded_by :address
 

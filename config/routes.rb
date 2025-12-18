@@ -71,6 +71,7 @@ Rails.application.routes.draw do
   resources :comments, only: [] do
     resources :replies, only: :create, controller: "replies"
     resource :vote, only: [:create, :destroy]
+    resources :reports, only: [:new, :create]
   end
 
   get 'my_travel_book', to: 'travel_books#show', as: :my_travel_book
@@ -82,6 +83,9 @@ Rails.application.routes.draw do
   end
   resources :travel_book_places, only: :destroy
   resources :comments, only: [:new, :create, :destroy]  # for new places + delete
+
+  # Tour completion
+  post 'tour/complete', to: 'tours#complete', as: :complete_tour
 
 
 

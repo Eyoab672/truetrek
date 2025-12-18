@@ -1,20 +1,37 @@
 <div class="report-page">
   <div class="report-container">
     <div class="report-header">
-      <h1><i class="fa-solid fa-flag"></i> Report Place</h1>
-      <p>Help us maintain accurate information by reporting issues with this place.</p>
+      <h1><i class="fa-solid fa-flag"></i> Report <%= @reportable.class.name %></h1>
+      <% if @reportable.is_a?(Place) %>
+        <p>Help us maintain accurate information by reporting issues with this place.</p>
+      <% else %>
+        <p>Help us keep our community safe by reporting inappropriate content.</p>
+      <% end %>
     </div>
 
-    <div class="report-place-info">
-      <h2><%= @place.title %></h2>
-      <p class="place-location"><i class="fa-solid fa-location-dot"></i> <%= @place.city.name %></p>
+    <div class="report-item-info">
+      <% if @reportable.is_a?(Place) %>
+        <h2><%= @reportable.title %></h2>
+        <p class="item-location"><i class="fa-solid fa-location-dot"></i> <%= @reportable.city.name %></p>
+      <% elsif @reportable.is_a?(Comment) %>
+        <div class="reported-comment">
+          <div class="comment-author">
+            <i class="fa-solid fa-user"></i> <%= @reportable.user.username %>
+          </div>
+          <p class="comment-preview"><%= truncate(@reportable.description, length: 200) %></p>
+          <p class="comment-meta">
+            <i class="fa-solid fa-location-dot"></i> <%= @reportable.place.title %>
+          </p>
+        </div>
+      <% end %>
     </div>
 
-    <%= simple_form_for @report, url: place_reports_path(@place), class: "report-form" do |f| %>
+    <% form_url = @reportable.is_a?(Place) ? place_reports_path(@reportable) : comment_reports_path(@reportable) %>
+    <%= simple_form_for @report, url: form_url, class: "report-form" do |f| %>
       <div class="form-group">
         <label class="form-label">What's the issue?</label>
         <div class="reason-options">
-          <% Report::REASONS.each do |reason| %>
+          <% Report.reasons_for(@reportable.class.name).each do |reason| %>
             <label class="reason-option">
               <%= f.radio_button :reason, reason, class: "reason-radio" %>
               <span class="reason-label"><%= reason %></span>
@@ -28,7 +45,11 @@
 
       <div class="form-actions">
         <%= f.submit "Submit Report", class: "btn-submit" %>
-        <%= link_to "Cancel", city_place_path(@place.city, @place), class: "btn-cancel" %>
+        <% if @reportable.is_a?(Place) %>
+          <%= link_to "Cancel", city_place_path(@reportable.city, @reportable), class: "btn-cancel" %>
+        <% else %>
+          <%= link_to "Cancel", city_place_path(@reportable.place.city, @reportable.place), class: "btn-cancel" %>
+        <% end %>
       </div>
     <% end %>
   </div>

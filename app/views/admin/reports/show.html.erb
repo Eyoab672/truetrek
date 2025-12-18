@@ -11,6 +11,13 @@
     <div class="report-info-card">
       <h2>Report Information</h2>
       <div class="info-row">
+        <span class="info-label">Type:</span>
+        <span class="type-badge <%= @report.reportable_type.downcase %>">
+          <i class="fa-solid <%= @report.place_report? ? 'fa-location-dot' : 'fa-comment' %>"></i>
+          <%= @report.reportable_type %>
+        </span>
+      </div>
+      <div class="info-row">
         <span class="info-label">Status:</span>
         <span class="status-badge <%= @report.status %>"><%= @report.status.humanize %></span>
       </div>
@@ -18,7 +25,9 @@
         <span class="info-label">Reported By:</span>
         <span class="info-value">
           <%= @report.user.username %>
-          <% if @report.user.city&.downcase == @place.city.name&.downcase %>
+          <% reporter_city = @report.user.city&.downcase %>
+          <% item_city = @report.place_report? ? @reportable.city.name&.downcase : @reportable.place.city.name&.downcase %>
+          <% if reporter_city == item_city %>
             <span class="local-tag">Local</span>
           <% end %>
         </span>
@@ -46,44 +55,104 @@
       </div>
     </div>
 
-    <!-- Place Info -->
-    <div class="place-info-card">
-      <h2>Place Details</h2>
-      <div class="place-header-info">
-        <h3><%= @place.title %></h3>
-        <p class="place-city"><i class="fa-solid fa-location-dot"></i> <%= @place.city.name %></p>
-      </div>
-      <div class="info-row">
-        <span class="info-label">Total Reports:</span>
-        <span class="info-value report-count"><%= @place.reports.count %></span>
-      </div>
-      <div class="info-row">
-        <span class="info-label">Comments:</span>
-        <span class="info-value"><%= @place.comments.count %></span>
-      </div>
-      <% if @place.enhanced_description.present? %>
-        <div class="place-description">
-          <span class="info-label">Description:</span>
-          <p><%= truncate(@place.enhanced_description, length: 300) %></p>
+    <% if @report.place_report? %>
+      <!-- Place Info -->
+      <div class="place-info-card">
+        <h2>Place Details</h2>
+        <div class="place-header-info">
+          <h3><%= @reportable.title %></h3>
+          <p class="place-city"><i class="fa-solid fa-location-dot"></i> <%= @reportable.city.name %></p>
         </div>
-      <% end %>
+        <div class="info-row">
+          <span class="info-label">Total Reports:</span>
+          <span class="info-value report-count"><%= @reportable.reports.count %></span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Comments:</span>
+          <span class="info-value"><%= @reportable.comments.count %></span>
+        </div>
+        <% if @reportable.enhanced_description.present? %>
+          <div class="place-description">
+            <span class="info-label">Description:</span>
+            <p><%= truncate(@reportable.enhanced_description, length: 300) %></p>
+          </div>
+        <% end %>
 
-      <div class="place-actions">
-        <%= link_to city_place_path(@place.city, @place), class: "btn-view", target: "_blank" do %>
-          <i class="fa-solid fa-external-link"></i> View Place
-        <% end %>
-        <%= button_to admin_place_path(@place), method: :delete, class: "btn-delete", data: { turbo_confirm: "Are you sure you want to delete this place? This action cannot be undone." } do %>
-          <i class="fa-solid fa-trash"></i> Delete Place
-        <% end %>
+        <div class="place-actions">
+          <%= link_to city_place_path(@reportable.city, @reportable), class: "btn-view", target: "_blank" do %>
+            <i class="fa-solid fa-external-link"></i> View Place
+          <% end %>
+          <%= button_to admin_place_path(@reportable), method: :delete, class: "btn-delete", data: { turbo_confirm: "Are you sure you want to delete this place? This action cannot be undone." } do %>
+            <i class="fa-solid fa-trash"></i> Delete Place
+          <% end %>
+        </div>
       </div>
-    </div>
+    <% else %>
+      <!-- Comment Info -->
+      <div class="comment-info-card">
+        <h2>Comment Details</h2>
+        <div class="comment-header-info">
+          <div class="comment-author-info">
+            <% if @reportable.user.avatar.attached? %>
+              <%= image_tag @reportable.user.avatar, class: "comment-author-avatar" %>
+            <% else %>
+              <div class="comment-author-avatar-placeholder">
+                <i class="fa-solid fa-user"></i>
+              </div>
+            <% end %>
+            <div>
+              <h3><%= @reportable.user.username %></h3>
+              <p class="comment-author-city"><%= @reportable.user.city || "Unknown location" %></p>
+            </div>
+          </div>
+        </div>
+        <div class="comment-content-box">
+          <p><%= @reportable.description %></p>
+        </div>
+        <% if @reportable.photos.attached? %>
+          <div class="comment-photos">
+            <% @reportable.photos.each do |photo| %>
+              <%= image_tag photo, class: "comment-photo-thumb" %>
+            <% end %>
+          </div>
+        <% end %>
+        <div class="info-row">
+          <span class="info-label">Posted on:</span>
+          <span class="info-value"><%= @reportable.place.title %> in <%= @reportable.place.city.name %></span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Posted at:</span>
+          <span class="info-value"><%= @reportable.created_at.strftime("%B %d, %Y at %I:%M %p") %></span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Vote Balance:</span>
+          <span class="info-value"><%= @reportable.vote_balance %></span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Total Reports:</span>
+          <span class="info-value report-count"><%= @reportable.reports.count %></span>
+        </div>
+
+        <div class="comment-actions">
+          <%= link_to city_place_path(@reportable.place.city, @reportable.place), class: "btn-view", target: "_blank" do %>
+            <i class="fa-solid fa-external-link"></i> View Place
+          <% end %>
+          <%= button_to admin_comment_path(@reportable), method: :delete, class: "btn-delete", data: { turbo_confirm: "Are you sure you want to delete this comment? This action cannot be undone." } do %>
+            <i class="fa-solid fa-trash"></i> Delete Comment
+          <% end %>
+          <%= button_to ban_admin_user_path(@reportable.user), method: :post, class: "btn-ban", data: { turbo_confirm: "Are you sure you want to ban this user?" } do %>
+            <i class="fa-solid fa-ban"></i> Ban User
+          <% end %>
+        </div>
+      </div>
+    <% end %>
   </div>
 
-  <!-- Other Reports for this Place -->
-  <% other_reports = @place.reports.where.not(id: @report.id) %>
+  <!-- Other Reports for this Item -->
+  <% other_reports = @reportable.reports.where.not(id: @report.id) %>
   <% if other_reports.any? %>
     <div class="other-reports-section">
-      <h2>Other Reports for this Place (<%= other_reports.count %>)</h2>
+      <h2>Other Reports for this <%= @report.reportable_type %> (<%= other_reports.count %>)</h2>
       <div class="reports-table">
         <table>
           <thead>
@@ -99,7 +168,9 @@
               <tr>
                 <td>
                   <%= report.user.username %>
-                  <% if report.user.city&.downcase == @place.city.name&.downcase %>
+                  <% reporter_city = report.user.city&.downcase %>
+                  <% item_city = @report.place_report? ? @reportable.city.name&.downcase : @reportable.place.city.name&.downcase %>
+                  <% if reporter_city == item_city %>
                     <span class="local-tag">Local</span>
                   <% end %>
                 </td>
