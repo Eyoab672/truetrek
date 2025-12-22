@@ -91,10 +91,94 @@
 }
 
 // ========================================
-// BUTTONS
+// CAMERA CONTROLS (Take Photo, Rotate)
 // ========================================
 
-#camera-controls,
+.camera-controls-wrapper {
+  margin-top: 1.5rem;
+}
+
+.camera-controls-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 2rem;
+}
+
+.camera-control-btn {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 2px solid #849DBB;
+  background: transparent;
+  color: #849DBB;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  i {
+    font-size: 1.25rem;
+  }
+
+  &:hover {
+    background: #849DBB;
+    color: #ffffff;
+    transform: scale(1.05);
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+}
+
+.camera-control-placeholder {
+  border: none;
+  background: transparent;
+  cursor: default;
+  pointer-events: none;
+
+  &:hover {
+    background: transparent;
+    transform: none;
+  }
+}
+
+.camera-capture-btn {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  border: 4px solid #7c6054;
+  background: #ffffff;
+  color: #7c6054;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 16px rgba(124, 96, 84, 0.2);
+
+  i {
+    font-size: 1.75rem;
+  }
+
+  &:hover {
+    background: #7c6054;
+    color: #ffffff;
+    transform: scale(1.05);
+    box-shadow: 0 6px 20px rgba(124, 96, 84, 0.35);
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+}
+
+// ========================================
+// ACTION BUTTONS (Looks Great, Retake)
+// ========================================
+
 #action-buttons {
   gap: 1rem;
 
@@ -182,7 +266,28 @@
     padding: 1.5rem 1rem 3rem;
   }
 
-  #camera-controls,
+  .camera-controls-row {
+    gap: 1.5rem;
+  }
+
+  .camera-control-btn {
+    width: 44px;
+    height: 44px;
+
+    i {
+      font-size: 1.1rem;
+    }
+  }
+
+  .camera-capture-btn {
+    width: 64px;
+    height: 64px;
+
+    i {
+      font-size: 1.5rem;
+    }
+  }
+
   #action-buttons {
     .btn {
       padding: 0.75rem 1rem;

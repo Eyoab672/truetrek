@@ -1,0 +1,81 @@
+<% if user_signed_in? && !current_user.tour_completed %>
+  <%
+    tour_steps = [
+      {
+        title: "Welcome to TrueTrek! 🌍",
+        description: "Let us show you around. We'll help you discover amazing places and share your travel experiences with the community.",
+        target: nil,
+        position: "center"
+      },
+      {
+        title: "Explore Destinations",
+        description: "Browse through popular cities and discover hidden gems. Each city has unique places waiting for you to explore.",
+        target: ".cities-grid, .places-grid",
+        position: "top"
+      },
+      {
+        title: "Your Travel Book 📚",
+        description: "Save your favorite places to your personal Travel Book. Tap the heart icon on any place to add it to your collection.",
+        target: ".place-heart-btn, [href*='my_travel_book']",
+        position: "bottom"
+      },
+      {
+        title: "Share Your Experiences",
+        description: "Leave reviews and comments on places you've visited. Your insights help other travelers discover the best spots!",
+        target: ".place-add-comment-section, .comment-form-card",
+        position: "top"
+      },
+      {
+        title: "Capture Moments 📸",
+        description: "Use the camera to take photos and add them to places. Your photos help bring destinations to life!",
+        target: ".bottom-nav-center-btn, [href*='camera']",
+        position: "top"
+      },
+      {
+        title: "Connect with Travelers",
+        description: "Follow other travelers, send messages, and get notified when someone interacts with your content.",
+        target: ".hero-icons, .navbar-mobile-icons",
+        position: "bottom"
+      },
+      {
+        title: "You're All Set! 🎉",
+        description: "Start exploring and sharing your travel adventures. Have a great journey!",
+        target: nil,
+        position: "center"
+      }
+    ]
+  %>
+
+  <div data-controller="tour"
+       data-tour-steps-value="<%= tour_steps.to_json %>"
+       data-tour-complete-url-value="<%= complete_tour_path %>"
+       data-action="keydown@window->tour#keydown">
+
+    <!-- Overlay -->
+    <div class="tour-overlay" data-tour-target="overlay">
+      <!-- Tooltip -->
+      <div class="tour-tooltip" data-tour-target="tooltip">
+        <button type="button" class="tour-skip-btn" data-action="click->tour#skip">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+
+        <div class="tour-content" data-tour-target="content">
+          <!-- Content populated by JS -->
+        </div>
+
+        <div class="tour-footer">
+          <span class="tour-step-indicator" data-tour-target="stepIndicator">1 / 7</span>
+
+          <div class="tour-nav-buttons">
+            <button type="button" class="tour-btn tour-btn-prev" data-tour-target="prevBtn" data-action="click->tour#prev">
+              <i class="fa-solid fa-arrow-left"></i> Back
+            </button>
+            <button type="button" class="tour-btn tour-btn-next" data-tour-target="nextBtn" data-action="click->tour#next">
+              Next <i class="fa-solid fa-arrow-right"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+<% end %>

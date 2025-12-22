@@ -1,8 +1,19 @@
+require "open-uri"
+
 class User < ApplicationRecord
+  include PgSearch::Model
+
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
   devise :database_authenticatable, :registerable,
-         :recoverable, :rememberable, :validatable
+         :recoverable, :rememberable, :validatable,
+         :omniauthable, omniauth_providers: [:google_oauth2]
+
+  pg_search_scope :search,
+    against: [:username, :city],
+    using: {
+      tsearch: { prefix: true }
+    }
 
   has_one :travel_book, dependent: :destroy
   accepts_nested_attributes_for :travel_book
@@ -11,11 +22,11 @@ class User < ApplicationRecord
   has_many :reports, dependent: :destroy
   has_one_attached :avatar
 
-  # KeepTabs (follow) relationships
-  has_many :keep_tabs, foreign_key: :follower_id, dependent: :destroy
-  has_many :following, through: :keep_tabs, source: :followed
-  has_many :reverse_keep_tabs, class_name: "KeepTab", foreign_key: :followed_id, dependent: :destroy
-  has_many :followers, through: :reverse_keep_tabs, source: :follower
+  # Follow relationships
+  has_many :follows, foreign_key: :follower_id, dependent: :destroy
+  has_many :following, through: :follows, source: :followed
+  has_many :reverse_follows, class_name: "Follow", foreign_key: :followed_id, dependent: :destroy
+  has_many :followers, through: :reverse_follows, source: :follower
 
   # Notifications
   has_many :notifications, dependent: :destroy
@@ -55,16 +66,16 @@ class User < ApplicationRecord
     update!(banned: false, banned_at: nil, banned_reason: nil)
   end
 
-  # KeepTabs helpers
-  def keeping_tabs_on?(user)
+  # Follow helpers
+  def following?(user)
     following.include?(user)
   end
 
-  def keep_tabs_on(user)
-    following << user unless self == user || keeping_tabs_on?(user)
+  def follow(user)
+    following << user unless self == user || following?(user)
   end
 
-  def stop_keeping_tabs_on(user)
+  def unfollow(user)
     following.delete(user)
   end
 
@@ -97,5 +108,43 @@ class User < ApplicationRecord
 
   def pending_message_requests_count
     received_conversations.pending.count
+  end
+
+  # Check if user signed up via OAuth and hasn't set their city yet
+  def needs_profile_completion?
+    provider.present? && (city.blank? || city == "Not set")
+  end
+
+  # OmniAuth
+  def self.from_omniauth(auth)
+    where(provider: auth.provider, uid: auth.uid).first_or_create do |user|
+      user.email = auth.info.email
+      user.password = Devise.friendly_token[0, 20]
+      user.username = generate_unique_username(auth.info.name || auth.info.email.split("@").first)
+      user.city = "Not set"
+
+      # Download and attach avatar from Google if available
+      if auth.info.image.present?
+        begin
+          avatar_url = auth.info.image.gsub("=s96-c", "=s400-c") # Get larger image
+          downloaded_image = URI.open(avatar_url)
+          user.avatar.attach(io: downloaded_image, filename: "google_avatar.jpg", content_type: "image/jpeg")
+        rescue StandardError => e
+          Rails.logger.warn "Could not download Google avatar: #{e.message}"
+        end
+      end
+    end
+  end
+
+  def self.generate_unique_username(base_name)
+    username = base_name.parameterize(separator: "_")
+    return username unless User.exists?(username: username)
+
+    counter = 1
+    loop do
+      candidate = "#{username}_#{counter}"
+      return candidate unless User.exists?(username: candidate)
+      counter += 1
+    end
   end
 end

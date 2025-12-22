@@ -1,0 +1,40 @@
+<%# Remove unread styling from all notifications %>
+<% current_user.notifications.each do |notification| %>
+  <%= turbo_stream.replace "notification_#{notification.id}" do %>
+    <div class="notification-card" id="notification_<%= notification.id %>">
+      <div class="notification-avatar">
+        <% if notification.actor.avatar.attached? %>
+          <%= cl_image_tag notification.actor.avatar.key, width: 50, height: 50, crop: :fill, class: "avatar-img" %>
+        <% else %>
+          <div class="avatar-placeholder">
+            <%= notification.actor.username&.first&.upcase %>
+          </div>
+        <% end %>
+      </div>
+      <div class="notification-content">
+        <p class="notification-text">
+          <strong><%= link_to notification.actor.username, user_path(notification.actor) %></strong>
+          <% case notification.action %>
+          <% when "new_comment" %>
+            posted a new review on
+            <% if notification.notifiable.present? %>
+              <strong><%= link_to notification.notifiable.place.title, city_place_path(notification.notifiable.place.city, notification.notifiable.place) %></strong>
+            <% else %>
+              a place
+            <% end %>
+          <% when "new_follow" %>
+            started following you
+          <% end %>
+        </p>
+        <span class="notification-time"><%= time_ago_in_words(notification.created_at) %> ago</span>
+      </div>
+    </div>
+  <% end %>
+<% end %>
+
+<%# Hide the mark all read button %>
+<%= turbo_stream.remove "mark_all_read_btn" %>
+
+<%# Update navbar badges %>
+<%= turbo_stream.update "notif_badge_mobile" %>
+<%= turbo_stream.update "notif_badge_desktop" %>

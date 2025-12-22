@@ -1,3 +1,31 @@
+<%# Update the navbar DM badges with current count after reading messages %>
+<%= turbo_frame_tag "dm_badge_mobile" do %>
+  <% unread_dm = current_user.unread_messages_count + current_user.pending_message_requests_count %>
+  <% if unread_dm > 0 %>
+    <span class="mobile-icon-badge"><%= unread_dm %></span>
+  <% end %>
+<% end %>
+<%= turbo_frame_tag "dm_badge_desktop" do %>
+  <% unread_dm = current_user.unread_messages_count + current_user.pending_message_requests_count %>
+  <% if unread_dm > 0 %>
+    <span class="notification-badge"><%= unread_dm %></span>
+  <% end %>
+<% end %>
+
+<%# Update the tab badges on conversations index page %>
+<%= turbo_frame_tag "messages_tab_badge" do %>
+  <% unread_messages = current_user.unread_messages_count %>
+  <% if unread_messages > 0 %>
+    <span class="tab-badge"><%= unread_messages %></span>
+  <% end %>
+<% end %>
+<%= turbo_frame_tag "requests_tab_badge" do %>
+  <% pending_requests = current_user.pending_message_requests_count %>
+  <% if pending_requests > 0 %>
+    <span class="tab-badge"><%= pending_requests %></span>
+  <% end %>
+<% end %>
+
 <div class="chat-page" data-controller="lightbox chat-scroll chat" data-action="keydown@window->lightbox#closeWithKey">
   <!-- Chat Header -->
   <div class="chat-header">

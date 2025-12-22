@@ -2,6 +2,9 @@ class NotificationsController < ApplicationController
   def index
     @notifications = policy_scope(Notification).recent.includes(:actor, :notifiable)
     authorize Notification
+
+    # Auto-mark all as read when viewing
+    current_user.notifications.unread.update_all(read_at: Time.current)
   end
 
   def mark_read

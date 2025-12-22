@@ -50,6 +50,25 @@
   gap: 12px;
 }
 
+.notification-date-separator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 0;
+  margin: 8px 0;
+}
+
+.notification-date {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #6b7280;
+  background: #f3f4f6;
+  padding: 6px 16px;
+  border-radius: 16px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
 .notification-card {
   display: flex;
   align-items: flex-start;
@@ -321,7 +340,7 @@
 .user-action {
   flex-shrink: 0;
 
-  .keeping-tabs-badge {
+  .following-badge {
     display: flex;
     align-items: center;
     justify-content: center;

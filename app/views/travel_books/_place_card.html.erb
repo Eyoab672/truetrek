@@ -1,0 +1,41 @@
+<%# Get image - try place photos first, then comment photos, then default %>
+<% place_photo = place.photo.first %>
+<% comment_photo = place.comments.flat_map { |c| c.photos.to_a }.first unless place_photo %>
+
+<div class="place-card <%= 'pinned' if pinned %>"
+     data-travel-book-select-target="item"
+     data-travel-book-place-id="<%= tbp.id %>"
+     data-action="mousedown->travel-book-select#startPress mouseup->travel-book-select#endPress mouseleave->travel-book-select#cancelPress touchstart->travel-book-select#startPress touchend->travel-book-select#endPress touchmove->travel-book-select#cancelPress click->travel-book-select#toggleItem">
+
+  <input type="checkbox" class="place-checkbox" data-travel-book-select-target="checkbox">
+
+  <% if pinned %>
+    <div class="place-card-pin-badge">
+      <i class="fa-solid fa-thumbtack"></i>
+    </div>
+  <% end %>
+
+  <%= link_to city_place_path(city, place), class: "place-card-link" do %>
+    <% if place_photo %>
+      <div class="place-card-image" style="background-image: url('<%= cl_image_path place_photo.key, height: 400, width: 600, crop: :fill %>');"></div>
+    <% elsif comment_photo %>
+      <div class="place-card-image" style="background-image: url('<%= cl_image_path comment_photo.key, height: 400, width: 600, crop: :fill %>');"></div>
+    <% elsif place.default_img_url.present? %>
+      <div class="place-card-image" style="background-image: url('<%= place.default_img_url %>');"></div>
+    <% else %>
+      <div class="place-card-image place-card-image-placeholder">
+        <i class="fa-solid fa-image"></i>
+      </div>
+    <% end %>
+    <div class="place-card-overlay"></div>
+    <div class="place-card-content">
+      <% if pinned %>
+        <span class="place-card-city"><%= city.name %></span>
+      <% end %>
+      <h3 class="place-card-title"><%= place.title %></h3>
+      <% unless pinned %>
+        <span class="place-card-cta">View details <i class="fa-solid fa-arrow-right"></i></span>
+      <% end %>
+    </div>
+  <% end %>
+</div>

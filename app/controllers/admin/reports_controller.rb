@@ -3,12 +3,13 @@ module Admin
     before_action :set_report, only: [:show, :update, :destroy]
 
     def index
-      @reports = Report.includes(:user, :place).order(created_at: :desc)
+      @reports = Report.includes(:user, :reportable).order(created_at: :desc)
       @reports = @reports.where(status: params[:status]) if params[:status].present?
+      @reports = @reports.where(reportable_type: params[:type]) if params[:type].present?
     end
 
     def show
-      @place = @report.place
+      @reportable = @report.reportable
     end
 
     def update

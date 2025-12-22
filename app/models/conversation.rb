@@ -11,7 +11,7 @@ class Conversation < ApplicationRecord
   validate :cannot_message_self
 
   def mutual_follow?
-    sender.keeping_tabs_on?(recipient) && recipient.keeping_tabs_on?(sender)
+    sender.following?(recipient) && recipient.following?(sender)
   end
 
   def auto_accept_if_mutual!

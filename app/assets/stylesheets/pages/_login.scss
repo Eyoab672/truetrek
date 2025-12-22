@@ -183,7 +183,62 @@
   box-shadow: 0 6px 14px rgba(17, 39, 66, 0.48);
 }
 
-/* ===== Separator & alt login ===== */
+/* ===== Divider ===== */
+
+.auth-divider {
+  display: flex;
+  align-items: center;
+  margin: 24px 0;
+
+  &::before,
+  &::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: #e5e7eb;
+  }
+
+  span {
+    padding: 0 14px;
+    font-size: 0.8rem;
+    color: #9ca3af;
+    text-transform: lowercase;
+  }
+}
+
+/* ===== OAuth buttons ===== */
+
+.auth-oauth {
+  margin-bottom: 8px;
+}
+
+.auth-google-btn {
+  width: 100%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 11px 16px;
+  background: #ffffff;
+  color: #3c4043;
+  border: 1px solid #dadce0;
+  border-radius: 999px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s ease, box-shadow 0.2s ease;
+
+  &:hover {
+    background: #f8f9fa;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  }
+
+  .google-icon {
+    flex-shrink: 0;
+  }
+}
+
+/* ===== Separator & alt login (legacy) ===== */
 
 .auth-separator {
   margin: 26px 0 8px;

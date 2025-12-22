@@ -26,8 +26,8 @@
           </div>
           <% if current_user != user %>
             <div class="user-action">
-              <% if current_user.keeping_tabs_on?(user) %>
-                <span class="keeping-tabs-badge"><i class="fa-solid fa-eye"></i></span>
+              <% if current_user.following?(user) %>
+                <span class="following-badge"><i class="fa-solid fa-user-check"></i></span>
               <% end %>
             </div>
           <% end %>

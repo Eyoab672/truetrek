@@ -1,51 +1,74 @@
-<div class="travel-book-page">
+<div class="travel-book-page" data-controller="travel-book-select">
   <!-- Header Section -->
   <section class="travel-book-header">
     <div class="header-content">
       <h1 class="header-title">My Travel Book</h1>
       <p class="header-subtitle">Your curated collection of destinations</p>
     </div>
+
+    <!-- Header Actions (visible when items selected) -->
+    <div class="tb-header-actions" data-travel-book-select-target="headerActions">
+      <span class="tb-selected-count">
+        <span data-travel-book-select-target="selectedCount">0</span> selected
+      </span>
+      <button class="tb-header-btn tb-pin-header-btn"
+              data-travel-book-select-target="pinBtn"
+              data-action="click->travel-book-select#pinSelected"
+              title="Pin">
+        <i class="fa-solid fa-thumbtack"></i>
+      </button>
+      <button class="tb-header-btn tb-delete-header-btn"
+              data-travel-book-select-target="deleteBtn"
+              data-action="click->travel-book-select#deleteSelected"
+              title="Remove">
+        <i class="fa-solid fa-trash"></i>
+      </button>
+    </div>
   </section>
 
   <% if @travel_book.places.any? %>
-    <% @travel_book.places.includes(:city).group_by(&:city).each do |city, places| %>
+    <!-- Pinned Section -->
+    <% pinned_tbps = @travel_book.travel_book_places.pinned.includes(place: [:city, :photo_attachments, comments: :photos_attachments]) %>
+    <% if pinned_tbps.any? %>
+      <section class="pinned-section">
+        <div class="pinned-section-header">
+          <h2 class="pinned-section-title">
+            <i class="fa-solid fa-thumbtack"></i>
+            Pinned
+          </h2>
+          <span class="pinned-count"><%= pinned_tbps.count %>/5</span>
+        </div>
+
+        <div class="places-grid">
+          <% pinned_tbps.each do |tbp| %>
+            <% place = tbp.place %>
+            <% city = place.city %>
+            <%= render "travel_books/place_card", place: place, city: city, tbp: tbp, pinned: true %>
+          <% end %>
+        </div>
+      </section>
+    <% end %>
+
+    <!-- Regular Places by City -->
+    <% unpinned_tbps = @travel_book.travel_book_places.unpinned.includes(place: [:city, :photo_attachments, comments: :photos_attachments]) %>
+    <% unpinned_tbps.map { |tbp| [tbp, tbp.place] }.group_by { |tbp, place| place.city }.each do |city, tbp_place_pairs| %>
       <section class="city-section">
         <div class="city-section-header">
           <h2 class="city-section-title">
             <i class="fa-solid fa-location-dot"></i>
             <%= city.name %>
           </h2>
-          <span class="places-count"><%= places.count %> <%= 'place'.pluralize(places.count) %></span>
+          <span class="places-count"><%= tbp_place_pairs.count %> <%= 'place'.pluralize(tbp_place_pairs.count) %></span>
         </div>
 
         <div class="places-grid">
-          <% places.each do |place| %>
-            <% photo = place.comments.flat_map { |c| c.photos.to_a }.first %>
-            <div class="place-card">
-              <%= link_to city_place_path(city, place), class: "place-card-link" do %>
-                <% if photo %>
-                  <div class="place-card-image" style="background-image: url('<%= cl_image_path photo.key, height: 400, width: 600, crop: :fill %>');"></div>
-                <% elsif place.default_img_url %>
-                  <div class="place-card-image" style="background-image: url('<%= place.default_img_url %>');"></div>
-                <% else %>
-                  <div class="place-card-image place-card-image-placeholder">
-                    <i class="fa-solid fa-image"></i>
-                  </div>
-                <% end %>
-                <div class="place-card-overlay"></div>
-                <div class="place-card-content">
-                  <h3 class="place-card-title"><%= place.title %></h3>
-                  <span class="place-card-cta">View details <i class="fa-solid fa-arrow-right"></i></span>
-                </div>
-              <% end %>
-              <%= button_to travel_book_place_path(@travel_book.travel_book_places.find_by(place: place)), method: :delete, class: "place-card-remove" do %>
-                <i class="fa-solid fa-heart"></i>
-              <% end %>
-            </div>
+          <% tbp_place_pairs.each do |tbp, place| %>
+            <%= render "travel_books/place_card", place: place, city: city, tbp: tbp, pinned: false %>
           <% end %>
         </div>
       </section>
     <% end %>
+
   <% else %>
     <section class="empty-state">
       <div class="empty-state-content">

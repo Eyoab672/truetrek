@@ -1,19 +1,19 @@
 class ReportsController < ApplicationController
-  before_action :set_place
+  before_action :set_reportable
 
   def new
-    @report = @place.reports.new
+    @report = @reportable.reports.new
     authorize @report
   end
 
   def create
-    @report = @place.reports.new(report_params)
+    @report = @reportable.reports.new(report_params)
     @report.user = current_user
     authorize @report
 
     if @report.save
       respond_to do |format|
-        format.html { redirect_to city_place_path(@place.city, @place), notice: "Thank you for your report. Our team will review it shortly." }
+        format.html { redirect_to redirect_path, notice: "Thank you for your report. Our team will review it shortly." }
         format.turbo_stream { flash.now[:notice] = "Thank you for your report. Our team will review it shortly." }
       end
     else
@@ -23,8 +23,23 @@ class ReportsController < ApplicationController
 
   private
 
-  def set_place
-    @place = Place.find(params[:place_id])
+  def set_reportable
+    if params[:place_id]
+      @reportable = Place.find(params[:place_id])
+    elsif params[:comment_id]
+      @reportable = Comment.find(params[:comment_id])
+    else
+      raise ActiveRecord::RecordNotFound, "No reportable found"
+    end
+  end
+
+  def redirect_path
+    case @reportable
+    when Place
+      city_place_path(@reportable.city, @reportable)
+    when Comment
+      city_place_path(@reportable.place.city, @reportable.place)
+    end
   end
 
   def report_params

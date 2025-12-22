@@ -1,6 +1,7 @@
 class ApplicationController < ActionController::Base
   before_action :authenticate_user!
   before_action :configure_permitted_parameters, if: :devise_controller?
+  before_action :ensure_profile_complete
   include Pundit::Authorization
 
   after_action :verify_authorized, except: :index, unless: :skip_pundit?
@@ -25,5 +26,15 @@ class ApplicationController < ActionController::Base
 
   def skip_pundit?
     devise_controller? || params[:controller] =~ %r{(^(rails_)?admin)|(^pages$)|(^mission_control)|(^places/autocomplete$)}
+  end
+
+  def ensure_profile_complete
+    return unless user_signed_in?
+    return if devise_controller?
+    return if params[:controller] == "users/profiles"
+
+    if current_user.needs_profile_completion?
+      redirect_to complete_profile_path, alert: "Please complete your profile to continue."
+    end
   end
 end

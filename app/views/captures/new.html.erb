@@ -22,10 +22,16 @@
             <img id="preview-image" class="camera-photo-preview w-100 mb-3" alt="Photo preview">
           </div>
 
-          <div class="d-grid gap-2" id="camera-controls">
-            <button type="button" id="take-photo" class="btn btn-primary btn-lg">
-              <i class="fa-solid fa-camera"></i> Capture Photo
-            </button>
+          <div id="camera-controls" class="camera-controls-wrapper">
+            <div class="camera-controls-row">
+              <button type="button" id="rotate-camera" class="camera-control-btn">
+                <i class="fa-solid fa-rotate"></i>
+              </button>
+              <button type="button" id="take-photo" class="camera-capture-btn">
+                <i class="fa-solid fa-camera"></i>
+              </button>
+              <div class="camera-control-btn camera-control-placeholder"></div>
+            </div>
           </div>
 
           <div id="action-buttons" class="d-grid gap-2 mt-3 d-none">

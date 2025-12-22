@@ -6,13 +6,20 @@
     <% end %>
   </div>
 
-  <!-- Filter Tabs -->
+  <!-- Type Filter Tabs -->
+  <div class="filter-tabs type-tabs">
+    <%= link_to "All Types", admin_reports_path(status: params[:status]), class: "filter-tab #{params[:type].blank? ? 'active' : ''}" %>
+    <%= link_to "Places", admin_reports_path(status: params[:status], type: 'Place'), class: "filter-tab #{params[:type] == 'Place' ? 'active' : ''}" %>
+    <%= link_to "Comments", admin_reports_path(status: params[:status], type: 'Comment'), class: "filter-tab #{params[:type] == 'Comment' ? 'active' : ''}" %>
+  </div>
+
+  <!-- Status Filter Tabs -->
   <div class="filter-tabs">
-    <%= link_to "All", admin_reports_path, class: "filter-tab #{params[:status].blank? ? 'active' : ''}" %>
-    <%= link_to "Pending", admin_reports_path(status: :pending), class: "filter-tab #{params[:status] == 'pending' ? 'active' : ''}" %>
-    <%= link_to "Reviewed", admin_reports_path(status: :reviewed), class: "filter-tab #{params[:status] == 'reviewed' ? 'active' : ''}" %>
-    <%= link_to "Resolved", admin_reports_path(status: :resolved), class: "filter-tab #{params[:status] == 'resolved' ? 'active' : ''}" %>
-    <%= link_to "Dismissed", admin_reports_path(status: :dismissed), class: "filter-tab #{params[:status] == 'dismissed' ? 'active' : ''}" %>
+    <%= link_to "All", admin_reports_path(type: params[:type]), class: "filter-tab #{params[:status].blank? ? 'active' : ''}" %>
+    <%= link_to "Pending", admin_reports_path(status: :pending, type: params[:type]), class: "filter-tab #{params[:status] == 'pending' ? 'active' : ''}" %>
+    <%= link_to "Reviewed", admin_reports_path(status: :reviewed, type: params[:type]), class: "filter-tab #{params[:status] == 'reviewed' ? 'active' : ''}" %>
+    <%= link_to "Resolved", admin_reports_path(status: :resolved, type: params[:type]), class: "filter-tab #{params[:status] == 'resolved' ? 'active' : ''}" %>
+    <%= link_to "Dismissed", admin_reports_path(status: :dismissed, type: params[:type]), class: "filter-tab #{params[:status] == 'dismissed' ? 'active' : ''}" %>
   </div>
 
   <% if @reports.any? %>
@@ -20,7 +27,8 @@
       <table>
         <thead>
           <tr>
-            <th>Place</th>
+            <th>Type</th>
+            <th>Content</th>
             <th>Reported By</th>
             <th>Reason</th>
             <th>Status</th>
@@ -32,15 +40,30 @@
           <% @reports.each do |report| %>
             <tr>
               <td>
-                <%= link_to report.place.title, admin_report_path(report), class: "place-link" %>
-                <span class="report-count-badge" title="Total reports for this place">
-                  <%= report.place.reports.count %>
+                <span class="type-badge <%= report.reportable_type.downcase %>">
+                  <i class="fa-solid <%= report.place_report? ? 'fa-location-dot' : 'fa-comment' %>"></i>
+                  <%= report.reportable_type %>
                 </span>
+              </td>
+              <td>
+                <% if report.place_report? %>
+                  <%= link_to report.reportable.title, admin_report_path(report), class: "content-link" %>
+                  <span class="report-count-badge" title="Total reports for this place">
+                    <%= report.reportable.reports.count %>
+                  </span>
+                <% else %>
+                  <%= link_to truncate(report.reportable.description, length: 50), admin_report_path(report), class: "content-link" %>
+                  <span class="report-count-badge" title="Total reports for this comment">
+                    <%= report.reportable.reports.count %>
+                  </span>
+                <% end %>
               </td>
               <td>
                 <span class="reporter">
                   <%= report.user.username %>
-                  <% if report.user.city&.downcase == report.place.city.name&.downcase %>
+                  <% reporter_city = report.user.city&.downcase %>
+                  <% item_city = report.place_report? ? report.reportable.city.name&.downcase : report.reportable.place.city.name&.downcase %>
+                  <% if reporter_city == item_city %>
                     <span class="local-tag">Local</span>
                   <% end %>
                 </span>

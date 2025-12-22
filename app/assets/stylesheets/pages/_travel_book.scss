@@ -16,11 +16,83 @@
   padding: 2rem 2rem;
   text-align: center;
   border-radius: 0px 0px 40px 40px;
+  position: relative;
 }
 
 .header-content {
   max-width: 800px;
   margin: 0 auto;
+}
+
+// Header Actions (visible when items selected) - floating/fixed
+.tb-header-actions {
+  position: fixed;
+  top: 1.5rem;
+  right: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-10px);
+  transition: all 0.2s ease;
+  z-index: 1000;
+  background: rgba(132, 157, 187, 0.95);
+  padding: 8px 12px;
+  border-radius: 30px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+
+  &.visible {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+}
+
+.tb-selected-count {
+  color: white;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.tb-header-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+
+  i {
+    font-size: 1rem;
+  }
+
+  &.hidden {
+    display: none;
+  }
+}
+
+.tb-pin-header-btn {
+  background: #ffd43b;
+  color: #1a1a2e;
+
+  &:hover {
+    background: #fab005;
+    transform: scale(1.1);
+  }
+}
+
+.tb-delete-header-btn {
+  background: #ff6b6b;
+  color: white;
+
+  &:hover {
+    background: #fa5252;
+    transform: scale(1.1);
+  }
 }
 
 .header-title {
@@ -325,6 +397,125 @@
 }
 
 // ========================================
+// PINNED SECTION
+// ========================================
+
+.pinned-section {
+  padding: 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding-top: 3rem;
+}
+
+.pinned-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid #ffd43b;
+}
+
+.pinned-section-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1a1a2e;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+
+  i {
+    color: #ffd43b;
+  }
+}
+
+.pinned-count {
+  font-size: 0.9rem;
+  color: #fab005;
+  background: #fff9db;
+  padding: 0.4rem 1rem;
+  border-radius: 20px;
+  font-weight: 600;
+}
+
+// Pinned card styling
+.place-card.pinned {
+  border: 2px solid #ffd43b;
+
+  .place-card-pin-badge {
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    z-index: 3;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #ffd43b;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.85rem;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+  }
+}
+
+.place-card-city {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.75);
+  margin-bottom: 4px;
+  display: block;
+}
+
+
+// ========================================
+// SELECTION MODE
+// ========================================
+
+.place-checkbox {
+  display: none;
+}
+
+.place-card {
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+}
+
+.select-mode {
+  .place-checkbox {
+    display: block;
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    z-index: 4;
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+    accent-color: #132742;
+  }
+
+  .place-card-link {
+    pointer-events: none;
+  }
+
+  .place-card {
+    cursor: pointer;
+  }
+
+  .place-card.selected {
+    border: 3px solid #132742;
+    box-shadow: 0 0 0 3px rgba(19, 39, 66, 0.2);
+  }
+
+  .place-card.pinned .place-card-pin-badge {
+    left: auto;
+    right: 1rem;
+  }
+}
+
+// ========================================
 // RESPONSIVE DESIGN
 // ========================================
 
@@ -333,11 +524,33 @@
     padding: 2.6rem 1.5rem;
   }
 
-  .city-section {
+  .tb-header-actions {
+    top: 0.75rem;
+    right: 0.75rem;
+    gap: 8px;
+    padding: 6px 10px;
+  }
+
+  .tb-header-btn {
+    width: 36px;
+    height: 36px;
+
+    i {
+      font-size: 0.9rem;
+    }
+  }
+
+  .tb-selected-count {
+    font-size: 0.8rem;
+  }
+
+  .city-section,
+  .pinned-section {
     padding: 1.5rem 1rem;
   }
 
-  .city-section-header {
+  .city-section-header,
+  .pinned-section-header {
     flex-direction: column;
     align-items: flex-start;
     gap: 0.75rem;
@@ -354,10 +567,6 @@
   .place-card-cta {
     opacity: 1;
     transform: translateY(0);
-  }
-
-  .place-card-remove {
-    opacity: 1;
   }
 
   .travel-book-page {

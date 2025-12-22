@@ -1,4 +1,4 @@
-<div class="homepage">
+<div class="homepage" data-controller="swipe-nav" data-swipe-nav-right-url-value="<%= conversations_path %>">
   <!-- Hero Section -->
   <section class="hero-section">
     <!-- Mobile Floating Header -->
@@ -6,17 +6,17 @@
       <div class="hero-floating-header d-flex d-md-none">
         <p class="hero-logo">TrueTrek</p>
         <div class="hero-icons">
+          <%= link_to notifications_path, class: "hero-icon-link" do %>
+            <i class="fa-regular fa-heart"></i>
+            <% if current_user.unread_notifications_count > 0 %>
+              <span class="hero-icon-badge"><%= current_user.unread_notifications_count %></span>
+            <% end %>
+          <% end %>
           <%= link_to conversations_path, class: "hero-icon-link" do %>
             <i class="fa-regular fa-paper-plane"></i>
             <% unread_dm = current_user.unread_messages_count + current_user.pending_message_requests_count %>
             <% if unread_dm > 0 %>
               <span class="hero-icon-badge"><%= unread_dm %></span>
-            <% end %>
-          <% end %>
-          <%= link_to notifications_path, class: "hero-icon-link" do %>
-            <i class="fa-regular fa-heart"></i>
-            <% if current_user.unread_notifications_count > 0 %>
-              <span class="hero-icon-badge"><%= current_user.unread_notifications_count %></span>
             <% end %>
           <% end %>
         </div>
@@ -27,69 +27,35 @@
       <h1 class="hero-title">Discover Your Next Adventure</h1>
       <p class="hero-subtitle">Explore breathtaking destinations and create unforgettable memories</p>
 
-      <!-- Search Bar -->
-      <div class="search-container">
-        <%= form_with url: root_path, method: :get, local: true, class: "search-form" do %>
-          <div class="search-input-wrapper">
-            <i class="fa-solid fa-magnifying-glass search-icon d-none d-md-block"></i>
-            <%= text_field_tag :query, params[:query], placeholder: "Search cities, places, comments...", class: "search-input" %>
-            <button type="submit" class="search-btn-circle d-md-none">
-              <i class="fa-solid fa-magnifying-glass"></i>
-            </button>
-          </div>
-          <%= submit_tag "Explore", class: "search-btn d-none d-md-inline-block" %>
-        <% end %>
-      </div>
+      <!-- Search Bar (links to search page) -->
+      <%= link_to search_path, class: "search-container-link" do %>
+        <div class="search-input-wrapper">
+          <i class="fa-solid fa-magnifying-glass search-icon"></i>
+          <span class="search-placeholder">Search people, places, posts...</span>
+        </div>
+      <% end %>
     </div>
     <div class="hero-overlay"></div>
   </section>
 
-  <% if @query.present? %>
-    <!-- Search Results Section -->
-    <section class="search-results-section container py-3">
+  <!-- Cities Section -->
+  <section class="cities-section">
+    <div class="section-header-home">
+      <h2 class="section-title">Popular Destinations</h2>
+      <p class="section-subtitle">Handpicked cities waiting to be explored</p>
+    </div>
 
-      <% if @cities.any? %>
-        <% if @cities.any? %>
-          <div class="mb-5">
-            <div class="cities-grid">
-              <% @cities.each do |city| %>
-                <%= link_to city_places_path(city), class: "city-card" do %>
-                  <div class="card-image" style="background-image: url('<%= city.img %>');"></div>
-                  <div class="card-overlay"></div>
-                  <div class="card-content">
-                    <h3 class="card-title"><%= city.name %></h3>
-                    <span class="card-cta">Explore <i class="fa-solid fa-arrow-right"></i></span>
-                  </div>
-                <% end %>
-              <% end %>
-            </div>
+    <div class="cities-grid">
+      <% @cities.each_with_index do |city, index| %>
+        <%= link_to city_places_path(city), class: "city-card #{'featured' if index < 2}" do %>
+          <div class="card-image" style="background-image: url('<%= city.img %>');"></div>
+          <div class="card-overlay"></div>
+          <div class="card-content">
+            <h3 class="card-title"><%= city.name %></h3>
+            <span class="card-cta">Explore <i class="fa-solid fa-arrow-right"></i></span>
           </div>
         <% end %>
-
-      <% else %>
-        <p class="text-muted">No results found for "<%= @query %>"</p>
       <% end %>
-    </section>
-  <% else %>
-    <!-- Cities Section -->
-    <section class="cities-section">
-      <div class="section-header-home">
-        <h2 class="section-title">Popular Destinations</h2>
-        <p class="section-subtitle">Handpicked cities waiting to be explored</p>
-      </div>
-
-      <div class="cities-grid">
-        <% @cities.each_with_index do |city, index| %>
-          <%= link_to city_places_path(city), class: "city-card #{'featured' if index < 2}" do %>
-            <div class="card-image" style="background-image: url('<%= city.img %>');"></div>
-            <div class="card-overlay"></div>
-            <div class="card-content">
-              <h3 class="card-title"><%= city.name %></h3>
-              <span class="card-cta">Explore <i class="fa-solid fa-arrow-right"></i></span>
-            </div>
-          <% end %>
-        <% end %>
-      </div>
-    </section>
-  <% end %>
+    </div>
+  </section>
 </div>

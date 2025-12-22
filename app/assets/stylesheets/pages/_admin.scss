@@ -328,6 +328,48 @@
 }
 
 // ========================================
+// TYPE BADGES (Place/Comment)
+// ========================================
+
+.type-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.25rem 0.65rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  border-radius: 12px;
+
+  &.place {
+    background: #e8f5e9;
+    color: #2e7d32;
+  }
+
+  &.comment {
+    background: #e3f2fd;
+    color: #1565c0;
+  }
+
+  i {
+    font-size: 0.7rem;
+  }
+}
+
+.type-tabs {
+  margin-bottom: 0.5rem;
+}
+
+.content-link {
+  color: #5d89ba;
+  text-decoration: none;
+  font-weight: 500;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+// ========================================
 // BUTTONS
 // ========================================
 
@@ -456,7 +498,8 @@
 
 .report-info-card,
 .place-info-card,
-.place-detail-card {
+.place-detail-card,
+.comment-info-card {
   background: #ffffff;
   border-radius: 16px;
   padding: 1.5rem;
@@ -469,6 +512,143 @@
     margin: 0 0 1rem 0;
     padding-bottom: 0.75rem;
     border-bottom: 1px solid #e9ecef;
+  }
+}
+
+// Comment info card specific styles
+.comment-info-card {
+  .comment-header-info {
+    margin-bottom: 1rem;
+  }
+
+  .comment-author-info {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+
+    h3 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #533A33;
+      margin: 0;
+    }
+  }
+
+  .comment-author-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+
+  .comment-author-avatar-placeholder {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #5d89ba, #849DBB);
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+  }
+
+  .comment-author-city {
+    font-size: 0.85rem;
+    color: #849DBB;
+    margin: 0.25rem 0 0 0;
+  }
+
+  .comment-content-box {
+    background: #f8f9fa;
+    border-radius: 12px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+
+    p {
+      margin: 0;
+      color: #495057;
+      line-height: 1.6;
+    }
+  }
+
+  .comment-photos {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+  }
+
+  .comment-photo-thumb {
+    width: 80px;
+    height: 80px;
+    border-radius: 8px;
+    object-fit: cover;
+  }
+
+  .comment-actions {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid #e9ecef;
+    flex-wrap: wrap;
+  }
+}
+
+// Report item info (polymorphic report form)
+.report-item-info {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 1.25rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 4px 15px rgba(83, 58, 51, 0.06);
+
+  h2 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #533A33;
+    margin: 0 0 0.25rem 0;
+  }
+
+  .item-location {
+    color: #849DBB;
+    margin: 0;
+    font-size: 0.9rem;
+  }
+}
+
+.reported-comment {
+  .comment-author {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 600;
+    color: #533A33;
+    margin-bottom: 0.5rem;
+
+    i {
+      color: #849DBB;
+    }
+  }
+
+  .comment-preview {
+    color: #495057;
+    line-height: 1.5;
+    margin: 0 0 0.5rem 0;
+    padding: 0.75rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+  }
+
+  .comment-meta {
+    color: #849DBB;
+    font-size: 0.85rem;
+    margin: 0;
+
+    i {
+      margin-right: 0.25rem;
+    }
   }
 }
 

@@ -1,0 +1,44 @@
+<div class="auth-page">
+  <div class="auth-phone-shell">
+    <div class="auth-card">
+      <header class="auth-header">
+        <div class="auth-title-row">
+          <span class="auth-title-main">Almost there!</span>
+        </div>
+        <p class="auth-subtitle">Tell us a bit more about yourself</p>
+      </header>
+
+      <%= simple_form_for(current_user, url: complete_profile_path, method: :patch, html: { class: "auth-form" }) do |f| %>
+        <%= f.error_notification %>
+
+        <div class="auth-field-group">
+          <%= f.label :username, "Username", class: "auth-label" %>
+          <%= f.input :username,
+                      label: false,
+                      required: true,
+                      input_html: {
+                        class: "auth-input-field",
+                        placeholder: "Your display name"
+                      } %>
+        </div>
+
+        <div class="auth-field-group">
+          <%= f.label :city, "Where are you from?", class: "auth-label" %>
+          <p class="auth-hint">This helps others know your perspective on places</p>
+          <%= f.input :city,
+                      label: false,
+                      required: true,
+                      input_html: {
+                        class: "auth-input-field",
+                        placeholder: "e.g. New York, London, Tokyo",
+                        autofocus: true
+                      } %>
+        </div>
+
+        <div class="auth-actions">
+          <%= f.button :submit, "Continue", class: "auth-primary-btn" %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

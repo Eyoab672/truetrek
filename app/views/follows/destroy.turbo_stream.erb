@@ -1,5 +1,5 @@
-<%= turbo_stream.replace "keep_tabs_button_#{@user.id}" do %>
-  <%= render "keep_tabs/button", user: @user %>
+<%= turbo_stream.replace "follow_button_#{@user.id}" do %>
+  <%= render "follows/button", user: @user %>
 <% end %>
 
 <%= turbo_stream.replace "followers_count_#{@user.id}" do %>

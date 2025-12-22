@@ -1,0 +1,22 @@
+<%= link_to user_path(user), class: "search-user-card" do %>
+  <div class="user-avatar">
+    <% if user.avatar.attached? %>
+      <%= cl_image_tag user.avatar.key, width: 56, height: 56, crop: :fill, class: "avatar-img" %>
+    <% else %>
+      <div class="avatar-placeholder">
+        <%= user.username&.first&.upcase || user.email.first.upcase %>
+      </div>
+    <% end %>
+  </div>
+  <div class="user-info">
+    <span class="user-name"><%= user.username %></span>
+    <span class="user-location"><i class="fa-solid fa-location-dot"></i> <%= user.city %></span>
+  </div>
+  <% if user_signed_in? && current_user != user %>
+    <div class="user-follow-indicator">
+      <% if current_user.following?(user) %>
+        <span class="following-badge"><i class="fa-solid fa-user-check"></i></span>
+      <% end %>
+    </div>
+  <% end %>
+<% end %>
