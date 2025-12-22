@@ -1,17 +1,34 @@
+<%# Hide the navbar notification badges when on notifications page %>
+<%= turbo_frame_tag "notif_badge_mobile" %>
+<%= turbo_frame_tag "notif_badge_desktop" %>
+
 <div class="notifications-page" data-controller="swipe-nav" data-swipe-nav-left-url-value="<%= conversations_path %>">
   <div class="notifications-header">
     <h1><i class="fa-regular fa-heart"></i> Activity</h1>
-    <% if @notifications.unread.any? %>
-      <%= button_to mark_all_read_notifications_path, method: :patch, class: "mark-all-read-btn" do %>
-        Mark all as read
-      <% end %>
-    <% end %>
   </div>
 
   <% if @notifications.any? %>
     <div class="notifications-list">
+      <% current_date = nil %>
       <% @notifications.each do |notification| %>
-        <div class="notification-card <%= 'unread' unless notification.read? %>" id="notification_<%= notification.id %>">
+        <% notification_date = notification.created_at.to_date %>
+        <% if notification_date != current_date %>
+          <% current_date = notification_date %>
+          <div class="notification-date-separator">
+            <span class="notification-date">
+              <% if notification_date == Date.today %>
+                Today
+              <% elsif notification_date == Date.yesterday %>
+                Yesterday
+              <% elsif notification_date > 1.week.ago.to_date %>
+                <%= notification_date.strftime("%A") %>
+              <% else %>
+                <%= notification_date.strftime("%B %d, %Y") %>
+              <% end %>
+            </span>
+          </div>
+        <% end %>
+        <div class="notification-card" id="notification_<%= notification.id %>">
           <div class="notification-avatar">
             <% if notification.actor.avatar.attached? %>
               <%= cl_image_tag notification.actor.avatar.key, width: 50, height: 50, crop: :fill, class: "avatar-img" %>
@@ -32,17 +49,12 @@
                 <% else %>
                   a place
                 <% end %>
+              <% when "new_follow" %>
+                started following you
               <% end %>
             </p>
             <span class="notification-time"><%= time_ago_in_words(notification.created_at) %> ago</span>
           </div>
-          <% unless notification.read? %>
-            <div class="notification-action">
-              <%= button_to mark_read_notification_path(notification), method: :patch, class: "mark-read-btn" do %>
-                <i class="fa-solid fa-check"></i>
-              <% end %>
-            </div>
-          <% end %>
         </div>
       <% end %>
     </div>
@@ -50,7 +62,7 @@
     <div class="empty-state">
       <i class="fa-regular fa-bell"></i>
       <p>No notifications yet</p>
-      <span class="empty-hint">When people you follow post reviews, you'll see them here</span>
+      <span class="empty-hint">When someone follows you or people you follow post reviews, you'll see them here</span>
     </div>
   <% end %>
 </div>

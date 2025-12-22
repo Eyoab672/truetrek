@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_12_18_141223) do
+ActiveRecord::Schema[7.2].define(version: 2025_12_22_002816) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -73,14 +73,14 @@ ActiveRecord::Schema[7.2].define(version: 2025_12_18_141223) do
     t.index ["sender_id"], name: "index_conversations_on_sender_id"
   end
 
-  create_table "keep_tabs", force: :cascade do |t|
+  create_table "follows", force: :cascade do |t|
     t.bigint "follower_id", null: false
     t.bigint "followed_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["followed_id"], name: "index_keep_tabs_on_followed_id"
-    t.index ["follower_id", "followed_id"], name: "index_keep_tabs_on_follower_id_and_followed_id", unique: true
-    t.index ["follower_id"], name: "index_keep_tabs_on_follower_id"
+    t.index ["followed_id"], name: "index_follows_on_followed_id"
+    t.index ["follower_id", "followed_id"], name: "index_follows_on_follower_id_and_followed_id", unique: true
+    t.index ["follower_id"], name: "index_follows_on_follower_id"
   end
 
   create_table "messages", force: :cascade do |t|
@@ -274,6 +274,7 @@ ActiveRecord::Schema[7.2].define(version: 2025_12_18_141223) do
     t.bigint "travel_book_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "pinned", default: false, null: false
     t.index ["place_id"], name: "index_travel_book_places_on_place_id"
     t.index ["travel_book_id"], name: "index_travel_book_places_on_travel_book_id"
   end
@@ -301,7 +302,10 @@ ActiveRecord::Schema[7.2].define(version: 2025_12_18_141223) do
     t.datetime "banned_at"
     t.string "banned_reason"
     t.boolean "tour_completed", default: false, null: false
+    t.string "provider"
+    t.string "uid"
     t.index ["email"], name: "index_users_on_email", unique: true
+    t.index ["provider", "uid"], name: "index_users_on_provider_and_uid", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
@@ -323,8 +327,8 @@ ActiveRecord::Schema[7.2].define(version: 2025_12_18_141223) do
   add_foreign_key "comments", "users"
   add_foreign_key "conversations", "users", column: "recipient_id"
   add_foreign_key "conversations", "users", column: "sender_id"
-  add_foreign_key "keep_tabs", "users", column: "followed_id"
-  add_foreign_key "keep_tabs", "users", column: "follower_id"
+  add_foreign_key "follows", "users", column: "followed_id"
+  add_foreign_key "follows", "users", column: "follower_id"
   add_foreign_key "messages", "conversations"
   add_foreign_key "messages", "messages", column: "replied_to_message_id"
   add_foreign_key "messages", "users"

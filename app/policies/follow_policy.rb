@@ -1,4 +1,4 @@
-class KeepTabPolicy < ApplicationPolicy
+class FollowPolicy < ApplicationPolicy
   def create?
     user.present? && user != record.followed
   end

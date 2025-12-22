@@ -1,0 +1,18 @@
+<%= link_to city_place_path(place.city, place), class: "search-place-card" do %>
+  <div class="place-image">
+    <% photo = place.comments.flat_map { |c| c.photos.to_a }.first %>
+    <% if photo %>
+      <div class="place-img" style="background-image: url('<%= cl_image_path photo.key, height: 200, width: 300, crop: :fill %>');"></div>
+    <% elsif place.default_img_url.present? %>
+      <div class="place-img" style="background-image: url('<%= place.default_img_url %>');"></div>
+    <% else %>
+      <div class="place-img place-img-placeholder">
+        <i class="fa-solid fa-map-pin"></i>
+      </div>
+    <% end %>
+  </div>
+  <div class="place-info">
+    <h4 class="place-title"><%= truncate(place.title, length: 30) %></h4>
+    <span class="place-location"><i class="fa-solid fa-city"></i> <%= place.city.name %></span>
+  </div>
+<% end %>

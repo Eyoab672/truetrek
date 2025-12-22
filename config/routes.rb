@@ -1,5 +1,9 @@
 Rails.application.routes.draw do
-  devise_for :users
+  devise_for :users, controllers: { omniauth_callbacks: "users/omniauth_callbacks" }
+
+  # Profile completion for OAuth users
+  get "complete_profile", to: "users/profiles#complete", as: :complete_profile
+  patch "complete_profile", to: "users/profiles#update_profile"
   resources :users, only: [:show] do
     collection do
       get :search
@@ -8,7 +12,7 @@ Rails.application.routes.draw do
       get :followers
       get :following
     end
-    resource :keep_tab, only: [:create, :destroy]
+    resource :follow, only: [:create, :destroy]
   end
 
   resources :notifications, only: [:index] do
@@ -29,6 +33,7 @@ Rails.application.routes.draw do
   end
 
   root to: "cities#index"
+  get "search", to: "search#index", as: :search
 
   get "/pages/home", to: "pages#home"
   authenticate :user, ->(user) { user.admin? } do
@@ -81,7 +86,15 @@ Rails.application.routes.draw do
       get :autocomplete, to: 'places/autocomplete#index'
     end
   end
-  resources :travel_book_places, only: :destroy
+  resources :travel_book_places, only: :destroy do
+    member do
+      patch :toggle_pin
+    end
+    collection do
+      delete :bulk_destroy
+      patch :bulk_pin
+    end
+  end
   resources :comments, only: [:new, :create, :destroy]  # for new places + delete
 
   # Tour completion

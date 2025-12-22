@@ -1,0 +1,35 @@
+<div class="search-post-card">
+  <div class="post-header">
+    <%= link_to user_path(comment.user), class: "post-user" do %>
+      <div class="post-avatar">
+        <% if comment.user.avatar.attached? %>
+          <%= cl_image_tag comment.user.avatar.key, width: 40, height: 40, crop: :fill, class: "avatar-img" %>
+        <% else %>
+          <div class="avatar-placeholder small">
+            <%= comment.user.username&.first&.upcase || comment.user.email.first.upcase %>
+          </div>
+        <% end %>
+      </div>
+      <span class="post-username"><%= comment.user.username %></span>
+    <% end %>
+    <span class="post-time"><%= time_ago_in_words(comment.created_at) %> ago</span>
+  </div>
+
+  <%= link_to city_place_path(comment.place.city, comment.place), class: "post-content" do %>
+    <p class="post-text"><%= truncate(comment.description, length: 150) %></p>
+    <span class="post-place">
+      <i class="fa-solid fa-location-dot"></i> <%= comment.place.title %>
+    </span>
+  <% end %>
+
+  <% if comment.photos.any? %>
+    <div class="post-photos">
+      <% comment.photos.limit(3).each do |photo| %>
+        <%= cl_image_tag photo.key, height: 80, width: 80, crop: :fill, class: "post-photo" %>
+      <% end %>
+      <% if comment.photos.count > 3 %>
+        <span class="more-photos">+<%= comment.photos.count - 3 %></span>
+      <% end %>
+    </div>
+  <% end %>
+</div>

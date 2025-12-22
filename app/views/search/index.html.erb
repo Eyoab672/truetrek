@@ -1,0 +1,150 @@
+<div class="search-page">
+  <!-- Search Header -->
+  <div class="search-header">
+    <div class="search-header-row">
+      <%= link_to root_path, class: "search-back-btn" do %>
+        <i class="fa-solid fa-arrow-left"></i>
+      <% end %>
+
+      <%= form_with url: search_path, method: :get, local: true, class: "search-form" do %>
+        <div class="search-input-wrapper">
+          <i class="fa-solid fa-magnifying-glass search-input-icon"></i>
+          <%= text_field_tag :query, @query, placeholder: "Search people, places, posts...", class: "search-input", autofocus: true %>
+          <% if @query.present? %>
+            <%= link_to search_path(type: @type), class: "search-clear-btn" do %>
+              <i class="fa-solid fa-xmark"></i>
+            <% end %>
+          <% end %>
+        </div>
+        <%= hidden_field_tag :type, @type %>
+      <% end %>
+    </div>
+
+    <!-- Search Type Tabs -->
+    <div class="search-tabs">
+      <%= link_to search_path(query: @query, type: "all"), class: "search-tab #{'active' if @type == 'all'}" do %>
+        All
+      <% end %>
+      <%= link_to search_path(query: @query, type: "people"), class: "search-tab #{'active' if @type == 'people'}" do %>
+        People
+      <% end %>
+      <%= link_to search_path(query: @query, type: "places"), class: "search-tab #{'active' if @type == 'places'}" do %>
+        Places
+      <% end %>
+      <%= link_to search_path(query: @query, type: "posts"), class: "search-tab #{'active' if @type == 'posts'}" do %>
+        Posts
+      <% end %>
+    </div>
+  </div>
+
+  <!-- Search Results -->
+  <div class="search-results container">
+    <% if @query.blank? %>
+      <div class="search-empty-state">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <p>Search for people, places, or posts</p>
+      </div>
+    <% elsif @type == "all" %>
+      <!-- All Results -->
+      <% has_results = (@users&.any? || @places&.any? || @comments&.any?) %>
+
+      <% if has_results %>
+        <% if @users&.any? %>
+          <div class="search-section">
+            <div class="search-section-header">
+              <h3><i class="fa-solid fa-users"></i> People</h3>
+              <% if @users.size >= 6 %>
+                <%= link_to "See all", search_path(query: @query, type: "people"), class: "see-all-link" %>
+              <% end %>
+            </div>
+            <div class="search-users-grid">
+              <% @users.each do |user| %>
+                <%= render "search/user_card", user: user %>
+              <% end %>
+            </div>
+          </div>
+        <% end %>
+
+        <% if @places&.any? %>
+          <div class="search-section">
+            <div class="search-section-header">
+              <h3><i class="fa-solid fa-location-dot"></i> Places</h3>
+              <% if @places.size >= 6 %>
+                <%= link_to "See all", search_path(query: @query, type: "places"), class: "see-all-link" %>
+              <% end %>
+            </div>
+            <div class="search-places-grid">
+              <% @places.each do |place| %>
+                <%= render "search/place_card", place: place %>
+              <% end %>
+            </div>
+          </div>
+        <% end %>
+
+        <% if @comments&.any? %>
+          <div class="search-section">
+            <div class="search-section-header">
+              <h3><i class="fa-solid fa-comment"></i> Posts</h3>
+              <% if @comments.size >= 6 %>
+                <%= link_to "See all", search_path(query: @query, type: "posts"), class: "see-all-link" %>
+              <% end %>
+            </div>
+            <div class="search-posts-list">
+              <% @comments.each do |comment| %>
+                <%= render "search/post_card", comment: comment %>
+              <% end %>
+            </div>
+          </div>
+        <% end %>
+      <% else %>
+        <div class="search-no-results">
+          <i class="fa-regular fa-face-frown"></i>
+          <p>No results found for "<%= @query %>"</p>
+          <span>Try different keywords or check your spelling</span>
+        </div>
+      <% end %>
+
+    <% elsif @type == "people" %>
+      <% if @users&.any? %>
+        <div class="search-users-grid full">
+          <% @users.each do |user| %>
+            <%= render "search/user_card", user: user %>
+          <% end %>
+        </div>
+      <% else %>
+        <div class="search-no-results">
+          <i class="fa-regular fa-face-frown"></i>
+          <p>No people found for "<%= @query %>"</p>
+        </div>
+      <% end %>
+
+    <% elsif @type == "places" %>
+      <% if @places&.any? %>
+        <div class="search-places-grid full">
+          <% @places.each do |place| %>
+            <%= render "search/place_card", place: place %>
+          <% end %>
+        </div>
+      <% else %>
+        <div class="search-no-results">
+          <i class="fa-regular fa-face-frown"></i>
+          <p>No places found for "<%= @query %>"</p>
+        </div>
+      <% end %>
+
+    <% elsif @type == "posts" %>
+      <% if @comments&.any? %>
+        <div class="search-posts-list full">
+          <% @comments.each do |comment| %>
+            <%= render "search/post_card", comment: comment %>
+          <% end %>
+        </div>
+      <% else %>
+        <div class="search-no-results">
+          <i class="fa-regular fa-face-frown"></i>
+          <p>No posts found for "<%= @query %>"</p>
+        </div>
+      <% end %>
+    <% end %>
+  </div>
+</div>

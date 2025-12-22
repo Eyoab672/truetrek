@@ -1,0 +1,11 @@
+<div id="follow_button_<%= user.id %>">
+  <% if current_user.following?(user) %>
+    <%= button_to user_follow_path(user), method: :delete, class: "follow-btn following", data: { turbo_stream: true } do %>
+      <i class="fa-solid fa-user-check"></i> Following
+    <% end %>
+  <% else %>
+    <%= button_to user_follow_path(user), method: :post, class: "follow-btn", data: { turbo_stream: true } do %>
+      <i class="fa-solid fa-user-plus"></i> Follow
+    <% end %>
+  <% end %>
+</div>
