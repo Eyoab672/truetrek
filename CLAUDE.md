@@ -151,18 +151,21 @@ Jobs in `app/jobs/` processed by Solid Queue:
 - All controllers include `Pundit::Authorization` via `ApplicationController`
 - `verify_authorized` runs after all actions except index (unless skipped)
 - `verify_policy_scoped` runs after index actions
-- Pundit is skipped for Devise controllers, pages controller, and mission_control
+- Pundit is skipped for Devise controllers, pages controller, mission_control, and places/autocomplete
 - Admin controllers (`Admin::BaseController`) use `require_admin` before_action and skip Pundit
 - Policy files in `app/policies/`
 
 ### Routes Structure
 - Root: `cities#index`
+- `GET /search` - global search across places and comments
 - Nested: `cities/:city_id/places` for places within a city
 - Nested: `cities/:city_id/places/:place_id/comments` for comments
+- Nested: `cities/:city_id/places/:place_id/regenerate_description` - manually trigger LLM description regeneration
 - Nested: `comments/:comment_id/replies` for threaded replies
 - Nested: `comments/:comment_id/vote` for upvote/downvote
 - Nested: `places/:place_id/reports` for user-submitted place reports
-- `travel_book_places` for managing user's saved places
+- Nested: `comments/:comment_id/reports` for reporting individual comments
+- `travel_book_places` for managing user's saved places (includes `toggle_pin`, `bulk_destroy`, `bulk_pin`)
 - `/camera` for photo capture feature (stores blob in session, redirects to comment form)
 - `/users/search` for user autocomplete (@mentions)
 - `/users/:id/follow` - follow/unfollow a user
@@ -195,7 +198,7 @@ Key JavaScript controllers in `app/javascript/controllers/`:
 ### Devise Configuration
 Custom permitted parameters in `ApplicationController`:
 - Sign up: `username`, `city`, `avatar`
-- Account update: `username`, `city`, `avatar`
+- Account update: `username`, `city`, `avatar`, `travel_book_attributes: [:hidden]`
 - Google OAuth: Users signing up via Google are redirected to complete their profile (city is required)
 
 ## Environment Variables
