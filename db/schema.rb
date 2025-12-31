@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_12_22_002816) do
+ActiveRecord::Schema[7.2].define(version: 2025_12_30_113725) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -61,13 +61,32 @@ ActiveRecord::Schema[7.2].define(version: 2025_12_22_002816) do
     t.index ["user_id"], name: "index_comments_on_user_id"
   end
 
+  create_table "conversation_members", force: :cascade do |t|
+    t.bigint "conversation_id", null: false
+    t.bigint "user_id", null: false
+    t.integer "role", default: 0, null: false
+    t.boolean "muted", default: false, null: false
+    t.datetime "joined_at", default: -> { "CURRENT_TIMESTAMP" }, null: false
+    t.datetime "left_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["conversation_id", "user_id"], name: "index_conversation_members_on_conversation_id_and_user_id", unique: true
+    t.index ["conversation_id"], name: "index_conversation_members_on_conversation_id"
+    t.index ["user_id", "conversation_id"], name: "index_conversation_members_on_user_id_and_conversation_id"
+    t.index ["user_id"], name: "index_conversation_members_on_user_id"
+  end
+
   create_table "conversations", force: :cascade do |t|
-    t.bigint "sender_id", null: false
-    t.bigint "recipient_id", null: false
+    t.bigint "sender_id"
+    t.bigint "recipient_id"
     t.boolean "accepted", default: false, null: false
     t.datetime "accepted_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "is_group", default: false, null: false
+    t.string "group_name"
+    t.bigint "created_by_id"
+    t.index ["created_by_id"], name: "index_conversations_on_created_by_id"
     t.index ["recipient_id"], name: "index_conversations_on_recipient_id"
     t.index ["sender_id", "recipient_id"], name: "index_conversations_on_sender_id_and_recipient_id", unique: true
     t.index ["sender_id"], name: "index_conversations_on_sender_id"
@@ -325,6 +344,9 @@ ActiveRecord::Schema[7.2].define(version: 2025_12_22_002816) do
   add_foreign_key "comments", "comments", column: "parent_id"
   add_foreign_key "comments", "places"
   add_foreign_key "comments", "users"
+  add_foreign_key "conversation_members", "conversations"
+  add_foreign_key "conversation_members", "users"
+  add_foreign_key "conversations", "users", column: "created_by_id"
   add_foreign_key "conversations", "users", column: "recipient_id"
   add_foreign_key "conversations", "users", column: "sender_id"
   add_foreign_key "follows", "users", column: "followed_id"

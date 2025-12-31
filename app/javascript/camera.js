@@ -11,7 +11,7 @@ function initCameraPage() {
   const looksGreatButton = document.getElementById("looks-great");
   const retakeButton = document.getElementById("retake-photo");
   const rotateCameraBtn = document.getElementById("rotate-camera");
-  const cameraPage = document.querySelector(".camera-new-page");
+  const cameraPage = document.querySelector(".camera-fullscreen-page") || document.querySelector(".camera-new-page");
 
   if (!video || !canvas || !takePhotoBtn) return; // not on /camera
 
@@ -36,8 +36,14 @@ function initCameraPage() {
     }
 
     try {
+      // Request highest quality video
       stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: facingMode },
+        video: {
+          facingMode: facingMode,
+          width: { ideal: 4096 },
+          height: { ideal: 2160 },
+          aspectRatio: { ideal: 16/9 }
+        },
         audio: false
       });
       video.srcObject = stream;
@@ -78,6 +84,7 @@ function initCameraPage() {
     const ctx = canvas.getContext("2d");
     ctx.drawImage(video, 0, 0, width, height);
 
+    // Use JPEG with high quality (0.95) for better file size while maintaining quality
     canvas.toBlob((blob) => {
       if (!blob) return;
       lastBlob = blob;
@@ -107,7 +114,7 @@ function initCameraPage() {
           { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
         );
       }
-    }, "image/png");
+    }, "image/jpeg", 0.95);
   });
 
   // Retake photo

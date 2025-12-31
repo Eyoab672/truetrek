@@ -1,0 +1,105 @@
+<div class="messages-page" data-controller="group-chat-form">
+  <div class="messages-header">
+    <%= link_to conversations_path, class: "back-btn" do %>
+      <i class="fa-solid fa-arrow-left"></i>
+    <% end %>
+    <h1>New Message</h1>
+  </div>
+
+  <!-- Toggle between DM and Group -->
+  <div class="new-chat-tabs">
+    <button type="button" class="new-chat-tab active" data-action="click->group-chat-form#showDM" data-group-chat-form-target="dmTab">
+      <i class="fa-regular fa-comment"></i> Direct Message
+    </button>
+    <button type="button" class="new-chat-tab" data-action="click->group-chat-form#showGroup" data-group-chat-form-target="groupTab">
+      <i class="fa-solid fa-users"></i> New Group
+    </button>
+  </div>
+
+  <!-- DM Form -->
+  <div class="new-chat-form" data-group-chat-form-target="dmForm">
+    <%= form_with url: conversations_path, method: :post, local: true do |f| %>
+      <div class="form-group">
+        <label>To:</label>
+        <div class="user-search-wrapper">
+          <input type="text"
+                 class="user-search-input"
+                 placeholder="Search for a user..."
+                 data-group-chat-form-target="searchInput"
+                 data-action="input->group-chat-form#search">
+          <div class="user-search-results" data-group-chat-form-target="searchResults"></div>
+        </div>
+        <input type="hidden" name="recipient_id" data-group-chat-form-target="recipientId">
+        <div class="selected-user" data-group-chat-form-target="selectedUser" style="display: none;">
+          <span class="selected-user-name"></span>
+          <button type="button" class="remove-selected" data-action="click->group-chat-form#removeSelected">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+      </div>
+      <button type="submit" class="btn-primary btn-block" data-group-chat-form-target="dmSubmit" disabled>
+        Start Conversation
+      </button>
+    <% end %>
+  </div>
+
+  <!-- Group Form -->
+  <div class="new-chat-form" data-group-chat-form-target="groupForm" style="display: none;">
+    <%= form_with url: conversations_path, method: :post, local: true do |f| %>
+      <input type="hidden" name="is_group" value="true">
+
+      <div class="form-group">
+        <label>Group Name (optional)</label>
+        <input type="text" name="group_name" class="form-input" placeholder="Enter group name...">
+      </div>
+
+      <div class="form-group">
+        <label>Add Members <span class="label-hint">(at least 2)</span></label>
+        <div class="user-search-wrapper">
+          <input type="text"
+                 class="user-search-input"
+                 placeholder="Search for users..."
+                 data-group-chat-form-target="groupSearchInput"
+                 data-action="input->group-chat-form#searchGroup">
+          <div class="user-search-results" data-group-chat-form-target="groupSearchResults"></div>
+        </div>
+
+        <div class="selected-members" data-group-chat-form-target="selectedMembers">
+          <!-- Selected members will appear here -->
+        </div>
+      </div>
+
+      <button type="submit" class="btn-primary btn-block" data-group-chat-form-target="groupSubmit" disabled>
+        Create Group
+      </button>
+    <% end %>
+  </div>
+
+  <!-- User List for Quick Selection -->
+  <div class="user-list-section">
+    <h3>Suggested</h3>
+    <div class="user-list">
+      <% @users.limit(20).each do |user| %>
+        <div class="user-list-item"
+             data-user-id="<%= user.id %>"
+             data-username="<%= user.username %>"
+             data-action="click->group-chat-form#selectFromList">
+          <div class="user-avatar">
+            <% if user.avatar.attached? %>
+              <%= cl_image_tag user.avatar.key, width: 44, height: 44, crop: :fill, class: "avatar-img" %>
+            <% else %>
+              <div class="avatar-placeholder-sm"><%= user.username&.first&.upcase %></div>
+            <% end %>
+          </div>
+          <div class="user-info">
+            <span class="user-name"><%= user.username %></span>
+            <span class="user-city"><%= user.city %></span>
+          </div>
+          <div class="user-check" data-group-chat-form-target="checkmark" data-user-id="<%= user.id %>">
+            <i class="fa-solid fa-circle-check"></i>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

@@ -35,6 +35,11 @@ class User < ApplicationRecord
   has_many :sent_conversations, class_name: "Conversation", foreign_key: :sender_id, dependent: :destroy
   has_many :received_conversations, class_name: "Conversation", foreign_key: :recipient_id, dependent: :destroy
 
+  # Group chat memberships
+  has_many :conversation_members, dependent: :destroy
+  has_many :group_conversations, through: :conversation_members, source: :conversation
+  has_many :created_groups, class_name: "Conversation", foreign_key: :created_by_id
+
   validates :username, presence: true
   validates :city, presence: true
 
@@ -94,16 +99,28 @@ class User < ApplicationRecord
   end
 
   def find_or_create_conversation_with(other_user)
-    conversation_with(other_user) || sent_conversations.create!(recipient: other_user)
+    conversation_with(other_user) || Conversation.find_or_create_dm(self, other_user)
   end
 
   def unread_messages_count
-    Message.joins(:conversation)
+    # DM unread count
+    dm_count = Message.joins(:conversation)
+      .where(conversations: { is_group: false })
       .where("conversations.sender_id = ? OR conversations.recipient_id = ?", id, id)
       .where("conversations.accepted = ?", true)
       .where.not(user_id: id)
       .where(read_at: nil)
       .count
+
+    # Group chat unread count
+    group_count = Message.joins(conversation: :conversation_members)
+      .where(conversations: { is_group: true })
+      .where(conversation_members: { user_id: id, left_at: nil })
+      .where.not(user_id: id)
+      .where(read_at: nil)
+      .count
+
+    dm_count + group_count
   end
 
   def pending_message_requests_count

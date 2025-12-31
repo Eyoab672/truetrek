@@ -2,7 +2,13 @@ import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
   connect() {
-    this.scrollToBottom()
+    // Scroll to bottom after a small delay to ensure content is rendered
+    requestAnimationFrame(() => {
+      this.scrollToBottom()
+    })
+
+    // Also scroll after images/media load
+    setTimeout(() => this.scrollToBottom(), 300)
 
     // Listen for turbo stream events
     document.addEventListener('turbo:before-stream-render', this.handleStreamRender.bind(this))

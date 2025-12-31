@@ -1,32 +1,74 @@
 <%= link_to conversation_path(conversation), class: "conversation-card #{'unread' if conversation.unread_count_for(current_user) > 0}", id: "conversation_#{conversation.id}" do %>
-  <% other_user = conversation.other_user(current_user) %>
-  <div class="conversation-avatar">
-    <% if other_user.avatar.attached? %>
-      <%= cl_image_tag other_user.avatar.key, width: 56, height: 56, crop: :fill, class: "avatar-img" %>
-    <% else %>
-      <div class="avatar-placeholder">
-        <%= other_user.username&.first&.upcase %>
-      </div>
-    <% end %>
-  </div>
-  <div class="conversation-info">
-    <div class="conversation-header">
-      <span class="conversation-name"><%= other_user.username %></span>
-      <% if conversation.last_message %>
-        <span class="conversation-time"><%= time_ago_in_words(conversation.last_message.created_at) %></span>
-      <% end %>
-    </div>
-    <div class="conversation-preview">
-      <% if conversation.last_message %>
-        <% if conversation.last_message.user == current_user %>
-          <span class="preview-you">You: </span>
-        <% end %>
-        <%= truncate(conversation.last_message.body || "Sent a photo", length: 40) %>
+  <% if conversation.group? %>
+    <!-- Group Chat Avatar -->
+    <div class="conversation-avatar group-avatar">
+      <% if conversation.group_avatar.attached? %>
+        <%= cl_image_tag conversation.group_avatar.key, width: 56, height: 56, crop: :fill, class: "avatar-img" %>
       <% else %>
-        <span class="preview-empty">No messages yet</span>
+        <div class="group-avatar-stack">
+          <% conversation.active_members.where.not(id: current_user.id).limit(2).each_with_index do |member, index| %>
+            <div class="stacked-avatar stacked-<%= index %>">
+              <% if member.avatar.attached? %>
+                <%= cl_image_tag member.avatar.key, width: 32, height: 32, crop: :fill, class: "avatar-img" %>
+              <% else %>
+                <div class="avatar-placeholder-xs"><%= member.username&.first&.upcase %></div>
+              <% end %>
+            </div>
+          <% end %>
+        </div>
       <% end %>
     </div>
-  </div>
+    <div class="conversation-info">
+      <div class="conversation-header">
+        <span class="conversation-name"><%= conversation.display_name(current_user) %></span>
+        <% if conversation.last_message %>
+          <span class="conversation-time"><%= time_ago_in_words(conversation.last_message.created_at) %></span>
+        <% end %>
+      </div>
+      <div class="conversation-preview">
+        <% if conversation.last_message %>
+          <% if conversation.last_message.user == current_user %>
+            <span class="preview-you">You: </span>
+          <% else %>
+            <span class="preview-sender"><%= conversation.last_message.user.username %>: </span>
+          <% end %>
+          <%= truncate(conversation.last_message.body || "Sent a photo", length: 35) %>
+        <% else %>
+          <span class="preview-empty">No messages yet</span>
+        <% end %>
+      </div>
+    </div>
+  <% else %>
+    <!-- DM Avatar -->
+    <% other_user = conversation.other_user(current_user) %>
+    <div class="conversation-avatar">
+      <% if other_user.avatar.attached? %>
+        <%= cl_image_tag other_user.avatar.key, width: 56, height: 56, crop: :fill, class: "avatar-img" %>
+      <% else %>
+        <div class="avatar-placeholder">
+          <%= other_user.username&.first&.upcase %>
+        </div>
+      <% end %>
+    </div>
+    <div class="conversation-info">
+      <div class="conversation-header">
+        <span class="conversation-name"><%= other_user.username %></span>
+        <% if conversation.last_message %>
+          <span class="conversation-time"><%= time_ago_in_words(conversation.last_message.created_at) %></span>
+        <% end %>
+      </div>
+      <div class="conversation-preview">
+        <% if conversation.last_message %>
+          <% if conversation.last_message.user == current_user %>
+            <span class="preview-you">You: </span>
+          <% end %>
+          <%= truncate(conversation.last_message.body || "Sent a photo", length: 40) %>
+        <% else %>
+          <span class="preview-empty">No messages yet</span>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
   <% if conversation.unread_count_for(current_user) > 0 %>
     <div class="conversation-badge">
       <span class="unread-count"><%= conversation.unread_count_for(current_user) %></span>

@@ -24,10 +24,14 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :conversations, only: [:index, :show, :create] do
+  resources :conversations, only: [:index, :show, :new, :create, :update] do
     member do
       post :accept
       delete :decline
+      get :info
+      post :add_members
+      delete :remove_member
+      delete :leave
     end
     resources :messages, only: [:create, :destroy]
   end

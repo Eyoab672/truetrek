@@ -54,6 +54,6 @@ class MessagesController < ApplicationController
   end
 
   def message_params
-    params.require(:message).permit(:body, :replied_to_message_id, photos: [])
+    params.require(:message).permit(:body, :replied_to_message_id, :voice_message, photos: [], videos: [])
   end
 end

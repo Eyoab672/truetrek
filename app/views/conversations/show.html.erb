@@ -26,50 +26,106 @@
   <% end %>
 <% end %>
 
-<div class="chat-page" data-controller="lightbox chat-scroll chat" data-action="keydown@window->lightbox#closeWithKey">
+<div class="chat-page" data-controller="lightbox chat-scroll chat media-player video-lightbox" data-action="keydown@window->lightbox#closeWithKey">
   <!-- Chat Header -->
   <div class="chat-header">
     <%= link_to conversations_path, class: "back-btn" do %>
       <i class="fa-solid fa-arrow-left"></i>
     <% end %>
-    <%= link_to user_path(@other_user), class: "chat-user-info" do %>
-      <div class="chat-avatar">
-        <% if @other_user.avatar.attached? %>
-          <%= cl_image_tag @other_user.avatar.key, width: 40, height: 40, crop: :fill, class: "avatar-img" %>
-        <% else %>
-          <div class="avatar-placeholder-sm">
-            <%= @other_user.username&.first&.upcase %>
-          </div>
-        <% end %>
+
+    <% if @conversation.group? %>
+      <!-- Group Chat Header -->
+      <%= link_to info_conversation_path(@conversation), class: "chat-user-info" do %>
+        <div class="chat-avatar group-chat-avatar">
+          <% if @conversation.group_avatar.attached? %>
+            <%= cl_image_tag @conversation.group_avatar.key, width: 32, height: 32, crop: :fill, class: "avatar-img" %>
+          <% else %>
+            <div class="group-avatar-mini">
+              <i class="fa-solid fa-users"></i>
+            </div>
+          <% end %>
+        </div>
+        <div class="chat-user-details">
+          <span class="chat-username"><%= @conversation.display_name(current_user) %></span>
+          <span class="chat-members-count"><%= @conversation.active_member_count %> members</span>
+        </div>
+      <% end %>
+      <div class="chat-menu-wrapper" data-controller="dropdown">
+        <button type="button" class="chat-info-btn" data-action="click->dropdown#toggle">
+          <i class="fa-solid fa-ellipsis-vertical"></i>
+        </button>
+        <div class="chat-dropdown-menu" data-dropdown-target="menu">
+          <button type="button" class="chat-menu-item" data-action="click->chat-scroll#scrollToTop">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <span>Search</span>
+          </button>
+          <%= link_to info_conversation_path(@conversation), class: "chat-menu-item" do %>
+            <i class="fa-solid fa-circle-info"></i>
+            <span>Group Info</span>
+          <% end %>
+          <%= button_to leave_conversation_path(@conversation), method: :delete, class: "chat-menu-item danger", data: { turbo_confirm: "Are you sure you want to leave this group?" } do %>
+            <i class="fa-solid fa-right-from-bracket"></i>
+            <span>Leave Group</span>
+          <% end %>
+        </div>
       </div>
-      <div class="chat-user-details">
-        <span class="chat-username"><%= @other_user.username %></span>
-        <span class="chat-user-location"><%= @other_user.city %></span>
+    <% else %>
+      <!-- DM Header -->
+      <%= link_to user_path(@other_user), class: "chat-user-info" do %>
+        <div class="chat-avatar">
+          <% if @other_user.avatar.attached? %>
+            <%= cl_image_tag @other_user.avatar.key, width: 32, height: 32, crop: :fill, class: "avatar-img" %>
+          <% else %>
+            <div class="avatar-placeholder-sm">
+              <%= @other_user.username&.first&.upcase %>
+            </div>
+          <% end %>
+        </div>
+        <div class="chat-user-details">
+          <span class="chat-username"><%= @other_user.username %></span>
+        </div>
+      <% end %>
+      <div class="chat-menu-wrapper" data-controller="dropdown">
+        <button type="button" class="chat-info-btn" data-action="click->dropdown#toggle">
+          <i class="fa-solid fa-ellipsis-vertical"></i>
+        </button>
+        <div class="chat-dropdown-menu" data-dropdown-target="menu">
+          <button type="button" class="chat-menu-item" data-action="click->chat-scroll#scrollToTop">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <span>Search</span>
+          </button>
+          <%= link_to user_path(@other_user), class: "chat-menu-item" do %>
+            <i class="fa-solid fa-user"></i>
+            <span>View Profile</span>
+          <% end %>
+        </div>
       </div>
     <% end %>
   </div>
 
-  <!-- Pending Request Notice -->
-  <% if !@conversation.accepted? && @conversation.sender == current_user %>
-    <div class="pending-notice">
-      <i class="fa-solid fa-clock"></i>
-      Waiting for <%= @other_user.username %> to accept your message request
-    </div>
-  <% end %>
-
-  <!-- Accept/Decline for Recipient -->
-  <% if !@conversation.accepted? && @conversation.recipient == current_user %>
-    <div class="request-notice">
-      <p><strong><%= @other_user.username %></strong> wants to send you a message</p>
-      <div class="request-notice-actions">
-        <%= button_to accept_conversation_path(@conversation), method: :post, class: "btn-accept-sm" do %>
-          Accept
-        <% end %>
-        <%= button_to decline_conversation_path(@conversation), method: :delete, class: "btn-decline-sm", data: { turbo_confirm: "Decline this message request?" } do %>
-          Decline
-        <% end %>
+  <% unless @conversation.group? %>
+    <!-- Pending Request Notice (DM only) -->
+    <% if !@conversation.accepted? && @conversation.sender == current_user %>
+      <div class="pending-notice">
+        <i class="fa-solid fa-clock"></i>
+        Waiting for <%= @other_user.username %> to accept your message request
       </div>
-    </div>
+    <% end %>
+
+    <!-- Accept/Decline for Recipient (DM only) -->
+    <% if !@conversation.accepted? && @conversation.recipient == current_user %>
+      <div class="request-notice">
+        <p><strong><%= @other_user.username %></strong> wants to send you a message</p>
+        <div class="request-notice-actions">
+          <%= button_to accept_conversation_path(@conversation), method: :post, class: "btn-accept-sm" do %>
+            Accept
+          <% end %>
+          <%= button_to decline_conversation_path(@conversation), method: :delete, class: "btn-decline-sm", data: { turbo_confirm: "Decline this message request?" } do %>
+            Decline
+          <% end %>
+        </div>
+      </div>
+    <% end %>
   <% end %>
 
   <!-- Messages -->

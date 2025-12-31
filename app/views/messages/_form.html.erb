@@ -1,4 +1,4 @@
-<%= form_with model: [conversation, message], class: "message-form", data: { turbo_stream: true } do |f| %>
+<%= form_with model: [conversation, message], class: "message-form", data: { turbo_stream: true, controller: "webcam-capture" } do |f| %>
   <!-- Reply Preview -->
   <div class="reply-preview" data-chat-target="replyPreview">
     <div class="reply-preview-content">
@@ -14,24 +14,182 @@
   </div>
   <%= f.hidden_field :replied_to_message_id, data: { chat_target: "replyInput" } %>
 
-  <div class="photo-preview" id="photo_preview"></div>
+  <div class="media-preview" id="media_preview">
+    <div class="photo-preview" id="photo_preview"></div>
+    <div class="video-preview" id="video_preview"></div>
+  </div>
 
-  <div class="message-input-wrapper">
-    <label for="message_photos" class="photo-upload-btn">
-      <i class="fa-solid fa-image"></i>
-      <%= f.file_field :photos, multiple: true, accept: "image/*", class: "photo-input", id: "message_photos" %>
-    </label>
-    <%= f.text_field :body, placeholder: "Type a message...", class: "message-input", autocomplete: "off", data: { chat_target: "messageInput" } %>
-    <button type="submit" class="send-btn">
-      <i class="fa-solid fa-paper-plane"></i>
-    </button>
+  <!-- Webcam Capture Modal (for desktop) -->
+  <div class="webcam-modal" data-webcam-capture-target="modal">
+    <div class="webcam-modal-content">
+      <button type="button" class="webcam-close-btn" data-action="click->webcam-capture#close" data-webcam-capture-target="closeBtn">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+
+      <!-- Camera View -->
+      <div class="webcam-viewfinder">
+        <video data-webcam-capture-target="video" autoplay playsinline class="webcam-video"></video>
+        <canvas data-webcam-capture-target="canvas" style="display: none;"></canvas>
+
+        <!-- Preview (hidden initially) -->
+        <div class="webcam-preview hidden" data-webcam-capture-target="preview">
+          <img data-webcam-capture-target="previewImage" class="webcam-preview-image" alt="Preview">
+        </div>
+      </div>
+
+      <!-- Controls -->
+      <div class="webcam-controls">
+        <!-- Timer (for video recording) -->
+        <div class="webcam-timer hidden" data-webcam-capture-target="timer">0:00</div>
+
+        <!-- Capture/Record buttons -->
+        <div class="webcam-controls-row">
+          <button type="button" class="webcam-btn webcam-btn-secondary" data-action="click->webcam-capture#rotateCamera" data-webcam-capture-target="rotateBtn">
+            <i class="fa-solid fa-camera-rotate"></i>
+          </button>
+
+          <!-- Photo capture button -->
+          <button type="button" class="webcam-btn webcam-btn-shutter" data-action="click->webcam-capture#capturePhoto" data-webcam-capture-target="captureBtn">
+            <span class="shutter-inner"></span>
+          </button>
+
+          <!-- Video record button -->
+          <button type="button" class="webcam-btn webcam-btn-record hidden" data-action="click->webcam-capture#startRecording" data-webcam-capture-target="recordBtn">
+            <span class="record-inner"></span>
+          </button>
+
+          <!-- Video stop button -->
+          <button type="button" class="webcam-btn webcam-btn-stop hidden" data-action="click->webcam-capture#stopRecording" data-webcam-capture-target="stopBtn">
+            <i class="fa-solid fa-stop"></i>
+          </button>
+
+          <div class="webcam-btn webcam-btn-placeholder"></div>
+        </div>
+
+        <!-- Confirm/Retake buttons (shown after capture) -->
+        <div class="webcam-action-row hidden" data-webcam-capture-target="actionRow">
+          <button type="button" class="webcam-btn webcam-btn-retake" data-action="click->webcam-capture#retake" data-webcam-capture-target="retakeBtn">
+            <i class="fa-solid fa-rotate-left"></i>
+          </button>
+          <button type="button" class="webcam-btn webcam-btn-confirm" data-action="click->webcam-capture#confirm" data-webcam-capture-target="confirmBtn">
+            <i class="fa-solid fa-check"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="message-input-wrapper" data-controller="voice-recorder" data-voice-recorder-max-duration-value="300">
+    <!-- Attachment Button (Telegram style - single button with menu) -->
+    <div class="media-upload-dropdown">
+      <button type="button" class="attach-btn" id="attach_menu_btn">
+        <i class="fa-solid fa-paperclip"></i>
+      </button>
+      <div class="media-upload-menu" id="attach_menu">
+        <button type="button" class="media-upload-option" data-action="click->webcam-capture#openPhoto">
+          <i class="fa-solid fa-camera"></i>
+          <span>Camera</span>
+          <input type="file" name="message[photos][]" accept="image/*" capture="environment" class="media-input" id="message_photos_camera">
+        </button>
+        <label class="media-upload-option">
+          <i class="fa-solid fa-image"></i>
+          <span>Photo</span>
+          <%= f.file_field :photos, multiple: true, accept: "image/*", class: "media-input", id: "message_photos_gallery" %>
+        </label>
+        <button type="button" class="media-upload-option" data-action="click->webcam-capture#openVideo">
+          <i class="fa-solid fa-video"></i>
+          <span>Video</span>
+          <input type="file" name="message[videos][]" accept="video/*" capture="environment" class="media-input" id="message_videos_camera">
+        </button>
+        <label class="media-upload-option">
+          <i class="fa-solid fa-film"></i>
+          <span>Video File</span>
+          <%= f.file_field :videos, multiple: true, accept: "video/mp4,video/quicktime,video/webm,video/mpeg,video/x-m4v", class: "media-input", id: "message_videos_gallery" %>
+        </label>
+      </div>
+    </div>
+
+    <%= f.file_field :voice_message, accept: "audio/*", class: "hidden", data: { voice_recorder_target: "fileInput" } %>
+
+    <!-- Normal input state -->
+    <div class="input-normal-state" data-voice-recorder-target="idleState" data-controller="emoji-picker">
+      <%= f.text_field :body, placeholder: "Message...", class: "message-input", autocomplete: "off", data: { chat_target: "messageInput", voice_recorder_target: "messageInput", emoji_picker_target: "input", action: "input->voice-recorder#checkInput" } %>
+
+      <!-- Emoji picker -->
+      <div class="emoji-picker-wrapper">
+        <button type="button" class="emoji-toggle-btn" data-action="click->emoji-picker#toggle">
+          <i class="fa-regular fa-face-smile"></i>
+        </button>
+        <div class="emoji-picker" data-emoji-picker-target="picker"></div>
+      </div>
+
+      <!-- Mic button (shown when input is empty) -->
+      <button type="button" class="mic-btn" data-voice-recorder-target="micBtn" data-action="click->voice-recorder#startRecording">
+        <i class="fa-solid fa-microphone"></i>
+      </button>
+
+      <!-- Send button (shown when input has text) -->
+      <button type="submit" class="send-btn hidden" data-voice-recorder-target="sendBtn">
+        <i class="fa-solid fa-paper-plane"></i>
+      </button>
+    </div>
+
+    <!-- Recording State: Full width takeover -->
+    <div class="voice-recording-state hidden" data-voice-recorder-target="recordingState">
+      <button type="button" class="voice-cancel-btn" data-action="click->voice-recorder#cancelRecording">
+        <i class="fa-solid fa-trash"></i>
+      </button>
+      <div class="voice-recording-info">
+        <div class="voice-recording-indicator"></div>
+        <span class="voice-timer" data-voice-recorder-target="timer">0:00</span>
+        <div class="voice-waveform" data-voice-recorder-target="waveform">
+          <span></span><span></span><span></span><span></span><span></span>
+        </div>
+      </div>
+      <button type="button" class="voice-stop-btn" data-action="click->voice-recorder#stopRecording">
+        <i class="fa-solid fa-stop"></i>
+      </button>
+    </div>
+
+    <!-- Preview State: Full width takeover -->
+    <div class="voice-preview-state hidden" data-voice-recorder-target="previewState">
+      <button type="button" class="voice-cancel-btn" data-action="click->voice-recorder#cancelRecording">
+        <i class="fa-solid fa-trash"></i>
+      </button>
+      <audio class="voice-audio-player" data-voice-recorder-target="audioPlayer" controls></audio>
+      <button type="submit" class="voice-send-btn">
+        <i class="fa-solid fa-paper-plane"></i>
+      </button>
+    </div>
   </div>
 <% end %>
 
 <script>
-  document.getElementById('message_photos')?.addEventListener('change', function(e) {
+  // Attachment menu toggle
+  const attachBtn = document.getElementById('attach_menu_btn');
+  const attachMenu = document.getElementById('attach_menu');
+
+  attachBtn?.addEventListener('click', function(e) {
+    e.stopPropagation();
+    attachMenu.classList.toggle('show');
+  });
+
+  attachMenu?.addEventListener('click', function(e) {
+    e.stopPropagation();
+  });
+
+  // Close menu when clicking outside
+  document.addEventListener('click', function(e) {
+    if (e.target.closest('.media-upload-option')) return;
+    attachMenu?.classList.remove('show');
+  });
+
+  // Photo preview handler
+  function handlePhotoChange(e) {
     const preview = document.getElementById('photo_preview');
     preview.innerHTML = '';
+
+    if (e.target.files.length === 0) return;
 
     Array.from(e.target.files).forEach(file => {
       const reader = new FileReader();
@@ -43,5 +201,44 @@
       };
       reader.readAsDataURL(file);
     });
-  });
+
+    attachMenu?.classList.remove('show');
+  }
+
+  // Video preview handler
+  function handleVideoChange(e) {
+    const preview = document.getElementById('video_preview');
+    preview.innerHTML = '';
+
+    if (e.target.files.length === 0) return;
+
+    Array.from(e.target.files).forEach(file => {
+      const item = document.createElement('div');
+      item.className = 'video-preview-item';
+
+      const icon = document.createElement('i');
+      icon.className = 'fa-solid fa-film';
+
+      const name = document.createElement('span');
+      name.className = 'video-preview-name';
+      name.textContent = file.name.length > 20 ? file.name.substring(0, 17) + '...' : file.name;
+
+      const size = document.createElement('span');
+      size.className = 'video-preview-size';
+      size.textContent = (file.size / (1024 * 1024)).toFixed(1) + ' MB';
+
+      item.appendChild(icon);
+      item.appendChild(name);
+      item.appendChild(size);
+      preview.appendChild(item);
+    });
+
+    attachMenu?.classList.remove('show');
+  }
+
+  // Attach handlers
+  document.getElementById('message_photos_camera')?.addEventListener('change', handlePhotoChange);
+  document.getElementById('message_photos_gallery')?.addEventListener('change', handlePhotoChange);
+  document.getElementById('message_videos_camera')?.addEventListener('change', handleVideoChange);
+  document.getElementById('message_videos_gallery')?.addEventListener('change', handleVideoChange);
 </script>
