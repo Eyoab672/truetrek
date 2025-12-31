@@ -1,49 +1,45 @@
-<div class="camera-new-page" data-place-id="<%= params[:place_id] %>">
-  <section class="camera-page-header">
-    <div class="camera-page-header-content">
-      <h1 class="camera-page-title">Capture a Moment</h1>
-      <% if params[:place_id].present? %>
-        <% place = Place.find_by(id: params[:place_id]) %>
-        <p class="camera-page-subtitle">Add a photo to <%= place&.title || "this place" %></p>
-      <% else %>
-        <p class="camera-page-subtitle">Take a photo to create a place or add to an existing one</p>
-      <% end %>
+<div class="camera-fullscreen-page" data-place-id="<%= params[:place_id] %>">
+  <!-- Close button -->
+  <%= link_to :back, class: "camera-close-btn" do %>
+    <i class="fa-solid fa-xmark"></i>
+  <% end %>
+
+  <!-- Camera viewfinder -->
+  <div class="camera-viewfinder">
+    <video id="camera-video" autoplay playsinline class="camera-video-fullscreen"></video>
+    <canvas id="camera-canvas" style="display:none;"></canvas>
+
+    <div id="photo-preview" class="camera-preview-fullscreen d-none">
+      <img id="preview-image" class="camera-preview-image" alt="Photo preview">
     </div>
-  </section>
+  </div>
 
-  <section class="camera-form-section">
-    <div class="container">
-      <div class="camera-form-wrapper">
-        <div class="camera-form-card">
-          <video id="camera-video" autoplay playsinline class="camera-video mb-3"></video>
-          <canvas id="camera-canvas" style="display:none;"></canvas>
-
-          <div id="photo-preview" class="d-none">
-            <img id="preview-image" class="camera-photo-preview w-100 mb-3" alt="Photo preview">
-          </div>
-
-          <div id="camera-controls" class="camera-controls-wrapper">
-            <div class="camera-controls-row">
-              <button type="button" id="rotate-camera" class="camera-control-btn">
-                <i class="fa-solid fa-rotate"></i>
-              </button>
-              <button type="button" id="take-photo" class="camera-capture-btn">
-                <i class="fa-solid fa-camera"></i>
-              </button>
-              <div class="camera-control-btn camera-control-placeholder"></div>
-            </div>
-          </div>
-
-          <div id="action-buttons" class="d-grid gap-2 mt-3 d-none">
-            <button type="button" class="btn btn-success btn-lg" id="looks-great">
-              <i class="fa-solid fa-check"></i> Looks Great
-            </button>
-            <button type="button" class="btn btn-outline-secondary" id="retake-photo">
-              <i class="fa-solid fa-redo"></i> Retake Photo
-            </button>
-          </div>
-        </div>
-      </div>
+  <!-- Camera controls overlay -->
+  <div id="camera-controls" class="camera-controls-overlay">
+    <% if params[:place_id].present? %>
+      <% place = Place.find_by(id: params[:place_id]) %>
+      <p class="camera-place-label"><%= place&.title || "this place" %></p>
+    <% end %>
+    <div class="camera-controls-bottom">
+      <button type="button" id="rotate-camera" class="camera-btn-circle camera-btn-secondary">
+        <i class="fa-solid fa-rotate"></i>
+      </button>
+      <button type="button" id="take-photo" class="camera-btn-shutter">
+        <span class="shutter-inner"></span>
+      </button>
+      <div class="camera-btn-circle camera-btn-placeholder"></div>
     </div>
-  </section>
+  </div>
+
+  <!-- Action buttons after photo taken -->
+  <div id="action-buttons" class="camera-action-overlay d-none">
+    <div class="camera-action-buttons">
+      <button type="button" class="camera-btn-action camera-btn-retake" id="retake-photo">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+      <button type="button" class="camera-btn-action camera-btn-confirm" id="looks-great">
+        <i class="fa-solid fa-check"></i>
+      </button>
+    </div>
+  </div>
 </div>

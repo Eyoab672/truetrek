@@ -5,6 +5,9 @@
 <div class="messages-page" data-controller="tabs swipe-nav" data-swipe-nav-right-url-value="<%= notifications_path %>">
   <div class="messages-header">
     <h1><i class="fa-regular fa-paper-plane"></i> Messages</h1>
+    <%= link_to new_conversation_path, class: "new-chat-btn" do %>
+      <i class="fa-solid fa-pen-to-square"></i>
+    <% end %>
   </div>
 
   <!-- Tabs -->

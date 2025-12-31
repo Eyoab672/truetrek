@@ -1,0 +1,236 @@
+<div class="group-info-page" data-controller="group-info tabs">
+  <!-- Header -->
+  <div class="group-info-header">
+    <%= link_to conversation_path(@conversation), class: "back-btn" do %>
+      <i class="fa-solid fa-arrow-left"></i>
+    <% end %>
+    <h1>Group Info</h1>
+    <% if @conversation.is_admin?(current_user) %>
+      <button type="button" class="edit-btn" data-action="click->group-info#toggleEdit">
+        <i class="fa-solid fa-pen"></i>
+      </button>
+    <% end %>
+  </div>
+
+  <!-- Group Avatar & Name -->
+  <div class="group-info-main">
+    <div class="group-avatar-large">
+      <% if @conversation.group_avatar.attached? %>
+        <%= cl_image_tag @conversation.group_avatar.key, width: 100, height: 100, crop: :fill, class: "avatar-img" %>
+      <% else %>
+        <div class="group-avatar-placeholder-lg">
+          <i class="fa-solid fa-users"></i>
+        </div>
+      <% end %>
+    </div>
+    <h2 class="group-name"><%= @conversation.display_name(current_user) %></h2>
+    <p class="group-member-count"><%= @conversation.active_member_count %> members</p>
+  </div>
+
+  <!-- Edit Form (Hidden by default, shown for admins) -->
+  <% if @conversation.is_admin?(current_user) %>
+    <div class="group-edit-form" data-group-info-target="editForm" style="display: none;">
+      <%= form_with model: @conversation, url: conversation_path(@conversation), method: :patch, local: true do |f| %>
+        <div class="form-group">
+          <label>Group Name</label>
+          <%= f.text_field :group_name, class: "form-input", placeholder: "Enter group name..." %>
+        </div>
+        <div class="form-group">
+          <label>Group Avatar</label>
+          <%= f.file_field :group_avatar, class: "form-input", accept: "image/*" %>
+        </div>
+        <button type="submit" class="btn-primary btn-block">Save Changes</button>
+      <% end %>
+    </div>
+  <% end %>
+
+  <!-- Tabs Navigation -->
+  <div class="group-info-tabs">
+    <button class="group-info-tab active" data-tabs-target="tab" data-action="click->tabs#switch">
+      <i class="fa-solid fa-users"></i>
+      <span>Members</span>
+    </button>
+    <button class="group-info-tab" data-tabs-target="tab" data-action="click->tabs#switch">
+      <i class="fa-solid fa-image"></i>
+      <span>Media</span>
+    </button>
+    <button class="group-info-tab" data-tabs-target="tab" data-action="click->tabs#switch">
+      <i class="fa-solid fa-link"></i>
+      <span>Links</span>
+    </button>
+    <button class="group-info-tab" data-tabs-target="tab" data-action="click->tabs#switch">
+      <i class="fa-solid fa-microphone"></i>
+      <span>Voice</span>
+    </button>
+  </div>
+
+  <!-- Members Tab -->
+  <div class="tab-content" data-tabs-target="content">
+    <div class="group-members-section">
+      <% if @conversation.is_admin?(current_user) %>
+        <div class="section-header">
+          <button type="button" class="add-member-btn-full" data-action="click->group-info#toggleAddMembers">
+            <i class="fa-solid fa-user-plus"></i>
+            <span>Add Members</span>
+          </button>
+        </div>
+
+        <!-- Add Members Form (Hidden by default) -->
+        <div class="add-members-form" data-group-info-target="addMembersForm" style="display: none;">
+          <%= form_with url: add_members_conversation_path(@conversation), method: :post, local: true, data: { controller: "add-members-search" } do %>
+            <div class="user-search-wrapper">
+              <input type="text"
+                     class="user-search-input"
+                     placeholder="Search for users..."
+                     data-add-members-search-target="searchInput"
+                     data-action="input->add-members-search#search">
+              <div class="user-search-results" data-add-members-search-target="searchResults"></div>
+            </div>
+            <div class="selected-members" data-add-members-search-target="selectedMembers"></div>
+            <button type="submit" class="btn-primary btn-block" data-add-members-search-target="submitBtn" disabled>
+              Add Members
+            </button>
+          <% end %>
+        </div>
+      <% end %>
+
+      <div class="members-list">
+        <% @members.each do |member| %>
+          <% membership = member.conversation_members.find_by(conversation: @conversation) %>
+          <div class="member-item">
+            <%= link_to user_path(member), class: "member-info" do %>
+              <div class="member-avatar">
+                <% if member.avatar.attached? %>
+                  <%= cl_image_tag member.avatar.key, width: 48, height: 48, crop: :fill, class: "avatar-img" %>
+                <% else %>
+                  <div class="avatar-placeholder-sm"><%= member.username&.first&.upcase %></div>
+                <% end %>
+              </div>
+              <div class="member-details">
+                <span class="member-name">
+                  <%= member.username %>
+                  <% if member == current_user %>
+                    <span class="you-label">(You)</span>
+                  <% end %>
+                </span>
+                <% if membership&.admin? %>
+                  <span class="admin-badge">Admin</span>
+                <% end %>
+              </div>
+            <% end %>
+
+            <% if @conversation.is_admin?(current_user) && member != current_user %>
+              <%= button_to remove_member_conversation_path(@conversation, user_id: member.id),
+                            method: :delete,
+                            class: "remove-member-btn",
+                            data: { turbo_confirm: "Remove #{member.username} from this group?" } do %>
+                <i class="fa-solid fa-user-minus"></i>
+              <% end %>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <!-- Media Tab -->
+  <div class="tab-content" data-tabs-target="content" style="display: none;">
+    <div class="shared-media-section">
+      <% if @media_messages.any? || @video_messages.any? %>
+        <div class="media-grid">
+          <% @media_messages.each do |message| %>
+            <% message.photos.each do |photo| %>
+              <a href="#" class="media-grid-item" data-action="click->lightbox#open" data-image-url="<%= cl_image_path(photo.key, width: 1200, quality: "auto") %>">
+                <%= cl_image_tag photo.key, width: 150, height: 150, crop: :fill, class: "media-thumbnail" %>
+              </a>
+            <% end %>
+          <% end %>
+          <% @video_messages.each do |message| %>
+            <% message.videos.each do |video| %>
+              <div class="media-grid-item video-item">
+                <%= cl_video_tag video.key, poster: cl_video_path(video.key, format: "jpg", start_offset: 0), class: "media-thumbnail", width: 150, height: 150, crop: :fill %>
+                <div class="video-overlay">
+                  <i class="fa-solid fa-play"></i>
+                </div>
+              </div>
+            <% end %>
+          <% end %>
+        </div>
+      <% else %>
+        <div class="empty-tab-state">
+          <i class="fa-regular fa-image"></i>
+          <p>No shared media yet</p>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <!-- Links Tab -->
+  <div class="tab-content" data-tabs-target="content" style="display: none;">
+    <div class="shared-links-section">
+      <% if @link_messages.any? %>
+        <div class="links-list">
+          <% @link_messages.each do |message| %>
+            <% urls = URI.extract(message.body || "", ['http', 'https']) %>
+            <% urls.each do |url| %>
+              <a href="<%= url %>" target="_blank" rel="noopener noreferrer" class="link-item">
+                <div class="link-icon">
+                  <i class="fa-solid fa-link"></i>
+                </div>
+                <div class="link-details">
+                  <span class="link-url"><%= truncate(url, length: 50) %></span>
+                  <span class="link-sender"><%= message.user.username %> &middot; <%= time_ago_in_words(message.created_at) %> ago</span>
+                </div>
+                <i class="fa-solid fa-arrow-up-right-from-square link-external"></i>
+              </a>
+            <% end %>
+          <% end %>
+        </div>
+      <% else %>
+        <div class="empty-tab-state">
+          <i class="fa-solid fa-link"></i>
+          <p>No shared links yet</p>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <!-- Voice Tab -->
+  <div class="tab-content" data-tabs-target="content" style="display: none;">
+    <div class="shared-voice-section">
+      <% if @voice_messages.any? %>
+        <div class="voice-list">
+          <% @voice_messages.each do |message| %>
+            <div class="voice-item">
+              <div class="voice-item-icon">
+                <i class="fa-solid fa-microphone"></i>
+              </div>
+              <div class="voice-item-details">
+                <span class="voice-sender"><%= message.user.username %></span>
+                <span class="voice-date"><%= message.created_at.strftime("%b %d, %Y") %></span>
+              </div>
+              <audio controls class="voice-item-player">
+                <source src="<%= url_for(message.voice_message) %>" type="<%= message.voice_message.content_type %>">
+              </audio>
+            </div>
+          <% end %>
+        </div>
+      <% else %>
+        <div class="empty-tab-state">
+          <i class="fa-solid fa-microphone"></i>
+          <p>No voice messages yet</p>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <!-- Actions -->
+  <div class="group-actions">
+    <%= button_to leave_conversation_path(@conversation),
+                  method: :delete,
+                  class: "btn-danger btn-block",
+                  data: { turbo_confirm: "Are you sure you want to leave this group?" } do %>
+      <i class="fa-solid fa-right-from-bracket"></i> Leave Group
+    <% end %>
+  </div>
+</div>

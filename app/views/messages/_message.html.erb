@@ -7,10 +7,13 @@
     <i class="fa-solid fa-reply"></i>
   </div>
   <div class="message <%= message.user == current_user ? 'message-sent' : 'message-received' %>" id="message_<%= message.id %>" data-message-id="<%= message.id %>">
+    <% if message.conversation.group? && message.user != current_user %>
+      <span class="message-sender-name"><%= message.user.username %></span>
+    <% end %>
     <% if message.replied_to_message.present? %>
       <div class="message-reply-preview">
         <span class="reply-author"><%= message.replied_to_message.user.username %></span>
-        <span class="reply-body"><%= message.replied_to_message.body&.truncate(40) || "Photo" %></span>
+        <span class="reply-body"><%= message.replied_to_message.body&.truncate(40) || (message.replied_to_message.voice_message.attached? ? "Voice message" : (message.replied_to_message.videos.attached? ? "Video" : "Photo")) %></span>
       </div>
     <% end %>
     <div class="message-content">
@@ -23,11 +26,53 @@
           <% end %>
         </div>
       <% end %>
+      <% if message.videos.attached? %>
+        <div class="message-videos">
+          <% message.videos.each do |video| %>
+            <div class="message-video-container" data-action="click->video-lightbox#open">
+              <div class="video-thumbnail">
+                <%= cl_video_tag video.key, poster: cl_video_path(video.key, format: "jpg", start_offset: 0), class: "message-video-preview", width: 280, crop: :limit %>
+                <div class="video-play-overlay">
+                  <i class="fa-solid fa-play"></i>
+                </div>
+              </div>
+              <video class="message-video-source hidden">
+                <source src="<%= cl_video_path(video.key, quality: "auto") %>" type="video/mp4">
+              </video>
+            </div>
+          <% end %>
+        </div>
+      <% end %>
+      <% if message.voice_message.attached? %>
+        <div class="message-voice">
+          <div class="voice-message-player" data-controller="audio-player">
+            <button type="button" class="voice-play-btn" data-action="click->audio-player#toggle">
+              <i class="fa-solid fa-play" data-audio-player-target="icon"></i>
+            </button>
+            <div class="voice-waveform-display">
+              <div class="voice-progress" data-audio-player-target="progress"></div>
+            </div>
+            <span class="voice-duration" data-audio-player-target="duration">0:00</span>
+            <audio data-audio-player-target="audio" preload="metadata">
+              <source src="<%= url_for(message.voice_message) %>" type="<%= message.voice_message.content_type %>">
+            </audio>
+          </div>
+        </div>
+      <% end %>
       <% if message.body.present? %>
         <p class="message-text"><%= message.body %></p>
       <% end %>
       <div class="message-meta">
         <span class="message-time"><%= message.created_at.strftime("%l:%M %p") %></span>
+        <% if message.user == current_user %>
+          <span class="message-status <%= message.read_at.present? ? 'status-read' : 'status-sent' %>">
+            <% if message.read_at.present? %>
+              <i class="fa-solid fa-check-double"></i>
+            <% else %>
+              <i class="fa-solid fa-check"></i>
+            <% end %>
+          </span>
+        <% end %>
         <% if message.user == current_user && message.can_unsend? %>
           <%= button_to conversation_message_path(message.conversation, message), method: :delete, class: "unsend-btn desktop-only", data: { turbo_stream: true, turbo_confirm: "Unsend this message?" } do %>
             <i class="fa-solid fa-trash-can"></i>
